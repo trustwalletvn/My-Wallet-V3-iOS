@@ -25,6 +25,7 @@ public struct ImageResourceView: View {
                 state = .image(image)
             case .url(let url):
                 state = .loading
+                // TODO: use an image loading and caching framework for this
                 DispatchQueue.global(qos: .userInteractive).async {
                     do {
                         let imageData = try Data(contentsOf: url)

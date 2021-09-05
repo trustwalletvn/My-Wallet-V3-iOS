@@ -99,18 +99,19 @@ final class TransactionInteractor {
         return transactionProcessor.updateFeeLevel(level, customFeeAmount: amount)
     }
 
+    func fetchPaymentAccounts(for currency: CryptoCurrency, amount: MoneyValue?) -> Single<[SingleAccount]> {
+        let amount = amount ?? .zero(currency: currency)
+        return paymentMethodsService
+            .fetchPaymentAccounts(for: currency, amount: amount)
+            .map { $0 }
+            .asSingle()
+    }
+
     func getAvailableSourceAccounts(action: AssetAction) -> Single<[SingleAccount]> {
         switch action {
         case .buy:
             // TODO: check the new limits API to understand whether passing asset and amount is really required
-            return paymentMethodsService
-                .fetchPaymentAccounts(
-                    for: .coin(.bitcoin),
-                    amount: .zero(currency: .coin(.bitcoin))
-                )
-                .map { $0 }
-                .asObservable()
-                .asSingle()
+            return fetchPaymentAccounts(for: .coin(.bitcoin), amount: nil)
         case .swap:
             let tradingPairs = availablePairsService.availableTradingPairs
             let allAccounts = coincore.allAccounts
@@ -161,8 +162,12 @@ final class TransactionInteractor {
             return linkedBanksFactory.nonWireTransferBanks.map { $0.map { $0 as SingleAccount } }
         case .withdraw:
             return linkedBanksFactory.linkedBanks.map { $0.map { $0 as SingleAccount } }
+        case .buy:
+            return coincore
+                .cryptoAccounts(supporting: .buy)
+                .asSingle()
+                .map { $0 }
         case .receive,
-             .buy,
              .sell,
              .viewActivity:
             unimplemented()

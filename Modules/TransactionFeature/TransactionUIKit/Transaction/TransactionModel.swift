@@ -23,12 +23,12 @@ final class TransactionModel {
 
     // MARK: - Init
 
-    init(initialState: TransactionState = TransactionState(), transactionInteractor: TransactionInteractor) {
+    init(initialState: TransactionState, transactionInteractor: TransactionInteractor) {
         interactor = transactionInteractor
         mviModel = MviModel(
             initialState: initialState,
-            performAction: { [unowned self] state, action -> Disposable? in
-                self.perform(previousState: state, action: action)
+            performAction: { [weak self] state, action -> Disposable? in
+                self?.perform(previousState: state, action: action)
             }
         )
     }
@@ -40,6 +40,7 @@ final class TransactionModel {
     }
 
     func perform(previousState: TransactionState, action: TransactionAction) -> Disposable? {
+        Logger.shared.debug("[Transaction Flow] Perform action: \(action) on state:")
         switch action {
         case .pendingTransactionStarted:
             return nil
@@ -60,19 +61,22 @@ final class TransactionModel {
         case .initialiseWithTargetAndNoSource(let action, _, _),
              .initialiseWithNoSourceOrTargetAccount(let action, _):
             return processSourceAccountsListUpdate(action: action)
+
         case .availableSourceAccountsListUpdated:
             return nil
+
         case .availableDestinationAccountsListUpdated:
-            return nil
+            return processAvailableDestinationAccountsListUpdated(state: previousState)
+
         case .bankAccountLinked(let action):
             return processSourceAccountsListUpdate(action: action)
         case .bankAccountLinkedFromSource(let source, let action):
-            return processAccountsListUpdate(fromAccount: source, action: action)
+            return processTargetAccountsListUpdate(fromAccount: source, action: action)
         case .showBankLinkingFlow,
              .bankLinkingFlowDismissed:
             return nil
         case .initialiseWithSourceAccount(let action, let sourceAccount, _):
-            return processAccountsListUpdate(fromAccount: sourceAccount, action: action)
+            return processTargetAccountsListUpdate(fromAccount: sourceAccount, action: action)
         case .targetAccountSelected(let destinationAccount):
             guard let source = previousState.source else {
                 fatalError("You should have a sourceAccount.")
@@ -95,6 +99,8 @@ final class TransactionModel {
         case .updateFeeLevelAndAmount(let feeLevel, let amount):
             return processSetFeeLevel(feeLevel, amount: amount)
         case .pendingTransactionUpdated:
+            return nil
+        case .performKYCChecks:
             return nil
         case .prepareTransaction:
             return nil
@@ -125,20 +131,21 @@ final class TransactionModel {
             }
             return processTransactionInvalidation(action: previousState.action)
         case .sourceAccountSelected(let sourceAccount):
-            // The user has already selected a destination
-            // such as through `Deposit`. In this case we want to
-            // go straight to the Enter Amount screen after they have
-            // selected a `LinkedBankAccount` to deposit from.
-            if let target = previousState.destination {
+            if let target = previousState.destination, !previousState.availableTargets.isEmpty {
+                // The user has already selected a destination such as through `Deposit`. In this case we want to
+                // go straight to the Enter Amount screen, since we have both target and source.
                 return processTargetSelectionConfirmed(
                     sourceAccount: sourceAccount,
                     transactionTarget: target,
                     amount: .zero(currency: sourceAccount.currencyType),
                     action: previousState.action
                 )
-            } else {
-                return processAccountsListUpdate(fromAccount: sourceAccount, action: previousState.action)
             }
+            // If the user still has to select a destination or a list of possible destinations is not available, that's the next step.
+            return processTargetAccountsListUpdate(
+                fromAccount: sourceAccount,
+                action: previousState.action
+            )
         case .modifyTransactionConfirmation(let confirmation):
             return processModifyTransactionConfirmation(confirmation: confirmation)
         case .invalidateTransaction:
@@ -146,8 +153,6 @@ final class TransactionModel {
         case .showSourceSelection:
             return nil
         case .showTargetSelection:
-            return nil
-        case .showSourceSelection:
             return nil
         }
     }
@@ -163,6 +168,7 @@ final class TransactionModel {
             .modifyTransactionConfirmation(confirmation)
             .subscribe(
                 onError: { error in
+                    // swiftlint:disable:next line_length
                     Logger.shared.error("!TRANSACTION!> Unable to modify transaction confirmation: \(String(describing: error))")
                 }
             )
@@ -183,6 +189,13 @@ final class TransactionModel {
             .subscribe(
                 onSuccess: { [weak self] sourceAccounts in
                     self?.process(action: .availableSourceAccountsListUpdated(sourceAccounts))
+                    if action == .buy, let first = sourceAccounts.first {
+                        // For buy, we don't want to display the list of possible sources straight away.
+                        // Instead, we want to select the default payment method returned by the API.
+                        // Therefore, once we know what payment methods the user has avaialble, we should select the top one.
+                        // This assumes that the API or the Service used for it sorts the payment methods so the default one is the first.
+                        self?.process(action: .sourceAccountSelected(first))
+                    }
                 },
                 onError: { [weak self] error in
                     Logger.shared.error("!TRANSACTION!> Unable to get source accounts: \(String(describing: error))")
@@ -222,11 +235,26 @@ final class TransactionModel {
             })
     }
 
+    private func processTargetSelectionConfirmed(
+        sourceAccount: BlockchainAccount,
+        transactionTarget: TransactionTarget,
+        amount: MoneyValue,
+        action: AssetAction
+    ) -> Disposable {
+        // since we have both source and destination we can simply initialize a `PendingTransaction`
+        initializeTransaction(
+            sourceAccount: sourceAccount,
+            transactionTarget: transactionTarget,
+            amount: amount,
+            action: action
+        )
+    }
+
     // At this point we can build a transactor object from coincore and configure
     // the state object a bit more; depending on whether it's an internal, external,
     // bitpay or BTC Url address we can set things like note, amount, fee schedule
     // and hook up the correct processor to execute the transaction.
-    private func processTargetSelectionConfirmed(
+    private func initializeTransaction(
         sourceAccount: BlockchainAccount,
         transactionTarget: TransactionTarget,
         amount: MoneyValue,
@@ -246,7 +274,7 @@ final class TransactionModel {
                     self?.process(action: .pendingTransactionUpdated(transaction))
                 },
                 onError: { [weak self] error in
-                    Logger.shared.error("!TRANSACTION!> Unable to process target selection: \(String(describing: error))")
+                    Logger.shared.error("!TRANSACTION!> Unable to initialize transaction: \(String(describing: error))")
                     self?.process(action: .fatalTransactionError(error))
                 }
             )
@@ -259,7 +287,7 @@ final class TransactionModel {
         process(action: .updateAmount(amount))
     }
 
-    private func processAccountsListUpdate(fromAccount: BlockchainAccount, action: AssetAction) -> Disposable {
+    private func processTargetAccountsListUpdate(fromAccount: BlockchainAccount, action: AssetAction) -> Disposable {
         interactor
             .getTargetAccounts(sourceAccount: fromAccount, action: action)
             .subscribe { [weak self] accounts in
@@ -293,5 +321,21 @@ final class TransactionModel {
     private func processInvalidateTransaction() -> Disposable {
         interactor.invalidateTransaction()
             .subscribe()
+    }
+
+    private func processAvailableDestinationAccountsListUpdated(state: TransactionState) -> Disposable? {
+        if let destination = state.destination {
+            // If we refreshed the list of possible accounts we need to proceed to enter amount
+            // That said, the current implementation doesn't initialize a `PendingTransaction` until
+            // a target is selected. A target was already selected in this case, but the exchange rate data
+            // was not updated. Triggering this action will refresh the transaction and make it load.
+            // NOTE: This may not be the best approach, but it's the same used in `sourceAccountSelected` for deposit.
+            // NOTE: Trying another approach like loading the fiat rates causes a crash as the transaction is not yet properly initialized.
+            return Observable.just(())
+                .subscribe(onNext: { [weak self] in
+                    self?.process(action: .targetAccountSelected(destination))
+                })
+        }
+        return nil
     }
 }

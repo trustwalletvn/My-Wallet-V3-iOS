@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Inter-Medium.ttf">
+            <string>Inter-Medium</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SelectionScreenTableHeaderView" customModule="PlatformUIKit">
+            <connections>
+                <outlet property="titleLabel" destination="R6G-Do-MsI" id="39q-Hy-pFv"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="Blm-Ad-8ud">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="93"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R6G-Do-MsI">
+                    <rect key="frame" x="40" y="16" width="350" height="61"/>
+                    <fontDescription key="fontDescription" name="Inter-Medium" family="Inter" pointSize="14"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="iCw-ea-zne"/>
+            <constraints>
+                <constraint firstItem="iCw-ea-zne" firstAttribute="trailing" secondItem="R6G-Do-MsI" secondAttribute="trailing" constant="24" id="3cU-RA-9u6"/>
+                <constraint firstItem="iCw-ea-zne" firstAttribute="bottom" secondItem="R6G-Do-MsI" secondAttribute="bottom" constant="16" id="L3S-eH-RfK"/>
+                <constraint firstItem="R6G-Do-MsI" firstAttribute="top" secondItem="Blm-Ad-8ud" secondAttribute="top" constant="16" id="gvi-7o-icd"/>
+                <constraint firstItem="R6G-Do-MsI" firstAttribute="leading" secondItem="iCw-ea-zne" secondAttribute="leading" constant="40" id="v6F-Ka-2LA"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-301.44927536231887" y="-195.87053571428569"/>
+        </view>
+    </objects>
+</document>

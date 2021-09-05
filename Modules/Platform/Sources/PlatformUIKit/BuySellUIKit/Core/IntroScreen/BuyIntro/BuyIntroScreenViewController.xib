@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BuyIntroScreenViewController" customModule="PlatformUIKit">
+            <connections>
+                <outlet property="announcementCardContainerView" destination="bGD-fC-j6u" id="yXb-4z-AAl"/>
+                <outlet property="continueButtonView" destination="5m9-rQ-67a" id="Oec-bV-WBM"/>
+                <outlet property="skipButtonView" destination="Uyh-9s-lQF" id="IXT-iq-Df0"/>
+                <outlet property="themeBackgroundImageView" destination="JnS-gM-mRD" id="isg-yC-dhB"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="bGD-fC-j6u">
+                    <rect key="frame" x="0.0" y="16" width="375" height="100"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" priority="751" constant="100" id="Gua-RQ-TGX"/>
+                    </constraints>
+                </view>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" image="sb-intro-bg-theme" translatesAutoresizingMaskIntoConstraints="NO" id="JnS-gM-mRD">
+                    <rect key="frame" x="24" y="116" width="327" height="250"/>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uyh-9s-lQF" customClass="ButtonView" customModule="PlatformUIKit">
+                    <rect key="frame" x="24" y="603" width="327" height="48"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="48" id="h28-lV-RVG"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5m9-rQ-67a" customClass="ButtonView" customModule="PlatformUIKit">
+                    <rect key="frame" x="24" y="539" width="327" height="48"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="48" id="Wfq-1D-4OU"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="JnS-gM-mRD" firstAttribute="top" secondItem="bGD-fC-j6u" secondAttribute="bottom" id="0LS-2u-vTN"/>
+                <constraint firstItem="5m9-rQ-67a" firstAttribute="trailing" secondItem="Uyh-9s-lQF" secondAttribute="trailing" id="5fk-lu-IU1"/>
+                <constraint firstItem="Uyh-9s-lQF" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="24" id="7dK-PJ-OoJ"/>
+                <constraint firstItem="5m9-rQ-67a" firstAttribute="leading" secondItem="Uyh-9s-lQF" secondAttribute="leading" id="CsJ-gk-dtS"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="JnS-gM-mRD" secondAttribute="trailing" constant="24" id="DIm-mz-BNz"/>
+                <constraint firstItem="Uyh-9s-lQF" firstAttribute="top" secondItem="5m9-rQ-67a" secondAttribute="bottom" constant="16" id="DZq-dM-s1Q"/>
+                <constraint firstItem="bGD-fC-j6u" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="16" id="TYW-IS-LsO"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="Uyh-9s-lQF" secondAttribute="bottom" constant="16" id="WR3-po-v2l"/>
+                <constraint firstItem="JnS-gM-mRD" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="24" id="e9e-O6-gK5"/>
+                <constraint firstItem="bGD-fC-j6u" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="fhH-tF-uv3"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="bGD-fC-j6u" secondAttribute="trailing" id="kmW-68-dR4"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="Uyh-9s-lQF" secondAttribute="trailing" constant="24" id="z94-QL-QSa"/>
+            </constraints>
+            <point key="canvasLocation" x="137.68115942028987" y="90.401785714285708"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="sb-intro-bg-theme" width="375" height="250"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

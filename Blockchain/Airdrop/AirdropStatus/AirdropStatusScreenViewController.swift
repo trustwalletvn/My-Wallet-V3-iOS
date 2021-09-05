@@ -74,7 +74,7 @@ final class AirdropStatusScreenViewController: BaseScreenViewController {
         tableView.separatorColor = .lightBorder
         tableView.estimatedRowHeight = 60
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.registerNibCell(AirdropStatusTableViewCell.self)
+        tableView.registerNibCell(AirdropStatusTableViewCell.self, in: .main)
         tableView.allowsSelection = false
     }
 }

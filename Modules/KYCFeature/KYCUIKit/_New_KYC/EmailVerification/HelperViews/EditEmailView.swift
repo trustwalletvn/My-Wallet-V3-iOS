@@ -72,7 +72,7 @@ let editEmailReducer = Reducer<EditEmailState, EditEmailAction, EditEmailEnviron
                 message: TextState(L10n.EditEmail.couldNotUpdateEmailAlertMessage),
                 primaryButton: .default(
                     TextState(L10n.GenericError.retryButtonTitle),
-                    send: .save
+                    action: .send(.save)
                 ),
                 secondaryButton: .cancel()
             )

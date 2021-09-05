@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Buy bitcoin announcement
@@ -29,7 +30,13 @@ final class BuyBitcoinAnnouncement: PeriodicAnnouncement & ActionableAnnouncemen
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-cart"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-cart", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.BuyBitcoin.title,
             description: LocalizationConstants.AnnouncementCards.BuyBitcoin.description,
             buttons: [button],
@@ -84,3 +91,31 @@ final class BuyBitcoinAnnouncement: PeriodicAnnouncement & ActionableAnnouncemen
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct BuyBitcoinAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = BuyBitcoinAnnouncement(
+            isEnabled: true,
+            reappearanceTimeInterval: 0,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct BuyBitcoinAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            BuyBitcoinAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

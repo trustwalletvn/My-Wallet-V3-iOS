@@ -213,7 +213,7 @@ extension SelectionButtonViewModel.LeadingContent {
                     image: account.currencyType.logoResource,
                     background: .fiat,
                     offset: 0,
-                    cornerRadius: .value(8.0),
+                    cornerRadius: .roundedHigh,
                     size: .edge(32)
                 )
             )

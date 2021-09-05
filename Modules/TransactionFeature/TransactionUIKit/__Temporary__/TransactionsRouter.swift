@@ -14,8 +14,15 @@ import UIComponentsKit
 /// Represents all types of transactions the user can perform
 public enum TransactionFlowAction: Equatable {
 
-    /// Performs a buy. If `CrytoCurrency` is `nil`, the users will be presented with a crypto currency selector.
-    case buy(CryptoCurrency?)
+    /// Performs a buy. If `CrytoAccount` is `nil`, the users will be presented with a crypto currency selector.
+    case buy(CryptoAccount?)
+
+    public static func == (lhs: TransactionFlowAction, rhs: TransactionFlowAction) -> Bool {
+        switch (lhs, rhs) {
+        case (.buy(let lhsAccount), .buy(let rhsAccount)):
+            return lhsAccount?.identifier == rhsAccount?.identifier
+        }
+    }
 }
 
 /// Represents the possible outcomes of going through the transaction flow
@@ -63,12 +70,11 @@ internal final class TransactionsRouter: TransactionsRouterAPI {
         from presenter: UIViewController
     ) -> AnyPublisher<TransactionFlowResult, Never> {
         switch action {
-        case .buy(let cryptoCurrency):
+        case .buy(let cryptoAccount):
             if featureFlagsService.isEnabled(.useTransactionsFlowToBuyCrypto) {
-                return presentTransactionFlow(toBuy: cryptoCurrency, from: presenter)
-            } else {
-                return presentLegacyTransactionFlow(toBuy: cryptoCurrency, from: presenter)
+                return presentTransactionFlow(with: cryptoAccount, from: presenter)
             }
+            return presentLegacyTransactionFlow(toBuy: cryptoAccount?.asset, from: presenter)
         }
     }
 }
@@ -89,13 +95,13 @@ extension TransactionsRouter {
 extension TransactionsRouter {
 
     private func presentTransactionFlow(
-        toBuy cryptoCurrency: CryptoCurrency?,
+        with cryptoAccount: CryptoAccount?,
         from presenter: UIViewController
     ) -> AnyPublisher<TransactionFlowResult, Never> {
         let listener = BuyFlowListener()
         let interactor = BuyFlowInteractor()
         let router = buyFlowBuilder.build(with: listener, interactor: interactor)
-        router.start(from: presenter, with: cryptoCurrency)
+        router.start(with: cryptoAccount, from: presenter)
         mimicRIBAttachment(router: router)
         return listener.publisher
     }

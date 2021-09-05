@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Card announcement for announcing Cash feature.
@@ -32,11 +33,12 @@ final class FiatFundsLinkBankAnnouncement: OneTimeAnnouncement & ActionableAnnou
             .disposed(by: disposeBag)
         return .init(
             type: type,
-            badgeImage: .hidden,
-            image: .init(
-                name: "icon-bank",
-                tintColor: .secondary,
-                bundle: .platformUIKit
+            badgeImage: .init(
+                image: .local(name: "icon-bank", bundle: .platformUIKit),
+                contentColor: .secondary,
+                backgroundColor: .white,
+                cornerRadius: .none,
+                size: .edge(32)
             ),
             title: LocalizationId.title,
             description: LocalizationId.description,
@@ -55,10 +57,7 @@ final class FiatFundsLinkBankAnnouncement: OneTimeAnnouncement & ActionableAnnou
     }
 
     var shouldShow: Bool {
-        guard shouldShowLinkBankAnnouncement else {
-            return false
-        }
-        return !isDismissed
+        shouldShowLinkBankAnnouncement && !isDismissed
     }
 
     let type = AnnouncementType.fiatFundsKYC
@@ -90,3 +89,30 @@ final class FiatFundsLinkBankAnnouncement: OneTimeAnnouncement & ActionableAnnou
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct FiatFundsLinkBankAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = FiatFundsLinkBankAnnouncement(
+            shouldShowLinkBankAnnouncement: true,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct FiatFundsLinkBankAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            FiatFundsLinkBankAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

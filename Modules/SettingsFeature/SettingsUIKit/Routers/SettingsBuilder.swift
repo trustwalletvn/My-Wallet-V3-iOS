@@ -3,6 +3,7 @@
 import DIKit
 import Localization
 import PlatformKit
+import UIKit
 
 public protocol SettingsBuilding: AnyObject {
     func removeCardPaymentMethodViewController(cardData: CardData) -> UIViewController

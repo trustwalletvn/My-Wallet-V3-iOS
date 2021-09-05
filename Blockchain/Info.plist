@@ -2,6 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>API_URL</key>
+	<string>$(API_URL)</string>
+	<key>EVERYPAY_API_URL</key>
+	<string>$(EVERYPAY_API_URL)</string>
+	<key>EXCHANGE_URL</key>
+	<string>$(EXCHANGE_URL)</string>
+	<key>EXPLORER_SERVER</key>
+	<string>$(EXPLORER_SERVER)</string>
+	<key>PIN_CERTIFICATE</key>
+	<string>$(PIN_CERTIFICATE)</string>
+	<key>RETAIL_CORE_SOCKET_URL</key>
+	<string>$(RETAIL_CORE_SOCKET_URL)</string>
+	<key>RETAIL_CORE_URL</key>
+	<string>$(RETAIL_CORE_URL)</string>
+	<key>SWIFTY_BEAVER_APP_ID</key>
+	<string>$(SWIFTY_BEAVER_APP_ID)</string>
+	<key>SWIFTY_BEAVER_APP_KEY</key>
+	<string>$(SWIFTY_BEAVER_APP_KEY)</string>
+	<key>SWIFTY_BEAVER_APP_SECRET</key>
+	<string>$(SWIFTY_BEAVER_APP_SECRET)</string>
+	<key>WALLET_SERVER</key>
+	<string>$(WALLET_SERVER)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -19,7 +41,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.6.0</string>
+	<string>4.7.0</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -34,7 +56,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>7</string>
+	<string>4</string>
 	<key>COMMIT_HASH</key>
 	<string>${COMMIT_HASH}</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
@@ -87,5 +109,11 @@
 	<string>$(SIFT_BEACON_KEY)</string>
 	<key>useNewAppDelegate</key>
 	<string>$(USE_NEW_APPDELEGATE)</string>
+	<key>LOGIN_URL</key>
+	<string>$(LOGIN_URL)</string>
+	<key>BLOCKCHAIN_URL</key>
+	<string>$(BLOCKCHAIN_URL)</string>
+	<key>GOOGLE_RECAPTCHA_SITE_KEY</key>
+	<string>$(GOOGLE_RECAPTCHA_SITE_KEY)</string>
 </dict>
 </plist>

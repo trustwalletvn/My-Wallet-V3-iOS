@@ -30,6 +30,7 @@
 "Welcome to Blockchain" = "Bem-vindo ao Blockchain";
 "Recover Funds" = "Recuperar fundos";
 "Backup phrase" = "Frase de backup";
+"Password" = "Senha";
 "email" = "O seu e-mail";
 "Continue" = "Continuar";
 "Weak" = "Fraco";
@@ -42,6 +43,7 @@
 "Rate us" = "Nos avalie";
 "Forget wallet" = "Esqueça a carteira";
 "Confirm Payment" = "Confirme o pagamento";
+"Fee" = "Taxa";
 "Imported Addresses" = "Endereços Importados";
 "Change PIN" = "Alterar PIN";
 "Addresses" = "Endereços";
@@ -56,6 +58,7 @@
 "Edit" = "Editar";
 "Warning" = "Atenção";
 "Extended Public Key" = "Chave pública estendida";
+"Address" = "Endereço";
 "copy_address" = "Copiar endereço";
 "Archive" = "Arquivo";
 "Unarchive" = "Desarquivar";
@@ -181,6 +184,7 @@
 "National ID Card" = "Bilhete de identidade nacional";
 "Residence Card" = "Cartão de residência";
 "Application Complete" = "Inscrição concluída";
+"Need some help?" = "Precisa de alguma ajuda?";
 "Read Now" = "Leia agora";
 "Failed" = "Falhou";
 "Verified" = "Verificado";
@@ -211,6 +215,7 @@
 "By completing the Gold Level requirements you are automatically eligible for our airdrop program." = "Ao preencher os requisitos do nível Gold, você é automaticamente qualificado para o nosso programa de lançamento aéreo.";
 "Approved!" = "Aprovado!";
 "In Review" = "Em revisão";
+"Available" = "Disponível";
 "Swap Currently Unavailable" = "Troca indisponível neste momento";
 "Requires Email, Name, Date of Birth and Address" = "Requer email, nome, data de nascimento e endereço";
 "View Your Portfolio" = "Ver seu portfólio";
@@ -240,6 +245,7 @@
 "Amount to send" = "Quantidade a enviar";
 "Only send funds from a bank account in your name. If not, your deposit could be delayed or rejected." = "Envie apenas fundos de uma conta bancária em seu nome. Caso contrário, o seu depósito poderá ser atrasado ou rejeitado.";
 "Are you sure?" = "Tem a certeza?";
+"Cancel Order" = "Cancelar pedido";
 "Transfer Details" = "Detalhes da transferência";
 "Oops!" = "Opa!";
 "Something went wrong. Please try again." = "Algo deu errado. Por favor, tente novamente.";
@@ -2003,3 +2009,80 @@ Fique ciente que há uma grande lista de espera para os airdrops Stellar e, infe
 "Your Sell Order Has Started." = "O seu pedido de venda foi iniciada.";
 "Your wallet is safe. We have blocked this device from logging into your wallet." = "A sua carteira está segura. Bloqueamos este dispositivo de iniciar sessão na sua carteira.";
 "your@email.com" = "your@email.com";
+"+Add New" = "+ Adicionar novo";
+"Earn Interest" = "Ganhe juros";
+"Email: " = "E-mail: ";
+"Incorrect 2FA code. %d attempts left" = "Código 2FA incorreto. %d tentativas restantes";
+"Keep track of your crypto balances from your Wallet's dashboard. Your Wallet currently supports Bitcoin, Ether, Bitcoin Cash, Stellar XLM and PAX." = "Monitorize os seus saldos de crypto no painel da sua Wallet. Atualmente, a sua Wallet suporta Bitcoin, Ether, Bitcoin Cash, Stellar XLM e PAX.";
+"Missing 2FA code" = "Código 2FA em falta";
+"Resend SMS" = "Reenviar SMS";
+"This account has been locked due to too many failed authentications" = "Esta conta foi bloqueada devido a demasiadas autenticações falhadas";
+"USD Digital is now Paxos Standard" = "USD Digital é agora Paxos Standard";
+"We’ve updated the naming of USD Digital (USD-D) to Paxos Standard (PAX). USD Digital was built using the Paxos standard. If you held USD-D, your funds are not affected." = "Atualizámos a nomenclatura de USD Digital (USD-D) para Paxos Standard (PAX). USD Digital foi construído utilizando o padrão Paxos. Se detinha USD-D, os seus fundos não são afetados.";
+"%@ (%@) is Now Trading" = "%1$@ (%2$@) está agora em negociação";
+"1 %@ = %@" = "1 %1$@ = %2$@";
+"and" = "e";
+"Buy %@" = "Comprar %@";
+"Buy, sell, swap, send, receive and store %@ in your Blockchain.com Wallet." = "Compre, venda, troque, envie, receba e armazene %@ na sua Blockchain.com Wallet.";
+"Can't log in?" = "Não consegue iniciar sessão?";
+"Can’t find your phrase?" = "Não encontra a frase?";
+"Continue to Reset" = "Continue para a reposição";
+"Create Account" = "Criar conta";
+"Enter new password" = "Introduzir nova palavra-passe";
+"Enter recovery phrase" = "Introduzir frase de recuperação";
+"Enter your twelve word Secret Private Key Recovery Phrase to log in. Separate each word with a space." = "Introduza a sua Frase de Recuperação de Chave Privada Secreta de doze palavras para iniciar sessão. Separe cada palavra com um espaço.";
+"Error Sending SMS" = "Erro ao enviar SMS";
+"Error Signing In" = "Erro ao iniciar sessão";
+"For security reasons you cannot proceed with signing in.\nPlease try to log in on web." = "Por razões de segurança, não pode prosseguir com o início de sessão.\
+Tente iniciar sessão na web.";
+"For your security, you may have to re-verify your identity before accessing your trading or interest account." = "Para sua segurança, poderá ter de voltar a verificar a sua identidade antes de aceder à sua conta de negociação ou de juros.";
+"Go Back" = "Voltar";
+"If your account has added security measures like Google Authenticator, please have that ready." = "Se a sua conta adicionou medidas de segurança como o Google Authenticator, tenha isso preparado.";
+"Import Wallet" = "Importar Carteira";
+"Import Your Wallet?" = "Importar a sua Carteira?";
+"Incorrect Wallet Identifier" = "Identificador de Carteira incorreto";
+"Invalid recovery phrase" = "Frase de recuperação inválida";
+"Log In on the Web ->" = "Iniciar sessão na web ->";
+"Log In Request From Web" = "Pedido de início de sessão da web";
+"Log In with Browser" = "Iniciar sessão com o navegador";
+"Manual Login" = "Início de sessão manual";
+"Manual Pairing Login" = "Início de sessão com emparelhamento manual";
+"Message sent" = "Mensagem enviada";
+"Network Error" = "Erro de rede";
+"Password Strength" = "Segurança da palavra-passe";
+"Passwords don't match" = "As palavras-passe não coincidem";
+"PIN Disabled" = "PIN desativado";
+"Re-enter new password" = "Introduza novamente a palavra-chave";
+"Reset Account" = "Repor conta";
+"Reset Password" = "Repor palavra-passe";
+"Reset Your Account?" = "Deseja repor a sua conta?";
+"Resetting Account May Result In\nLost Funds" = "A reposição da conta pode resultar em\
+perda de fundos";
+"Resetting will restore your Trading, Interest, and Exchange accounts." = "A reposição irá restaurar as suas contas de Negociação, Juros e Exchange.";
+"Retry Recovery Phrase" = "Tentar novamente a frase de recuperação";
+"Second Password Detected" = "Segunda palavra-passe detetada";
+"Select a Crypto Currency" = "Selecione uma criptomoeda";
+"Select a Payment Method" = "Selecione um método de pagamento";
+"The minimum buy is %@" = "A compra mínima é de %@";
+"There was an error sending you the SMS message.\nPlease try again." = "Ocorreu um erro ao enviar a mensagem SMS.\
+Tente novamente mais tarde.";
+"There’s no account associated with the seed phrase you entered. You can import and manage your wallet instead." = "Não existe uma conta associada à frase de provisionamento que introduziu. Em vez disso, pode importar e gerir a sua carteira.";
+"This is the unique password you entered when creating your wallet." = "Esta é a palavra-passe exclusiva que introduziu ao criar a sua carteira.";
+"This means that if you lose your recovery phrase, you will lose access to your Private Key Wallet funds. You can always restore your Private Key Wallet funds later if you find your recovery phrase." = "Isto significa que, se perder a sua frase de recuperação, perderá o acesso aos fundos da sua Carteira de Chaves Privada. Poderá sempre restaurar os fundos da sua Carteira de Chaves Privada mais tarde, se encontrar a sua frase de recuperação.";
+"To access your Wallet, please log in on the web.\nBelow is what you'll need." = "Para aceder à sua Carteira, inicie a sessão na web.\
+Abaixo está indicado o que vai precisar.";
+"Trouble Logging In" = "Problemas ao iniciar sessão";
+"Try again in" = "Tente novamente em";
+"Use at least 8 characters and a mix of letters, numbers, and symbols" = "Utilize pelo menos 8 carateres e uma mistura de letras, números e símbolos";
+"Use your email address or the Wallet ID. Locate your Wallet ID at the bottom of most Blockchain.com emails." = "Utilize o seu endereço de e-mail ou o ID de Carteira. Localize o seu ID de Carteira no fundo da maioria dos e-mails da Blockchain.com.";
+"Wallet ID or Email" = "ID de Carteira ou E-mail";
+"We cannot establish a connection with our server.\nPlease try to sign in again." = "Não é possível estabelecer uma ligação com o nosso servidor.\
+Tente iniciar sessão novamente.";
+"We have sent you a verification code message." = "Enviámos-lhe uma mensagem com um código de verificação.";
+"We noticed a log in attempt from a device you don't usually use." = "Notámos uma tentativa de início de sessão a partir de um dispositivo que normalmente não utiliza.";
+"We’re moving away from 2nd passwords.\nTo use the mobile app, log in on web to enable 2FA." = "Estamos a deixar de utilizar segundas palavras-passe.\
+Para utilizar a aplicação móvel, inicie sessão na web para ativar a autenticação de dois fatores.";
+"You can buy up to %@" = "Pode comprar até %@";
+"You've made too many failed attempts to log in with your PIN. Please try again in 60 seconds." = "Já realizou demasiadas tentativas falhadas de início de sessão com o seu PIN. Tente novamente dentro de 60 segundos.";
+"Your Password" = "A sua palavra-passe";
+"© %i Blockchain Luxembourg S.A. All rights reserved." = "© %i Blockchain Luxembourg S.A. Todos os direitos reservados.";

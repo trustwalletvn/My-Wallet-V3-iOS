@@ -1,7 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import AnalyticsKit
-import AuthenticationKit
+import FeatureAuthenticationDomain
 
 extension AnalyticsEvents.New {
     enum Security: AnalyticsEvent {

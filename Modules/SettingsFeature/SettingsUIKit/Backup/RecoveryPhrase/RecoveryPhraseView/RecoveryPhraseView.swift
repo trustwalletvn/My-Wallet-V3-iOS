@@ -75,7 +75,7 @@ final class RecoveryPhraseView: UIView {
     }
 
     private func setup() {
-        fromNib()
+        fromNib(in: Bundle(for: Self.self))
         clipsToBounds = true
         numberedLabels.forEach { $0.textColor = .mutedText }
         layer.cornerRadius = 8.0

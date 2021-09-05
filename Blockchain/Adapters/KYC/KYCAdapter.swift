@@ -6,7 +6,7 @@ import KYCKit
 import KYCUIKit
 import OnboardingUIKit
 import PlatformKit
-import PlatformUIKit // sadly, transactions logic is currently stored here
+import PlatformUIKit
 import RxSwift
 import ToolKit
 
@@ -15,40 +15,43 @@ final class KYCAdapter {
     // MARK: - Properties
 
     private let router: KYCUIKit.Routing
-    private let legacyRouter: PlatformUIKit.KYCRouterAPI
 
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
 
-    init(
-        router: KYCUIKit.Routing = resolve(),
-        legacyRouter: PlatformUIKit.KYCRouterAPI = resolve()
-    ) {
+    init(router: KYCUIKit.Routing = resolve()) {
         self.router = router
-        self.legacyRouter = legacyRouter
     }
 
     // MARK: - Public Interface
 
     func presentEmailVerificationAndKYCIfNeeded(
-        from presenter: UIViewController
+        from presenter: UIViewController,
+        requiredTier: KYC.Tier
     ) -> AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> {
-        router.presentEmailVerificationAndKYCIfNeeded(from: presenter)
+        router
+            .presentEmailVerificationAndKYCIfNeeded(
+                from: presenter,
+                requiredTier: requiredTier
+            )
             .eraseToAnyPublisher()
     }
 
     func presentEmailVerificationIfNeeded(
         from presenter: UIViewController
     ) -> AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> {
-        router.presentEmailVerificationIfNeeded(from: presenter)
+        router
+            .presentEmailVerificationIfNeeded(from: presenter)
             .eraseToAnyPublisher()
     }
 
     func presentKYCIfNeeded(
-        from presenter: UIViewController
+        from presenter: UIViewController,
+        requiredTier: KYC.Tier
     ) -> AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> {
-        router.presentKYCIfNeeded(from: presenter)
+        router
+            .presentKYCIfNeeded(from: presenter, requiredTier: requiredTier)
             .eraseToAnyPublisher()
     }
 }
@@ -84,9 +87,10 @@ extension KYCRoutingResult {
 extension KYCAdapter: PlatformUIKit.KYCRouting {
 
     func presentEmailVerificationAndKYCIfNeeded(
-        from presenter: UIViewController
+        from presenter: UIViewController,
+        requiredTier: KYC.Tier
     ) -> AnyPublisher<KYCRoutingResult, KYCRouterError> {
-        presentEmailVerificationAndKYCIfNeeded(from: presenter)
+        presentEmailVerificationAndKYCIfNeeded(from: presenter, requiredTier: requiredTier)
             .mapError(KYCRouterError.init)
             .map(KYCRoutingResult.init)
             .eraseToAnyPublisher()
@@ -102,9 +106,10 @@ extension KYCAdapter: PlatformUIKit.KYCRouting {
     }
 
     func presentKYCIfNeeded(
-        from presenter: UIViewController
+        from presenter: UIViewController,
+        requiredTier: KYC.Tier
     ) -> AnyPublisher<KYCRoutingResult, KYCRouterError> {
-        presentKYCIfNeeded(from: presenter)
+        presentKYCIfNeeded(from: presenter, requiredTier: requiredTier)
             .mapError(KYCRouterError.init)
             .map(KYCRoutingResult.init)
             .eraseToAnyPublisher()
@@ -142,26 +147,6 @@ extension KYCAdapter: PlatformUIKit.TierUpgradeRouterAPI {
             fatalError("A view controller was expected to exist to run \(#function) in \(#file)")
         }
         router.presentPromptToUnlockMoreTrading(from: presenter)
-            .setFailureType(to: Error.self) // to make the following code compile
-            .flatMap { [legacyRouter] result -> AnyPublisher<Void, Error> in
-                switch result {
-                case .abandoned:
-                    return Empty(
-                        completeImmediately: true,
-                        outputType: Void.self,
-                        failureType: Error.self
-                    ) // simply return to the prompt.
-                    .eraseToAnyPublisher()
-                case .completed:
-                    legacyRouter.start(tier: .tier2, parentFlow: .simpleBuy)
-                    return Observable.merge(
-                        legacyRouter.kycStopped,
-                        legacyRouter.kycFinished
-                            .mapToVoid()
-                    )
-                    .asPublisher()
-                }
-            }
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { result in
                 // if the result is a successful completion, do nothing
@@ -170,7 +155,11 @@ extension KYCAdapter: PlatformUIKit.TierUpgradeRouterAPI {
                     return
                 }
                 completion()
-            }, receiveValue: { _ in
+            }, receiveValue: { result in
+                guard case .completed = result else {
+                    // complete only if the KYC upgrade is successful
+                    return
+                }
                 completion()
             })
             .store(in: &cancellables)

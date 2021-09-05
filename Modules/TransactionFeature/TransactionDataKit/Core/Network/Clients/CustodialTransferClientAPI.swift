@@ -13,5 +13,7 @@ protocol CustodialTransferClientAPI {
         transferRequest: CustodialTransferRequest
     ) -> AnyPublisher<CustodialTransferResponse, NabuNetworkError>
 
+    func custodialTransferFeesForProduct(_ product: Product) -> AnyPublisher<CustodialTransferFeesResponse, NabuNetworkError>
+
     func custodialTransferFees() -> AnyPublisher<CustodialTransferFeesResponse, NabuNetworkError>
 }

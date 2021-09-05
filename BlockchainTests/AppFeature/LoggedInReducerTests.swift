@@ -44,11 +44,7 @@ final class LoggedInReducerTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        mockSettingsApp = MockBlockchainSettingsApp(
-            enabledCurrenciesService: MockEnabledCurrenciesService(),
-            keychainItemWrapper: MockKeychainItemWrapping(),
-            legacyPasswordProvider: MockLegacyPasswordProvider()
-        )
+        mockSettingsApp = MockBlockchainSettingsApp()
         mockWalletManager = WalletManager(
             wallet: mockWallet,
             appSettings: mockSettingsApp,

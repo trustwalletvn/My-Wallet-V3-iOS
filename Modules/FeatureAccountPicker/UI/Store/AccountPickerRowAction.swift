@@ -3,5 +3,5 @@
 import Foundation
 
 enum AccountPickerRowAction: Equatable {
-    case accountPickerRowDidTap(name: String)
+    case accountPickerRowDidTap(title: String)
 }

@@ -18,6 +18,7 @@ public protocol BackupRouterAPI {
 public protocol WalletOperationsRouting {
     func handleSellCrypto()
     func handleBuyCrypto(currency: CryptoCurrency)
+    func handleBuyCrypto(account: CryptoAccount?)
     func showCashIdentityVerificationScreen()
     func showFundTrasferDetails(fiatCurrency: FiatCurrency, isOriginDeposit: Bool)
     func switchTabToSwap()
@@ -286,9 +287,8 @@ public final class CustodyActionRouter: CustodyActionRouterAPI {
     }
 
     private func showBuy() {
-        dismiss { [weak self] in
-            guard case .crypto(let cryptoCurrency) = self?.currency else { return }
-            self?.walletOperationsRouter.handleBuyCrypto(currency: cryptoCurrency)
+        dismiss { [walletOperationsRouter, account] in
+            walletOperationsRouter.handleBuyCrypto(account: account as? CryptoAccount)
         }
     }
 

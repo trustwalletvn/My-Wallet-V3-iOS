@@ -10,7 +10,7 @@ import RxSwift
 import ToolKit
 
 /// This is a counterpart of `RecoverWalletScreenInteractor` and it is added so that we be able to
-/// use the old screens (soon to be replaced) with the new implementation of the welcome view in AuthenticationKit
+/// use the old screens (soon to be replaced) with the new implementation of the welcome view in FeatureAuthenticationDomain
 final class RecoverWalletInteractor: RegisterWalletScreenInteracting {
 
     // MARK: - Exposed Properties

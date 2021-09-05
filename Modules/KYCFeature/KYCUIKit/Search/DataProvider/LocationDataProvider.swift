@@ -32,7 +32,7 @@ class LocationDataProvider: NSObject {
 
     fileprivate func registerCells() {
         guard let tableView = tableView else { return }
-        tableView.registerNibCell(LocationSuggestionCell.self)
+        tableView.registerNibCell(LocationSuggestionCell.self, in: Bundle(for: LocationSuggestionCell.self))
     }
 
     fileprivate func update() {

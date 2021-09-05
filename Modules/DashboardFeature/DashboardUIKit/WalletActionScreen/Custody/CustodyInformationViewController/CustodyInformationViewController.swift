@@ -20,7 +20,7 @@ final class CustodyInformationViewController: BaseScreenViewController {
 
     init(presenter: CustodyInformationScreenPresenter) {
         self.presenter = presenter
-        super.init(nibName: CustodyInformationViewController.objectName, bundle: CustodyInformationViewController.bundle)
+        super.init(nibName: CustodyInformationViewController.objectName, bundle: Bundle(for: CustodyInformationViewController.self))
     }
 
     @available(*, unavailable)

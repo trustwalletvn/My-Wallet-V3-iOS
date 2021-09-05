@@ -37,7 +37,7 @@ public final class ActivityScreenViewController: BaseScreenViewController {
         let router = ActivityRouter(container: services)
         let interactor = ActivityScreenInteractor(serviceContainer: services)
         presenter = ActivityScreenPresenter(router: router, interactor: interactor)
-        super.init(nibName: ActivityScreenViewController.objectName, bundle: Self.bundle)
+        super.init(nibName: ActivityScreenViewController.objectName, bundle: Bundle(for: Self.self))
     }
 
     @available(*, unavailable)
@@ -123,26 +123,35 @@ public final class ActivityScreenViewController: BaseScreenViewController {
         tableView.estimatedRowHeight = 80
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(SelectionButtonTableViewCell.self)
-        tableView.registerNibCell(ActivityItemTableViewCell.self)
-        tableView.registerNibCell(ActivitySkeletonTableViewCell.self)
+        tableView.registerNibCell(
+            ActivityItemTableViewCell.self,
+            in: Bundle(for: ActivityItemTableViewCell.self)
+        )
+        tableView.registerNibCell(
+            ActivitySkeletonTableViewCell.self,
+            in: Bundle(for: ActivitySkeletonTableViewCell.self)
+        )
 
         let animation = AnimationConfiguration(insertAnimation: .fade, reloadAnimation: .fade, deleteAnimation: .fade)
 
-        let dataSource = RxDataSource(animationConfiguration: animation, configureCell: { [weak self] _, _, indexPath, item in
-            guard let self = self else { return UITableViewCell() }
-            let cell: UITableViewCell
+        let dataSource = RxDataSource(
+            animationConfiguration: animation,
+            configureCell: { [weak self] _, _, indexPath, item in
+                guard let self = self else { return UITableViewCell() }
+                let cell: UITableViewCell
 
-            switch item {
-            case .selection(let viewModel):
-                cell = self.selectionButtonTableViewCell(for: indexPath, viewModel: viewModel)
-            case .skeleton:
-                cell = self.skeletonCell(for: indexPath)
-            case .activity(let presenter):
-                cell = self.activityItemTableViewCell(for: indexPath, presenter: presenter)
+                switch item {
+                case .selection(let viewModel):
+                    cell = self.selectionButtonTableViewCell(for: indexPath, viewModel: viewModel)
+                case .skeleton:
+                    cell = self.skeletonCell(for: indexPath)
+                case .activity(let presenter):
+                    cell = self.activityItemTableViewCell(for: indexPath, presenter: presenter)
+                }
+                cell.selectionStyle = .none
+                return cell
             }
-            cell.selectionStyle = .none
-            return cell
-        })
+        )
 
         presenter.sectionsObservable
             .observeOn(MainScheduler.asyncInstance)

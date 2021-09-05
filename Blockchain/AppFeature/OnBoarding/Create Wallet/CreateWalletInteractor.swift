@@ -11,7 +11,7 @@ import SettingsKit
 import ToolKit
 
 /// This is a counterpart of `CreateWalletScreenInteractor` and it is added so that we be able to
-/// use the old screens (soon to be replaced) with the new implementation of the welcome view in AuthenticationKit
+/// use the old screens (soon to be replaced) with the new implementation of the welcome view in FeatureAuthenticationDomain
 final class CreateWalletInteractor: RegisterWalletScreenInteracting {
 
     // MARK: - Exposed Properties

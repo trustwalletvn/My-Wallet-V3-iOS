@@ -20,12 +20,12 @@ let package = Package(
         .target(
             name: "AnalyticsKit",
             dependencies: ["CombineExt"],
-            path: "Modules/Analytics/AnalyticsKit"
+            path: "Modules/Analytics/Sources/AnalyticsKit"
         ),
         .testTarget(
             name: "AnalyticsKitTests",
             dependencies: ["CombineExt"],
-            path: "Modules/Analytics/AnalyticsKitTests"
+            path: "Modules/Analytics/Tests/AnalyticsKitTests"
         )
     ],
     swiftLanguageVersions: [.v5]

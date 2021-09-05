@@ -1,20 +1,9 @@
-binary "VeriffSDK.json" == 4.3.1
-binary "RecaptchaSDK.json" == 1.0.0
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAnalyticsBinary.json"
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseCrashlyticsBinary.json"
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseDynamicLinksBinary.json"
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseMessagingBinary.json"
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseRemoteConfigBinary.json"
-github "attaswift/BigInt" ~> 5.2
-github "danielgindi/Charts" ~> 3.5
-github "dropbox/zxcvbn-ios" ~> 1.0
-github "jackpooleybc/CryptoSwift" "jack/iso10126padding-1.4.0"
-github "jackpooleybc/DIKit" "safe-property-wrappers"
-github "jackpooleybc/RxCombine" "xcode-12.5"
-github "marmelroy/PhoneNumberKit" ~> 3.2
-github "paulo-bc/RIBs" "cf5a87bc5f7dc268378f9d38377fcb29a7d988dd"
-github "paulo-bc/RxDataSources" ~> 4.0
-github "paulo-bc/RxSwift" ~> 5.1
-github "paulo-bc/wallet-core-carthage" "459c4cf69b1824efef39ef82a829ef79c4510088"
+binary "RecaptchaSDK.json" == 1.0.0
+binary "VeriffSDK.json" == 4.3.1
 github "SiftScience/sift-ios" "v2.0.1"
 github "Soneso/stellar-ios-mac-sdk" ~> 1.9

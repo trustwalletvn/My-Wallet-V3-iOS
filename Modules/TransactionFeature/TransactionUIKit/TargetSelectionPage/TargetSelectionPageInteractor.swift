@@ -218,7 +218,10 @@ final class TargetSelectionPageInteractor: PresentableInteractor<TargetSelection
         sourceAccount
             .map { account -> NSAttributedString in
                 NSAttributedString(
-                    string: String(format: LocalizationConstants.TextField.Title.cryptoAddress, account.currencyType.name),
+                    string: String(
+                        format: LocalizationConstants.TextField.Title.cryptoAddress,
+                        account.currencyType.name
+                    ),
                     attributes: [
                         .foregroundColor: UIColor.textFieldPlaceholder,
                         .font: UIFont.main(.medium, 16)
@@ -293,7 +296,10 @@ final class TargetSelectionPageInteractor: PresentableInteractor<TargetSelection
 
         if state.inputFieldInteractor == nil {
             state = state
-                .update(keyPath: \.inputFieldInteractor, value: .walletInputField(sourceAccount, cryptoAddressViewModel))
+                .update(
+                    keyPath: \.inputFieldInteractor,
+                    value: .walletInputField(sourceAccount, cryptoAddressViewModel)
+                )
         }
 
         return state

@@ -28,7 +28,7 @@ final class DashboardDetailsViewController: BaseScreenViewController {
         self.presenter = presenter
         super.init(
             nibName: DashboardDetailsViewController.objectName,
-            bundle: DashboardDetailsViewController.bundle
+            bundle: Bundle(for: DashboardDetailsViewController.self)
         )
     }
 
@@ -59,9 +59,9 @@ final class DashboardDetailsViewController: BaseScreenViewController {
         tableView.tableFooterView = UIView()
         tableView.estimatedRowHeight = 312
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.registerNibCell(MultiActionTableViewCell.self)
-        tableView.registerNibCell(PriceAlertTableViewCell.self)
-        tableView.registerNibCell(AssetLineChartTableViewCell.self)
+        tableView.registerNibCell(MultiActionTableViewCell.self, in: .platformUIKit)
+        tableView.registerNibCell(PriceAlertTableViewCell.self, in: .platformUIKit)
+        tableView.registerNibCell(AssetLineChartTableViewCell.self, in: .platformUIKit)
         tableView.register(CurrentBalanceTableViewCell.self)
         tableView.separatorColor = .clear
 

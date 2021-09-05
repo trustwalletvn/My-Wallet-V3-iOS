@@ -2,6 +2,7 @@
 
 import Combine
 import KYCUIKit
+import PlatformKit
 import UIKit
 
 public final class MockKYCRouter: KYCUIKit.Routing {
@@ -35,12 +36,17 @@ public final class MockKYCRouter: KYCUIKit.Routing {
         recordedInvocations.routeToEmailVerification.append((emailAddress, flowCompletion))
     }
 
-    public func routeToKYC(from presenter: UIViewController, flowCompletion: @escaping (FlowResult) -> Void) {
+    public func routeToKYC(
+        from presenter: UIViewController,
+        requiredTier: KYC.Tier,
+        flowCompletion: @escaping (FlowResult) -> Void
+    ) {
         recordedInvocations.routeToKYC.append((presenter, flowCompletion))
     }
 
     public func presentEmailVerificationAndKYCIfNeeded(
-        from presenter: UIViewController
+        from presenter: UIViewController,
+        requiredTier: KYC.Tier
     ) -> AnyPublisher<FlowResult, RouterError> {
         recordedInvocations.presentEmailVerificationAndKYCIfNeeded.append(presenter)
         return stubbedResults.presentEmailVerificationAndKYCIfNeeded
@@ -53,12 +59,17 @@ public final class MockKYCRouter: KYCUIKit.Routing {
         return stubbedResults.presentEmailVerificationIfNeeded
     }
 
-    public func presentKYCIfNeeded(from presenter: UIViewController) -> AnyPublisher<FlowResult, RouterError> {
+    public func presentKYCIfNeeded(
+        from presenter: UIViewController,
+        requiredTier: KYC.Tier
+    ) -> AnyPublisher<FlowResult, RouterError> {
         recordedInvocations.presentKYCIfNeeded.append(presenter)
         return stubbedResults.presentKYCIfNeeded
     }
 
-    public func presentPromptToUnlockMoreTrading(from presenter: UIViewController) -> AnyPublisher<FlowResult, Never> {
+    public func presentPromptToUnlockMoreTrading(
+        from presenter: UIViewController
+    ) -> AnyPublisher<FlowResult, Never> {
         recordedInvocations.presentPromptToUnlockMoreTrading.append(presenter)
         return stubbedResults.presentPromptToUnlockMoreTrading
     }

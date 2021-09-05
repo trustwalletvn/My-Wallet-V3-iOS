@@ -1,11 +1,14 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import AuthenticationKit
 import DIKit
+import FeatureAuthenticationDomain
 import PlatformKit
 
 /// Contains any needed remotely fetched data before displaying announcements.
 struct AnnouncementPreliminaryData {
+
+    /// Announcement Asset
+    let announcementAsset: CryptoCurrency?
 
     /// The nabu user
     let user: NabuUser
@@ -60,7 +63,8 @@ struct AnnouncementPreliminaryData {
         pendingOrderDetails: OrderDetails?,
         isSimpleBuyAvailable: Bool,
         isSimpleBuyEligible: Bool,
-        hasAnyWalletBalance: Bool
+        hasAnyWalletBalance: Bool,
+        announcementAsset: CryptoCurrency?
     ) {
         self.user = user
         self.tiers = tiers
@@ -72,6 +76,7 @@ struct AnnouncementPreliminaryData {
         self.isSimpleBuyAvailable = isSimpleBuyAvailable
         self.isSimpleBuyEligible = isSimpleBuyEligible
         self.hasAnyWalletBalance = hasAnyWalletBalance
+        self.announcementAsset = announcementAsset
         country = countries.first { $0.code == user.address?.countryCode }
     }
 }

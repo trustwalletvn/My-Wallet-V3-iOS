@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Verify identity announcement
@@ -29,7 +30,13 @@ final class VerifyIdentityAnnouncement: OneTimeAnnouncement & ActionableAnnounce
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-v"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-v", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.IdentityVerification.title,
             description: LocalizationConstants.AnnouncementCards.IdentityVerification.description,
             buttons: [button],
@@ -50,7 +57,7 @@ final class VerifyIdentityAnnouncement: OneTimeAnnouncement & ActionableAnnounce
         guard isCompletingKyc else {
             return false
         }
-        guard !user.isSunriverAirdropRegistered else {
+        guard !isSunriverAirdropRegistered else {
             return false
         }
         return !isDismissed
@@ -64,7 +71,7 @@ final class VerifyIdentityAnnouncement: OneTimeAnnouncement & ActionableAnnounce
 
     let action: CardAnnouncementAction
 
-    private let user: NabuUserSunriverAirdropRegistering
+    private let isSunriverAirdropRegistered: Bool
     private let isCompletingKyc: Bool
 
     private let disposeBag = DisposeBag()
@@ -72,7 +79,7 @@ final class VerifyIdentityAnnouncement: OneTimeAnnouncement & ActionableAnnounce
     // MARK: - Setup
 
     init(
-        user: NabuUserSunriverAirdropRegistering,
+        isSunriverAirdropRegistered: Bool,
         isCompletingKyc: Bool,
         cacheSuite: CacheSuite = resolve(),
         analyticsRecorder: AnalyticsEventRecorderAPI = resolve(),
@@ -84,7 +91,35 @@ final class VerifyIdentityAnnouncement: OneTimeAnnouncement & ActionableAnnounce
         self.analyticsRecorder = analyticsRecorder
         self.dismiss = dismiss
         self.action = action
-        self.user = user
+        self.isSunriverAirdropRegistered = isSunriverAirdropRegistered
         self.isCompletingKyc = isCompletingKyc
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct VerifyIdentityAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = VerifyIdentityAnnouncement(
+            isSunriverAirdropRegistered: false,
+            isCompletingKyc: false,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct VerifyIdentityAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VerifyIdentityAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

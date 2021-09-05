@@ -170,7 +170,7 @@ final class DepositRootInteractor: Interactor, DepositRootInteractable, DepositR
         router?.dismissTransactionFlow()
     }
 
-    func presentKYCTiersScreen() {
+    func presentKYCFlowIfNeeded(from viewController: UIViewController, completion: @escaping (Bool) -> Void) {
         unimplemented()
     }
 

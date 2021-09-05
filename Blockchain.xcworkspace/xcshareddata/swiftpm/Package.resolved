@@ -2,12 +2,30 @@
   "object": {
     "pins": [
       {
+        "package": "BigInt",
+        "repositoryURL": "git@github.com:attaswift/BigInt.git",
+        "state": {
+          "branch": null,
+          "revision": "889a1ecacd73ccc189c5cb29288048f186c44ed9",
+          "version": "5.2.1"
+        }
+      },
+      {
+        "package": "Charts",
+        "repositoryURL": "git@github.com:danielgindi/Charts.git",
+        "state": {
+          "branch": null,
+          "revision": "66546404a6739173b8e436ab6bc1f2897cd08594",
+          "version": "3.6.0"
+        }
+      },
+      {
         "package": "combine-schedulers",
         "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
         "state": {
           "branch": null,
-          "revision": "c37e5ae8012fb654af776cc556ff8ae64398c841",
-          "version": "0.5.0"
+          "revision": "6bde3b0063ba8e7537b43744948535ca7e9e0dad",
+          "version": "0.5.2"
         }
       },
       {
@@ -17,6 +35,24 @@
           "branch": null,
           "revision": "5b8a0c0f178527f9204200505c5fefa6847e528f",
           "version": "1.3.0"
+        }
+      },
+      {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "8d4f6384e0a8cc41f2005247241dd553963a492a",
+          "version": "1.4.1"
+        }
+      },
+      {
+        "package": "DIKit",
+        "repositoryURL": "git@github.com:jackpooleybc/DIKit.git",
+        "state": {
+          "branch": "safe-property-wrappers",
+          "revision": "1d20369ab59d123b4d0bf85dffbe045f4f405ec1",
+          "version": null
         }
       },
       {
@@ -51,8 +87,8 @@
         "repositoryURL": "https://github.com/kean/Nuke",
         "state": {
           "branch": null,
-          "revision": "3bd3a1765bdf62d561d4c2e10e1c4fc7a010f44e",
-          "version": "10.3.2"
+          "revision": "9881b20cfe6d895ee8c273aa4887487843a59397",
+          "version": "10.3.4"
         }
       },
       {
@@ -65,12 +101,66 @@
         }
       },
       {
+        "package": "PhoneNumberKit",
+        "repositoryURL": "git@github.com:marmelroy/PhoneNumberKit.git",
+        "state": {
+          "branch": null,
+          "revision": "1ef0431b971f69c48ca5eb4cdba07f2c5da54c35",
+          "version": "3.3.3"
+        }
+      },
+      {
+        "package": "RIBs",
+        "repositoryURL": "git@github.com:paulo-bc/RIBs.git",
+        "state": {
+          "branch": null,
+          "revision": "6cad1e953d9b60ab177a963dd63715806ed0d192",
+          "version": "0.10.2"
+        }
+      },
+      {
+        "package": "RxCombine",
+        "repositoryURL": "git@github.com:paulo-bc/RxCombine.git",
+        "state": {
+          "branch": null,
+          "revision": "0762454fba26dcf315aaa7ac5ed5fbdecd50fef2",
+          "version": "1.6.2"
+        }
+      },
+      {
+        "package": "RxDataSources",
+        "repositoryURL": "git@github.com:RxSwiftCommunity/RxDataSources.git",
+        "state": {
+          "branch": null,
+          "revision": "a18cee01c9ee55f04d0c7eb15c77a96c3648c88e",
+          "version": "4.0.1"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "git@github.com:ReactiveX/RxSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "cec68169a048a079f461ba203fe85636548d7a89",
+          "version": "5.1.3"
+        }
+      },
+      {
         "package": "swift-case-paths",
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "a313f0cc10e07bb5ce7e2ff5da600cce7efa8e8a",
-          "version": "0.2.0"
+          "revision": "d226d167bd4a68b51e352af5655c92bce8ee0463",
+          "version": "0.7.0"
+        }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections",
+        "state": {
+          "branch": null,
+          "revision": "9d8719c8bebdc79740b6969c912ac706eb721d7a",
+          "version": "0.0.7"
         }
       },
       {
@@ -78,8 +168,17 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-composable-architecture",
         "state": {
           "branch": null,
-          "revision": "0f026d395d414efab5cfdf8d697ec0ae766dd021",
-          "version": "0.18.0"
+          "revision": "96cdc7e38e2d1d89b95b0ad80c914eb369476c4b",
+          "version": "0.24.0"
+        }
+      },
+      {
+        "package": "swift-identified-collections",
+        "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections",
+        "state": {
+          "branch": null,
+          "revision": "04502c882077cd838d380d05b127db9a6e48d8da",
+          "version": "0.2.0"
         }
       },
       {
@@ -92,12 +191,30 @@
         }
       },
       {
+        "package": "WalletCore",
+        "repositoryURL": "git@github.com:oliveratkinson-bc/wallet-core.git",
+        "state": {
+          "branch": null,
+          "revision": "44bf856ce6cea5d804c2182804e8659dc59fc82a",
+          "version": null
+        }
+      },
+      {
         "package": "xctest-dynamic-overlay",
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "603974e3909ad4b48ba04aad7e0ceee4f077a518",
-          "version": "0.1.0"
+          "revision": "50a70a9d3583fe228ce672e8923010c8df2deddd",
+          "version": "0.2.1"
+        }
+      },
+      {
+        "package": "Zxcvbn",
+        "repositoryURL": "git@github.com:oliveratkinson-bc/zxcvbn-ios.git",
+        "state": {
+          "branch": "swift-package-manager",
+          "revision": "c0db9d5278bbc07b28937278406cc042e4bebf68",
+          "version": null
         }
       }
     ]

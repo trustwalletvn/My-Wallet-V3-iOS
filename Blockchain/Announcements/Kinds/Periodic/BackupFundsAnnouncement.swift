@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Announcement for funds backup
@@ -28,7 +29,13 @@ final class BackupFundsAnnouncement: PeriodicAnnouncement & ActionableAnnounceme
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-shield"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-shield", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.BackupFunds.title,
             description: LocalizationConstants.AnnouncementCards.BackupFunds.description,
             buttons: [button],
@@ -83,3 +90,31 @@ final class BackupFundsAnnouncement: PeriodicAnnouncement & ActionableAnnounceme
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct BackupFundsAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = BackupFundsAnnouncement(
+            shouldBackupFunds: true,
+            reappearanceTimeInterval: 0,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct BackupFundsAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            BackupFundsAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

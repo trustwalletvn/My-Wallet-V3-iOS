@@ -33,7 +33,7 @@ public enum PinCore {
 
     public struct Environment {
         let walletManager: WalletManager
-        let appSettings: BlockchainSettings.App
+        let appSettings: AppSettingsAPI
         let alertPresenter: AlertViewPresenterAPI
     }
 }

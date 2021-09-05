@@ -41,7 +41,7 @@ final class DashboardDetailsScreenInteractor {
     private let blockchainAccountFetcher: BlockchainAccountFetching
 
     private let currency: CryptoCurrency
-    private let savingsAccountService: SavingsOverviewAPI
+    private let savingsAccountService: InterestAccountOverviewAPI
     private let fiatCurrencyService: FiatCurrencySettingsServiceAPI
     private let recoveryPhraseStatus: RecoveryPhraseStatusProviding
     private let coincore: CoincoreAPI
@@ -51,7 +51,7 @@ final class DashboardDetailsScreenInteractor {
     init(
         currency: CryptoCurrency,
         coincore: CoincoreAPI = resolve(),
-        savingsAccountService: SavingsOverviewAPI = resolve(),
+        savingsAccountService: InterestAccountOverviewAPI = resolve(),
         blockchainAccountFetcher: BlockchainAccountFetching = resolve(),
         fiatCurrencyService: FiatCurrencySettingsServiceAPI = resolve(),
         exchangeAPI: PairExchangeServiceAPI

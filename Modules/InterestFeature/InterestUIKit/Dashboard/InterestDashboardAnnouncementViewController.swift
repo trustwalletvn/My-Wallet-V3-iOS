@@ -39,7 +39,7 @@ public final class InterestDashboardAnnouncementViewController: UIViewController
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(AnnouncementTableViewCell.self)
         tableView.register(BadgeNumberedTableViewCell.self)
-        tableView.registerNibCell(ButtonsTableViewCell.self)
+        tableView.registerNibCell(ButtonsTableViewCell.self, in: .platformUIKit)
         tableView.register(LineItemTableViewCell.self)
         tableView.register(FooterTableViewCell.self)
         tableView.separatorColor = .clear

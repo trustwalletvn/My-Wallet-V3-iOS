@@ -65,7 +65,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         tableView.sectionHeaderHeight = UITableView.automaticDimension
         tableView.rowHeight = UITableView.automaticDimension
         tableView.delegate = self
-        tableView.registerNibCell(AssetPriceTableViewCell.self)
+        tableView.registerNibCell(AssetPriceTableViewCell.self, in: Bundle(for: AssetPriceTableViewCell.self))
         tableView.register(PortfolioTableViewCell.self)
         tableView.register(TodayExtensionSectionHeaderView.self)
 

@@ -1,10 +1,10 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import AnalyticsKit
-import AuthenticationKit
 import BitcoinKit
 import Combine
 import DIKit
+import FeatureAuthenticationDomain
 import KYCUIKit
 import OnboardingUIKit
 import PlatformKit
@@ -325,7 +325,7 @@ extension AuthenticationCoordinator: WalletPairingFetcherAPI {
     // MARK: Email Verification
 
     private func presentOnboardingFlow() {
-        guard let viewController = UIApplication.shared.keyWindow?.rootViewController?.topMostViewController else {
+        guard let viewController = UIApplication.shared.topMostViewController else {
             fatalError("🔴 Could not present Email Verification Flow: topMostViewController is nil!")
         }
         onboardingRouter.presentOnboarding(from: viewController)

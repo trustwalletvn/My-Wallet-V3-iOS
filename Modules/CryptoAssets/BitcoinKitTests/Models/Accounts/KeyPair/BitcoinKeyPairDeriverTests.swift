@@ -1,6 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 @testable import BitcoinKit
+import TestKit
 import XCTest
 
 class BitcoinKeyPairDeriverTests: XCTestCase {

@@ -98,9 +98,8 @@ public final class NonCustodialActionRouter: NonCustodialActionRouterAPI {
     }
 
     private func showBuyScreen() {
-        dismiss { [weak self] currencyType in
-            guard case .crypto(let cryptoCurrency) = currencyType else { return }
-            self?.walletOperationsRouter.handleBuyCrypto(currency: cryptoCurrency)
+        dismiss { [walletOperationsRouter, account] _ in
+            walletOperationsRouter.handleBuyCrypto(account: account as? CryptoAccount)
         }
     }
 

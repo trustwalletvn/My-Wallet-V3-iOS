@@ -19,6 +19,18 @@ final class CustodialTransferRepository: CustodialTransferRepositoryAPI {
 
     // MARK: - CustodialTransferServiceAPI
 
+    func feesAndLimitsForInterest() -> AnyPublisher<CustodialTransferFee, NabuNetworkError> {
+        client
+            .custodialTransferFeesForProduct(.savings)
+            .map { response in
+                CustodialTransferFee(
+                    fee: response.fees,
+                    minimumAmount: response.minAmounts
+                )
+            }
+            .eraseToAnyPublisher()
+    }
+
     func transfer(
         moneyValue: MoneyValue,
         destination: String,

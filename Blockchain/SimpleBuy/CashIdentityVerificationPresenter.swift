@@ -57,11 +57,10 @@ final class CashIdentityVerificationPresenter {
                 image: .local(name: "icon-gbp", bundle: .platformUIKit),
                 contentColor: .white,
                 backgroundColor: .fiat,
-                cornerRadius: .value(4.0),
-                size: .init(edge: 32.0)
+                cornerRadius: .roundedLow,
+                size: .edge(32)
             ),
             border: .none,
-            image: .hidden,
             title: LocalizationId.title,
             description: LocalizationId.description,
             dismissState: .undismissible

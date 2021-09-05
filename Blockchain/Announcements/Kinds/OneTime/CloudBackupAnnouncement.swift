@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Announcement that introduces Cloud Backup
@@ -32,7 +33,13 @@ final class CloudBackupAnnouncement: OneTimeAnnouncement & ActionableAnnouncemen
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-lock"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-lock", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizedString.title,
             description: LocalizedString.description,
             buttons: [button],
@@ -77,3 +84,26 @@ final class CloudBackupAnnouncement: OneTimeAnnouncement & ActionableAnnouncemen
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct CloudBackupAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = CloudBackupAnnouncement(dismiss: {}, action: {})
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct CloudBackupAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            CloudBackupAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

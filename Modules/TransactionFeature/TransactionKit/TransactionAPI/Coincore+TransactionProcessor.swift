@@ -127,9 +127,9 @@ extension CoincoreAPI {
         case .send:
             return createTradingProcessorSend(with: account, target: target)
         case .buy:
-            unimplemented() // not needed
+            unimplemented("This should not be needed as the Buy engine should process the transaction")
         case .sell:
-            unimplemented() // CustodialSellTxEngine
+            unimplemented("CustodialSellTxEngine processes the transation")
         case .deposit, .receive, .viewActivity, .withdraw:
             unimplemented()
         }

@@ -4,6 +4,7 @@ import AnalyticsKit
 import DIKit
 import PlatformKit
 import PlatformUIKit
+import SwiftUI
 import ToolKit
 
 /// This announcement introduces Bitpay
@@ -14,8 +15,11 @@ final class BitpayAnnouncement: OneTimeAnnouncement {
     var viewModel: AnnouncementCardViewModel {
         AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(
-                name: "card-icon-bitpay",
+            badgeImage: .init(
+                image: .local(name: "card-icon-bitpay", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
                 size: CGSize(width: 115, height: 40)
             ),
             description: LocalizationConstants.AnnouncementCards.Bitpay.description,
@@ -55,3 +59,26 @@ final class BitpayAnnouncement: OneTimeAnnouncement {
         self.dismiss = dismiss
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct BitpayAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = BitpayAnnouncement(dismiss: {})
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct BitpayAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            BitpayAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 200))
+    }
+}
+#endif

@@ -14,11 +14,11 @@ public struct CustodialTransferFee {
         self.minimumAmount = minimumAmount
     }
 
-    subscript(fee currency: CurrencyType) -> MoneyValue {
+    public subscript(fee currency: CurrencyType) -> MoneyValue {
         fee[currency] ?? .zero(currency: currency)
     }
 
-    subscript(minimumAmount currency: CurrencyType) -> MoneyValue {
+    public subscript(minimumAmount currency: CurrencyType) -> MoneyValue {
         minimumAmount[currency] ?? .zero(currency: currency)
     }
 }

@@ -27,7 +27,6 @@ class WalletManager: NSObject, JSContextProviderAPI, WalletRepositoryProvider {
     // TODO: Replace this with asset-specific wallet architecture
     @objc let wallet: Wallet
     let reactiveWallet: ReactiveWalletAPI
-    private let appSettings: BlockchainSettings.App
 
     // TODO: make this private(set) once other methods in RootService have been migrated in here
     @objc var latestMultiAddressResponse: MultiAddressResponse?
@@ -49,16 +48,15 @@ class WalletManager: NSObject, JSContextProviderAPI, WalletRepositoryProvider {
 
     init(
         wallet: Wallet = Wallet()!,
-        appSettings: BlockchainSettings.App = resolve(),
+        appSettings: AppSettingsAPI = resolve(),
         reactiveWallet: ReactiveWalletAPI = resolve()
     ) {
-        self.appSettings = appSettings
         self.wallet = wallet
         self.reactiveWallet = reactiveWallet
         super.init()
         let repository = WalletRepository(
             jsContextProvider: self,
-            settings: appSettings,
+            appSettings: appSettings,
             reactiveWallet: reactiveWallet
         )
         legacyRepository = repository

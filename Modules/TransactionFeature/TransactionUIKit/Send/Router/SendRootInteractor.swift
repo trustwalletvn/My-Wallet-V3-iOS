@@ -31,8 +31,8 @@ final class SendRootInteractor: Interactor, SendRootInteractable, SendRootListen
         super.init()
     }
 
-    func presentKYCTiersScreen() {
-        // TODO:
+    func presentKYCFlowIfNeeded(from viewController: UIViewController, completion: @escaping (Bool) -> Void) {
+        unimplemented()
     }
 
     func dismissTransactionFlow() {

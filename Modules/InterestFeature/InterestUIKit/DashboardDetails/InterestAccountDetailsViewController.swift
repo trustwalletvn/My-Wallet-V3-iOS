@@ -49,7 +49,7 @@ public final class InterestAccountDetailsViewController: BaseScreenViewControlle
         tableView.separatorInset = .zero
         tableView.estimatedRowHeight = UITableView.automaticDimension
         tableView.register(CurrentBalanceTableViewCell.self)
-        tableView.registerNibCell(LineItemTableViewCell.self)
+        tableView.registerNibCell(LineItemTableViewCell.self, in: .platformUIKit)
         tableView.register(FooterTableViewCell.self)
 
         let dataSource = RxDataSource(configureCell: { [weak self] _, _, indexPath, item in

@@ -1,0 +1,70 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "BigInt",
+        "repositoryURL": "git@github.com:attaswift/BigInt.git",
+        "state": {
+          "branch": null,
+          "revision": "889a1ecacd73ccc189c5cb29288048f186c44ed9",
+          "version": "5.2.1"
+        }
+      },
+      {
+        "package": "combine-schedulers",
+        "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
+        "state": {
+          "branch": null,
+          "revision": "6dcc7c034d28fe7ac652453faeae07656f723909",
+          "version": "0.5.1"
+        }
+      },
+      {
+        "package": "CombineExt",
+        "repositoryURL": "https://github.com/CombineCommunity/CombineExt.git",
+        "state": {
+          "branch": null,
+          "revision": "5b8a0c0f178527f9204200505c5fefa6847e528f",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "DIKit",
+        "repositoryURL": "git@github.com:jackpooleybc/DIKit.git",
+        "state": {
+          "branch": "safe-property-wrappers",
+          "revision": "1d20369ab59d123b4d0bf85dffbe045f4f405ec1",
+          "version": null
+        }
+      },
+      {
+        "package": "RxCombine",
+        "repositoryURL": "git@github.com:paulo-bc/RxCombine.git",
+        "state": {
+          "branch": null,
+          "revision": "0762454fba26dcf315aaa7ac5ed5fbdecd50fef2",
+          "version": "1.6.2"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "git@github.com:ReactiveX/RxSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "cec68169a048a079f461ba203fe85636548d7a89",
+          "version": "5.1.3"
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "b9eeb1a7ea3fd6fea54ce57dee2f5794b667c8df",
+          "version": "0.2.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -16,7 +16,7 @@ final class LoggedInHostingController: UIViewController, LoggedInBridge {
 
     let store: Store<LoggedIn.State, LoggedIn.Action>
     let viewStore: ViewStore<LoggedIn.State, LoggedIn.Action>
-    private var cancellables: Set<AnyCancellable> = []
+    var cancellables: Set<AnyCancellable> = []
 
     // MARK: - The controllers
 
@@ -28,6 +28,8 @@ final class LoggedInHostingController: UIViewController, LoggedInBridge {
 
     @LazyInject var alertViewPresenter: AlertViewPresenterAPI
     @LazyInject var secureChannelRouter: SecureChannelRouting
+    @LazyInject var coincore: CoincoreAPI
+
     @Inject var airdropRouter: AirdropRouterAPI
 
     private let onboardingRouter: OnboardingUIKit.OnboardingRouterAPI

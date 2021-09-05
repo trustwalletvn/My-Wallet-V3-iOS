@@ -83,11 +83,11 @@ public final class InterestAccountDetailsScreenInteractor {
     let currentBalanceCellInteractor: CurrentBalanceCellInteracting
 
     private let interactorsRelay = BehaviorRelay<[DetailCellInteractor]>(value: [])
-    private let service: SavingAccountServiceAPI
+    private let service: InterestAccountServiceAPI
     private let disposeBag = DisposeBag()
 
     public init(
-        service: SavingAccountServiceAPI = resolve(),
+        service: InterestAccountServiceAPI = resolve(),
         account: BlockchainAccount
     ) {
         self.service = service

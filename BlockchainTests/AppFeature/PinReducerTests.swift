@@ -17,12 +17,9 @@ class PinReducerTests: XCTestCase {
     var settingsApp: MockBlockchainSettingsApp!
 
     override func setUp() {
+        super.setUp()
         mockWallet = MockWallet()
-        settingsApp = MockBlockchainSettingsApp(
-            enabledCurrenciesService: MockEnabledCurrenciesService(),
-            keychainItemWrapper: MockKeychainItemWrapping(),
-            legacyPasswordProvider: MockLegacyPasswordProvider()
-        )
+        settingsApp = MockBlockchainSettingsApp()
         mockWalletManager = WalletManager(
             wallet: mockWallet!,
             appSettings: settingsApp,
@@ -30,12 +27,11 @@ class PinReducerTests: XCTestCase {
         )
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() {
         mockWallet = nil
         settingsApp = nil
         mockWalletManager = nil
-
-        try super.tearDownWithError()
+        super.tearDown()
     }
 
     func test_verify_initial_state_is_correct() {

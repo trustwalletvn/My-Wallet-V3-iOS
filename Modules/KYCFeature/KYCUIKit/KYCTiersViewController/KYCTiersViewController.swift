@@ -90,7 +90,7 @@ public final class KYCTiersViewController: UIViewController {
         guard let collection = collectionView else { return }
         collection.delegate = self
         collection.dataSource = self
-        collection.registerNibCell(KYCTierCell.self)
+        collection.registerNibCell(KYCTierCell.self, in: Bundle(for: KYCTierCell.self))
     }
 
     fileprivate func registerSupplementaryViews() {

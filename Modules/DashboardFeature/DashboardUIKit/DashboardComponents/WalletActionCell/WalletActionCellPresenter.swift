@@ -31,6 +31,7 @@ final class WalletActionCellPresenter {
             image: .local(name: action.imageName, bundle: .platformUIKit),
             templateColor: templateColor,
             backgroundColor: accentColor,
+            cornerRadius: .round,
             accessibilityIdSuffix: "\(action.accessibilityId)"
         )
 

@@ -36,6 +36,7 @@ final class ActivityItemPresenter: IdentifiableType {
             image: .local(name: viewModel.imageName, bundle: .platformUIKit),
             templateColor: viewModel.eventColor,
             backgroundColor: viewModel.backgroundColor,
+            cornerRadius: .round,
             accessibilityIdSuffix: AccessibilityId.ActivityCell.badge
         )
         assetBalanceViewPresenter = AssetBalanceViewPresenter(

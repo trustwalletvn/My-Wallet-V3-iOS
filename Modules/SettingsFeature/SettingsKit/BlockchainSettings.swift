@@ -28,6 +28,26 @@ public protocol LegacyPasswordProviding: AnyObject {
     func setLegacyPassword(_ legacyPassword: String?)
 }
 
+public protocol AppSettingsBaseAPI: AnyObject {
+    func reset()
+}
+
+public protocol SymbolLocalSettingsAPI: AnyObject {
+    var onSymbolLocalChanged: ((Bool) -> Void)? { get set }
+
+    /// Property indicating whether or not the currency symbol that should be used throughout the app
+    /// should be fiat, if set to true, or the asset-specific symbol, if false.
+    var symbolLocal: Bool { get set }
+}
+
+public typealias BlockchainSettingsAppAPI = AppSettingsAPI
+    & AppSettingsAuthenticating
+    & AppSettingsSecureChannel
+    & CloudBackupConfiguring
+    & PermissionSettingsAPI
+    & SymbolLocalSettingsAPI
+    & AppSettingsBaseAPI
+
 /**
  Settings for the current user.
  All settings are written and read from NSUserDefaults.
@@ -38,13 +58,7 @@ public final class BlockchainSettings: NSObject {
     // MARK: - App
 
     @objc(BlockchainSettingsApp)
-    public class App: NSObject,
-        AppSettingsAPI,
-        AppSettingsAuthenticating,
-        AppSettingsSecureChannel,
-        CloudBackupConfiguring,
-        PermissionSettingsAPI
-    {
+    public final class App: NSObject, BlockchainSettingsAppAPI {
 
         @Inject @objc public static var shared: App
 
@@ -128,10 +142,6 @@ public final class BlockchainSettings: NSObject {
                 }
                 keychainItemWrapper.setPINInKeychain(pin)
             }
-        }
-
-        public var isPinSet: Bool {
-            pinKey != nil && encryptedPinPassword != nil
         }
 
         public var pinKey: String? {

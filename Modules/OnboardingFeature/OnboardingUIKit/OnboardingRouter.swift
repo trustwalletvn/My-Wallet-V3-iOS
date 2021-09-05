@@ -39,23 +39,12 @@ public class OnboardingRouter: OnboardingRouterAPI {
         // Step 1: present email verification
         presentEmailVerification(from: presenter)
             .receive(on: DispatchQueue.main)
-            .flatMap { result -> AnyPublisher<OnboardingResult, Never> in
+            .flatMap { [buyCryptoRouter] result -> AnyPublisher<OnboardingResult, Never> in
                 guard case .completed = result else {
                     return .just(.abandoned)
                 }
-                // dimiss the Email Verification flow (we don't need it anymore), then move on to the next step
-                return Future { completion in
-                    presenter.dismiss(animated: true) {
-                        completion(.success(result))
-                    }
-                }.flatMap { [weak self] _ -> AnyPublisher<OnboardingResult, Never> in
-                    guard let self = self else {
-                        unexpectedDeallocation()
-                    }
-                    // Step 2: present the buy flow
-                    return self.presentOnboardingToBuyingCrypto(from: presenter)
-                }
-                .eraseToAnyPublisher()
+                // Step 2: present the buy flow
+                return buyCryptoRouter.presentBuyFlow(from: presenter)
             }
             .eraseToAnyPublisher()
     }
@@ -71,9 +60,5 @@ public class OnboardingRouter: OnboardingRouterAPI {
                 return emailVerificationRouter.presentEmailVerification(from: presenter)
             }
             .eraseToAnyPublisher()
-    }
-
-    private func presentOnboardingToBuyingCrypto(from presenter: UIViewController) -> AnyPublisher<OnboardingResult, Never> {
-        buyCryptoRouter.presentBuyFlow(from: presenter)
     }
 }

@@ -6,9 +6,16 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 final class SimpleBuyPendingTransactionAnnouncement: PersistentAnnouncement & ActionableAnnouncement {
+
+    struct Order {
+        let isBankWire: Bool
+        let currencyCode: String
+        let isPendingDeposit: Bool
+    }
 
     // MARK: - Types
 
@@ -28,13 +35,12 @@ final class SimpleBuyPendingTransactionAnnouncement: PersistentAnnouncement & Ac
             }
             .disposed(by: disposeBag)
 
-        let orderDetails = order!
-        let assetCode = orderDetails.outputValue.currencyType.displayCode
+        let assetCode = order?.currencyCode ?? ""
 
         let imageName: String
         let title: String
         let description: String
-        if orderDetails.isBankWire {
+        if order?.isBankWire == true {
             title = "\(LocalizedString.titlePrefix) \(assetCode) \(LocalizedString.titleSuffix)"
             description = "\(LocalizedString.descriptionPrefix) \(assetCode) \(LocalizedString.descriptionSuffix)"
             imageName = "clock-error-icon"
@@ -46,11 +52,12 @@ final class SimpleBuyPendingTransactionAnnouncement: PersistentAnnouncement & Ac
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(
-                name: imageName,
-                size: CGSize(width: 27, height: 27),
-                tintColor: .iconWarning,
-                bundle: .platformUIKit
+            badgeImage: .init(
+                image: .local(name: imageName, bundle: .platformUIKit),
+                contentColor: .iconWarning,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(32)
             ),
             title: title,
             description: description,
@@ -68,7 +75,7 @@ final class SimpleBuyPendingTransactionAnnouncement: PersistentAnnouncement & Ac
             return false
         }
         // Shows only for bank wire - we need copy for card orders
-        return order.isBankWire && order.state == .pendingDeposit
+        return order.isBankWire && order.isPendingDeposit
     }
 
     let type = AnnouncementType.simpleBuyPendingTransaction
@@ -76,14 +83,14 @@ final class SimpleBuyPendingTransactionAnnouncement: PersistentAnnouncement & Ac
 
     let action: CardAnnouncementAction
 
-    private let order: OrderDetails?
+    private let order: Order?
 
     private let disposeBag = DisposeBag()
 
     // MARK: - Setup
 
     init(
-        order: OrderDetails?,
+        order: Order?,
         analyticsRecorder: AnalyticsEventRecorderAPI = resolve(),
         errorRecorder: ErrorRecording = CrashlyticsRecorder(),
         action: @escaping CardAnnouncementAction
@@ -92,4 +99,48 @@ final class SimpleBuyPendingTransactionAnnouncement: PersistentAnnouncement & Ac
         self.action = action
         self.analyticsRecorder = analyticsRecorder
     }
+
+    init(
+        orderDetails: OrderDetails?,
+        analyticsRecorder: AnalyticsEventRecorderAPI = resolve(),
+        errorRecorder: ErrorRecording = CrashlyticsRecorder(),
+        action: @escaping CardAnnouncementAction
+    ) {
+        order = orderDetails
+            .flatMap { orderDetails in
+                Order(
+                    isBankWire: orderDetails.isBankWire,
+                    currencyCode: orderDetails.outputValue.currencyType.displayCode,
+                    isPendingDeposit: orderDetails.state == .pendingDeposit
+                )
+            }
+        self.action = action
+        self.analyticsRecorder = analyticsRecorder
+    }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct SimpleBuyPendingTransactionAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = SimpleBuyPendingTransactionAnnouncement(
+            order: .init(isBankWire: true, currencyCode: "BTC", isPendingDeposit: true),
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct SimpleBuyPendingTransactionAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            SimpleBuyPendingTransactionAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

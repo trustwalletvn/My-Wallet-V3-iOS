@@ -1,7 +1,5 @@
 # Created by https://www.gitignore.io/api/node,xcode,macos,swift,jetbrains,objective-c
 
-*.orig
-
 !*.xcworkspace/contents.xcworkspacedata
 !default.mode1v3
 !default.mode2v3
@@ -11,6 +9,7 @@
 *.der
 *.dSYM
 *.dSYM.zip
+*.generated.swift
 *.hmap
 *.ipa
 *.iws
@@ -19,6 +18,7 @@
 *.mode1v3
 *.mode2v3
 *.moved-aside
+*.orig
 *.pbxuser
 *.perspectivev3
 *.pid
@@ -74,6 +74,7 @@
 .idea_modules/
 .lock-wscript
 .LSOverride
+.mockingbird
 .next
 .node_repl_history
 .npm
@@ -89,6 +90,7 @@
 .vuepress/dist
 .yarn-integrity
 /*.gcno
+/Config
 atlassian-ide-plugin.xml
 bower_components
 build/
@@ -98,7 +100,6 @@ Carthage/Build
 Cert
 cmake-build-*/
 com_crashlytics_export_strings.xml
-/Config
 coverage
 crashlytics-build.properties
 crashlytics.properties
@@ -117,13 +118,17 @@ jspm_packages/
 lerna-debug.log*
 lib-cov
 logs
+MockingbirdMocks/
+MockingbirdSupport/
 Network Trash Folder
 node_modules/
 npm-debug.log*
 out/
+output/
 pids
 playground.xcworkspace
 profile
+project-desc.json
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 temp/
 Temporary Items
@@ -133,6 +138,5 @@ typings/
 xcuserdata/
 yarn-debug.log*
 yarn-error.log*
-output/
-MockingbirdMocks/
-MockingbirdSupport/
+.swiftpm
+SourcePackages/

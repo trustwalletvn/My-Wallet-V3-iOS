@@ -1,6 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import DIKit
+import NetworkKit
 import PlatformKit
 import PlatformUIKit
 import RxSwift
@@ -85,6 +86,21 @@ extension Wallet {
             object: nil
         )
         getHistory()
+    }
+
+    @objc func useDebugSettingsIfSet() {
+        updateServerURL(BlockchainAPI.shared.walletUrl)
+        updateAPIURL(BlockchainAPI.shared.apiUrl)
+    }
+
+    private func updateServerURL(_ newURL: String) {
+        context
+            .evaluateScriptCheckIsOnMainQueue("MyWalletPhone.updateServerURL(\"\(newURL.escapedForJS())\")")
+    }
+
+    private func updateAPIURL(_ newURL: String) {
+        context
+            .evaluateScriptCheckIsOnMainQueue("MyWalletPhone.updateAPIURL(\"\(newURL.escapedForJS())\")")
     }
 }
 

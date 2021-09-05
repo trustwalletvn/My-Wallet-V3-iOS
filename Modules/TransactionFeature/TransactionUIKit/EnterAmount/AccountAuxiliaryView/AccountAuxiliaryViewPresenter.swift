@@ -70,3 +70,15 @@ final class AccountAuxiliaryViewPresenter {
             }
     }
 }
+
+extension AccountAuxiliaryViewPresenter: AuxiliaryViewPresenting {
+
+    func makeViewController() -> UIViewController {
+        let accountAuxiliaryView = AccountAuxiliaryView()
+        accountAuxiliaryView.presenter = self
+        let viewController = UIViewController()
+        viewController.view.addSubview(accountAuxiliaryView)
+        accountAuxiliaryView.constraint(edgesTo: viewController.view)
+        return viewController
+    }
+}

@@ -19,6 +19,8 @@ options:
     iOS: '14.0'
   groupSortPosition: bottom
   platform: iOS
+  preGenCommand: ./scripts/check_dependencies.sh
+  postGenCommand: xcrun swift sh scripts/add_test_targets.swift
 schemeTemplates:
   BlockchainScheme:
     analyze:
@@ -37,16 +39,6 @@ schemeTemplates:
       config: ${debugConfig}
       gatherCoverageData: true
       targets:
-      - name: ToolKitTests
-        randomExecutionOrder: true
-      - name: NetworkKitTests
-        randomExecutionOrder: true
-      - name: CommonCryptoKitTests
-        randomExecutionOrder: true
-      - name: PlatformKitTests
-        randomExecutionOrder: true
-      - name: PlatformUIKitTests
-        randomExecutionOrder: true
       - name: ActivityKitTests
         randomExecutionOrder: true
       - name: BitcoinKitTests
@@ -62,8 +54,6 @@ schemeTemplates:
       - name: ERC20KitTests
         randomExecutionOrder: true
       - name: EthereumKitTests
-        randomExecutionOrder: true
-      - name: HDWalletKitTests
         randomExecutionOrder: true
       - name: TransactionKitTests
         randomExecutionOrder: true
@@ -83,15 +73,7 @@ schemeTemplates:
         randomExecutionOrder: true
       - name: SettingsUIKitTests
         randomExecutionOrder: true
-      - name: AnalyticsKitTests
-        randomExecutionOrder: true
       - name: RemoteNotificationsKitTests
-        randomExecutionOrder: true
-      - name: AuthenticationKitTests
-        randomExecutionOrder: true
-      - name: AuthenticationUIKitTests
-        randomExecutionOrder: true
-      - name: AuthenticationDataKitTests
         randomExecutionOrder: true
       - name: BlockchainTests
         randomExecutionOrder: true
@@ -273,7 +255,6 @@ settings:
 targetTemplates:
   Module:
     dependencies:
-    - framework: Carthage/Build/DIKit.xcframework
     - target: SharedPackagesKit
     platform: iOS
     schemes:
@@ -287,30 +268,23 @@ targetTemplates:
     type: framework
   ModuleTests:
     dependencies:
-    - framework: Carthage/Build/DIKit.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxBlocking.xcframework
-    - framework: Carthage/Build/RxTest.xcframework
-    - package: ComposableArchitecture
-    - package: CombineExt
-    - package: Nuke
-    - package: NukeUI
-    - package: FeatureAccountPicker
-    - package: UIComponents
+    - target: SharedPackagesKit
+    - package: Test
+      product: TestKit
     platform: iOS
     sources:
     - createIntermediateGroups: true
       excludes:
       - "**/__Snapshots__"
       path: Modules/${featureName}/${target_name}
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Utilities
     type: bundle.unit-test
+  UIModule:
+    settings:
+      SWIFT_INSTALL_OBJC_HEADER: NO
 packages:
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    version: 0.18.0
+    version: 0.24.0
   CombineExt:
     url: https://github.com/CombineCommunity/CombineExt.git
     version: 1.3.0
@@ -323,9 +297,6 @@ packages:
   NukeUI:
     url: https://github.com/kean/NukeUI
     from: 0.6.5
-  SnapshotTesting:
-    url: https://github.com/pointfreeco/swift-snapshot-testing
-    version: 1.9.0
   Mockingbird:
     url: https://github.com/birdrides/mockingbird
     version: 0.16.0
@@ -333,18 +304,60 @@ packages:
     path: Modules/UIComponents
   FeatureAccountPicker:
     path: Modules/FeatureAccountPicker
+  DIKit:
+    url: git@github.com:jackpooleybc/DIKit.git
+    branch: safe-property-wrappers
+  BigInt:
+    url: git@github.com:attaswift/BigInt.git
+    version: 5.2.1
+  RxSwift:
+    url: git@github.com:ReactiveX/RxSwift.git
+    version: 5.1.3
+  RxDataSources:
+    url: git@github.com:RxSwiftCommunity/RxDataSources.git
+    version: 4.0.1
+  RxCombine:
+    url: git@github.com:paulo-bc/RxCombine.git
+    version: 1.6.2
+  RIBs:
+    url: git@github.com:paulo-bc/RIBs.git
+    version: 0.10.2
+  PhoneNumberKit:
+    url: git@github.com:marmelroy/PhoneNumberKit.git
+    version: 3.3.3
+  Tool:
+    path: Modules/Tool
+  Analytics:
+    path: Modules/Analytics
+  Network:
+    path: Modules/Network
+  Test:
+    path: Modules/Test
+  CommonCrypto:
+    path: Modules/CommonCrypto
+  WalletCore:
+    url: git@github.com:oliveratkinson-bc/wallet-core.git
+    revision: 44bf856ce6cea5d804c2182804e8659dc59fc82a
+  Localization:
+    path: Modules/Localization
+  WalletPayload:
+    path: Modules/WalletPayload
+  HDWallet:
+    path: Modules/HDWallet
+  Test:
+    path: Modules/Test
+  FeatureAuthentication:
+    path: Modules/FeatureAuthentication
+  Platform:
+    path: Modules/Platform
 targets:
   ActivityKit:
     dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
     - target: BitcoinCashKit
     - target: BitcoinKit
     - target: ERC20Kit
     - target: EthereumKit
-    - target: NetworkKit
     - target: StellarKit
-    - target: ToolKit
     scheme:
       testTargets:
       - ActivityKitTests
@@ -357,28 +370,20 @@ targets:
     - target: ActivityKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: ActivityFeature
     templates:
     - ModuleTests
   ActivityUIKit:
     dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxDataSources.xcframework
     - sdk: LinkPresentation.framework
     - sdk: SafariServices.framework
     - target: ActivityKit
-    - target: Localization
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: ToolKit
     scheme:
       testTargets:
       - ActivityUIKitTests
@@ -386,57 +391,26 @@ targets:
       featureName: ActivityFeature
     templates:
     - Module
+    - UIModule
   ActivityUIKitTests:
     dependencies:
     - target: ActivityUIKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
+      path: Modules/Platform/Sources/PlatformUIKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: ActivityFeature
     templates:
     - ModuleTests
-  AnalyticsKit:
-    scheme:
-      testTargets:
-        - AnalyticsKitTests
-    templateAttributes:
-      featureName: Analytics
-    templates:
-    - Module
-  AnalyticsKitTests:
-    dependencies:
-    - target: AnalyticsKit
-    - package: Mockingbird
-    templateAttributes:
-      featureName: Analytics
-    templates:
-    - ModuleTests
-  RxAnalyticsKit:
-    dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - target: AnalyticsKit
-    templateAttributes:
-      featureName: Analytics
-    templates:
-    - Module
   BitcoinCashKit:
     dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/DIKit.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
     - target: BitcoinChainKit
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
     scheme:
       testTargets:
       - BitcoinCashKitTests
@@ -449,27 +423,17 @@ targets:
     - target: BitcoinCashKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: CryptoAssets
     templates:
     - ModuleTests
   BitcoinChainKit:
     dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxCombine.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/SwiftProtobuf.xcframework
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
     - target: TransactionKit
     scheme:
       testTargets:
@@ -483,27 +447,18 @@ targets:
     - target: BitcoinChainKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: CryptoAssets
     templates:
     - ModuleTests
   BitcoinKit:
     dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/WalletCore.xcframework
     - target: BitcoinChainKit
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
     - target: TransactionKit
     scheme:
       testTargets:
@@ -519,11 +474,11 @@ targets:
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/BitcoinKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: CryptoAssets
     templates:
@@ -540,11 +495,6 @@ targets:
       Release Alpha: Config/BlockchainConfig/Blockchain-Alpha.xcconfig
     dependencies:
     - sdk: libicucore.tbd
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/Charts.xcframework
-    - framework: Carthage/Build/CryptoSwift.xcframework
-    - framework: Carthage/Build/Differentiator.xcframework
-    - framework: Carthage/Build/DIKit.xcframework
     - framework: Carthage/Build/FirebaseABTesting.xcframework
       embed: false
     - framework: Carthage/Build/FirebaseAnalytics.xcframework
@@ -571,7 +521,6 @@ targets:
       embed: false
     - framework: Carthage/Build/nanopb.xcframework
       embed: false
-    - framework: Carthage/Build/PhoneNumberKit.xcframework
     - framework: Carthage/Build/PromisesObjC.xcframework
       embed: false
     - framework: Carthage/Build/recaptcha.framework
@@ -584,40 +533,24 @@ targets:
       embed: false
     - framework: Carthage/Build/Promises.xcframework
       embed: false
-    - framework: Carthage/Build/RIBs.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxCombine.xcframework
-    - framework: Carthage/Build/RxDataSources.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
     - framework: Carthage/Build/Sift.xcframework
     - framework: Carthage/Build/stellarsdk.xcframework
-    - framework: Carthage/Build/SwiftProtobuf.xcframework
     - framework: Carthage/Build/Veriff.xcframework
-    - framework: Carthage/Build/WalletCore.xcframework
-    - framework: Carthage/Build/Zxcvbn.xcframework
     - embed: false
       framework: Submodules/OpenSSL-for-iPhone/lib/libcrypto.a
-    - target: PlatformUIKit
     - target: TodayExtension
-    - target: PlatformKit
     - target: InterestKit
+    - target: InterestDataKit
     - target: InterestUIKit
     - target: TransactionKit
     - target: TransactionDataKit
     - target: TransactionUIKit
-    - target: WalletPayloadKit
-    - target: ToolKit
-    - target: NetworkKit
     - target: StellarKit
     - target: EthereumKit
     - target: ERC20Kit
     - target: BitcoinKit
     - target: BitcoinCashKit
     - target: BitcoinChainKit
-    - target: HDWalletKit
-    - target: CommonCryptoKit
-    - target: Localization
     - target: ActivityKit
     - target: ActivityUIKit
     - target: DashboardKit
@@ -631,11 +564,7 @@ targets:
     - target: SettingsKit
     - target: SharedPackagesKit
     - target: RemoteNotificationsKit
-    - target: AuthenticationKit
-    - target: AuthenticationUIKit
-    - target: AuthenticationDataKit
-    - target: AnalyticsKit
-    - target: RxAnalyticsKit
+    - target: InterestDataKit
     platform: iOS
     postBuildScripts:
     - inputFiles:
@@ -644,6 +573,8 @@ targets:
       name: Run Crashlytics
       script: ${PROJECT_DIR}/scripts/crashlytics/run
     postCompileScripts:
+    - name: Get SSL Certificate
+      path: Blockchain/Scripts/get_ssl_certificate.sh
     - name: Swiftlint
       path: Blockchain/Scripts/swiftlint.sh
     - name: Setup Firebase Environment
@@ -704,12 +635,19 @@ targets:
           - release_signing_internal
           - base_ios
     sources:
+    - buildPhase:
+        copyFiles:
+          destination: resources
+      group: Blockchain/Cert
+      optional: true
+      path: Blockchain/Cert/blockchain.der
     - group: Blockchain/JavaScript
       optional: true
       path: Submodules/My-Wallet-V3/dist/my-wallet.js
     - excludes:
       - Firebase
       - Scripts
+      - Cert
       path: Blockchain
     - includes:
       - BTCAddress.[hm]
@@ -726,27 +664,25 @@ targets:
       path: Submodules/CoreBitcoin/CoreBitcoin
     type: application
   BlockchainTests:
+    settings:
+       OTHER_LDFLAGS: -undefined dynamic_lookup
     dependencies:
-    - framework: Carthage/Build/RxBlocking.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxTest.xcframework
-    - package: ComposableArchitecture
-    - package: CombineExt
     - target: Blockchain
+    - package: Test
+      product: TestKit
     platform: iOS
     sources:
     - path: BlockchainTests
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Utilities
+      path: Modules/Test/Sources/TestKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
+      path: Modules/Platform/Sources/PlatformUIKitMock
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/RemoteNotificationsKit
     - createIntermediateGroups: true
@@ -754,11 +690,11 @@ targets:
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/KYCUIKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AnalyticsKit
+      path: Modules/Analytics/Sources/AnalyticsKitMock
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/SettingsKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/WalletPayloadKit
+      path: Modules/WalletPayload/Sources/WalletPayloadKitMock
     type: bundle.unit-test
   DashboardKit:
     scheme:
@@ -777,17 +713,14 @@ targets:
       featureName: DashboardFeature
   DashboardUIKit:
     dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
     - target: DashboardKit
-    - target: PlatformUIKit
     - target: TransactionUIKit
     scheme:
       testTargets:
       - DashboardUIKitTests
     templates:
     - Module
+    - UIModule
     templateAttributes:
       featureName: DashboardFeature
   DashboardUIKitTests:
@@ -799,12 +732,46 @@ targets:
       featureName: DashboardFeature
   SharedPackagesKit:
     dependencies:
-    - package: ComposableArchitecture
+    - package: Analytics
+      product: AnalyticsKit
+    - package: FeatureAuthentication
+      product: FeatureAuthentication
+    - package: Analytics
+      product: RxAnalyticsKit
+    - package: BigInt
     - package: CombineExt
+    - package: CommonCrypto
+      product: CommonCryptoKit
+    - package: ComposableArchitecture
+    - package: DIKit
+    - package: FeatureAccountPicker
+    - package: HDWallet
+      product: HDWalletKit
+    - package: Localization
+    - package: Lottie
+    - package: Network
+      product: NetworkKit
     - package: Nuke
     - package: NukeUI
-    - package: FeatureAccountPicker
+    - package: Platform
+      product: PlatformKit
+    - package: Platform
+      product: PlatformUIKit
+    - package: RIBs
+    - package: RxCombine
+    - package: RxDataSources
+    - package: RxSwift
+      product: RxCocoa
+    - package: RxSwift
+      product: RxRelay
+    - package: RxSwift
+      product: RxSwift
+    - package: Tool
+      product: ToolKit
     - package: UIComponents
+    - package: WalletCore
+    - package: WalletPayload
+      product: WalletPayloadKit
     platform: iOS
     deploymentTarget:
         iOS: '14.0'
@@ -815,46 +782,15 @@ targets:
       - Scripts
       path: Modules/SharedPackages/SharedPackagesKit
     type: framework
-  CommonCryptoKit:
-    dependencies:
-    - framework: Carthage/Build/CryptoSwift.xcframework
-    - framework: Carthage/Build/SwiftProtobuf.xcframework
-    - framework: Carthage/Build/WalletCore.xcframework
-    scheme:
-      testTargets:
-      - CommonCryptoKitTests
-    templateAttributes:
-      featureName: CommonCrypto
-    templates:
-    - Module
-  CommonCryptoKitTests:
-    dependencies:
-    - target: CommonCryptoKit
-    templateAttributes:
-      featureName: CommonCrypto
-    templates:
-    - ModuleTests
   DebugUIKit:
-    dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: ToolKit
     templateAttributes:
       featureName: DebugUI
     templates:
     - Module
+    - UIModule
   ERC20Kit:
     dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/SwiftProtobuf.xcframework
-    - framework: Carthage/Build/WalletCore.xcframework
     - target: EthereumKit
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
     - target: TransactionKit
     scheme:
       testTargets:
@@ -872,24 +808,17 @@ targets:
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/ERC20Kit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: CryptoAssets
     templates:
     - ModuleTests
   EthereumKit:
     dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/SwiftProtobuf.xcframework
-    - framework: Carthage/Build/WalletCore.xcframework
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
     - target: TransactionKit
     scheme:
       testTargets:
@@ -905,40 +834,18 @@ targets:
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/EthereumKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: CryptoAssets
     templates:
     - ModuleTests
-  HDWalletKit:
-    dependencies:
-    - target: CommonCryptoKit
-    - target: ToolKit
-    scheme:
-      testTargets:
-      - HDWalletKitTests
-    templateAttributes:
-      featureName: HDWallet
-    templates:
-    - Module
-  HDWalletKitTests:
-    dependencies:
-    - target: HDWalletKit
-    templateAttributes:
-      featureName: HDWallet
-    templates:
-    - ModuleTests
   InterestKit:
     dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
+    - target: TransactionKit
     scheme:
       testTargets:
       - InterestKitTests
@@ -951,26 +858,40 @@ targets:
     - target: InterestKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
+    templateAttributes:
+      featureName: InterestFeature
+    templates:
+    - ModuleTests
+  InterestDataKit:
+    dependencies:
+    - target: InterestKit
+    scheme:
+      testTargets:
+      - InterestDataKitTests
+    templateAttributes:
+      featureName: InterestFeature
+    templates:
+      - Module
+  InterestDataKitTests:
+    dependencies:
+    - target: InterestDataKit
+    sources:
+    - createIntermediateGroups: true
+      path: Modules/Network/Sources/NetworkKitMock
+    - createIntermediateGroups: true
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: InterestFeature
     templates:
     - ModuleTests
   InterestUIKit:
     dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - target: CommonCryptoKit
     - target: InterestKit
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: ToolKit
     scheme:
       testTargets:
       - InterestUIKitTests
@@ -978,30 +899,24 @@ targets:
       featureName: InterestFeature
     templates:
     - Module
+    - UIModule
   InterestUIKitTests:
     dependencies:
     - target: InterestUIKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
+      path: Modules/Platform/Sources/PlatformUIKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: InterestFeature
     templates:
     - ModuleTests
   KYCKit:
-    dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
     scheme:
       testTargets:
       - KYCKitTests
@@ -1014,27 +929,19 @@ targets:
     - target: KYCKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: KYCFeature
     templates:
     - ModuleTests
   KYCUIKit:
     dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
     - framework: Carthage/Build/Veriff.xcframework
-    - target: AnalyticsKit
     - target: KYCKit
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: ToolKit
     scheme:
       testTargets:
       - KYCUIKitTests
@@ -1042,101 +949,28 @@ targets:
       featureName: KYCFeature
     templates:
     - Module
+    - UIModule
   KYCUIKitTests:
     dependencies:
-    - package: SnapshotTesting
     - target: KYCUIKit
     - target: SnapshotTestsHostApp # required for snapshot tests
     settings:
       TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SnapshotTestsHostApp.app/SnapshotTestsHostApp" # required for snapshot tests
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Helpers/SnapshotTesting
-    - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/KYCKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
+      path: Modules/Platform/Sources/PlatformUIKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AnalyticsKit
+      path: Modules/Analytics/Sources/AnalyticsKitMock
     templateAttributes:
       featureName: KYCFeature
-    templates:
-    - ModuleTests
-  Localization:
-    templateAttributes:
-      featureName: Localization
-    scheme: {}
-    templates:
-    - Module
-  NetworkKit:
-    configFiles:
-      Debug Dev: Config/NetworkKitConfig/NetworkKit-Dev.xcconfig
-      Debug Production: Config/NetworkKitConfig/NetworkKit-Production.xcconfig
-      Debug Staging: Config/NetworkKitConfig/NetworkKit-Staging.xcconfig
-      Debug Alpha: Config/NetworkKitConfig/NetworkKit-Alpha.xcconfig
-      Release: Config/NetworkKitConfig/NetworkKit-Production.xcconfig
-      Release Internal: Config/NetworkKitConfig/NetworkKit-Production.xcconfig
-      Release Staging: Config/NetworkKitConfig/NetworkKit-Staging.xcconfig
-      Release Alpha: Config/NetworkKitConfig/NetworkKit-Alpha.xcconfig
-    dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCombine.xcframework
-    - framework: Carthage/Build/DIKit.xcframework
-    - target: AnalyticsKit
-    - target: SharedPackagesKit
-    - target: ToolKit
-    info:
-      path: Modules/Network/NetworkKit/Info.plist
-      properties:
-        API_URL: $(API_URL)
-        EVERYPAY_API_URL: $(EVERYPAY_API_URL)
-        EXCHANGE_URL: $(EXCHANGE_URL)
-        EXPLORER_SERVER: $(EXPLORER_SERVER)
-        PIN_CERTIFICATE: $(PIN_CERTIFICATE)
-        RETAIL_CORE_SOCKET_URL: $(RETAIL_CORE_SOCKET_URL)
-        RETAIL_CORE_URL: $(RETAIL_CORE_URL)
-        SWIFTY_BEAVER_APP_ID: $(SWIFTY_BEAVER_APP_ID)
-        SWIFTY_BEAVER_APP_KEY: $(SWIFTY_BEAVER_APP_KEY)
-        SWIFTY_BEAVER_APP_SECRET: $(SWIFTY_BEAVER_APP_SECRET)
-        WALLET_SERVER: $(WALLET_SERVER)
-    platform: iOS
-    postCompileScripts:
-    - name: Get SSL Certificate
-      path: Modules/Network/NetworkKit/Scripts/get_ssl_certificate.sh
-    scheme:
-      testTargets:
-      - NetworkKitTests
-    sources:
-    - createIntermediateGroups: true
-      excludes:
-      - Scripts
-      - Cert
-      path: Modules/Network/NetworkKit
-    - buildPhase:
-        copyFiles:
-          destination: resources
-      group: Modules/Network/NetworkKit/Cert
-      optional: true
-      path: Modules/Network/NetworkKit/Cert/blockchain.der
-    schemes:
-      gatherCoverageData: true
-    type: framework
-  NetworkKitTests:
-    dependencies:
-    - target: NetworkKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
-    templateAttributes:
-      featureName: Network
     templates:
     - ModuleTests
   OnboardingDemo:
@@ -1145,10 +979,7 @@ targets:
     - target: KYCUIKit
     - target: OnboardingKit
     - target: OnboardingUIKit
-    - target: PlatformKit
-    - target: PlatformUIKit
     - target: SharedPackagesKit
-    - target: ToolKit
     platform: iOS
     sources:
       - createIntermediateGroups: true
@@ -1172,7 +1003,6 @@ targets:
   OnboardingUIKit:
     dependencies:
     - target: OnboardingKit
-    - target: ToolKit
     scheme:
       testTargets:
       - OnboardingUIKitTests
@@ -1180,97 +1010,19 @@ targets:
       featureName: OnboardingFeature
     templates:
     - Module
+    - UIModule
   OnboardingUIKitTests:
     dependencies:
     - target: OnboardingUIKit
-    - target: PlatformKit
-    - target: PlatformUIKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AnalyticsKit # required for PlatformUIKit mocks to compile
+      path: Modules/Analytics/Sources/AnalyticsKitMock # required for PlatformUIKit mocks to compile
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
+      path: Modules/Platform/Sources/PlatformUIKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: OnboardingFeature
-    templates:
-    - ModuleTests
-  PlatformKit:
-    dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/CryptoSwift.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - target: AuthenticationKit
-    - target: CommonCryptoKit
-    - target: Localization
-    - target: NetworkKit
-    - target: ToolKit
-    - target: WalletPayloadKit
-    - target: RxAnalyticsKit
-    scheme:
-      testTargets:
-      - PlatformKitTests
-    templateAttributes:
-      featureName: Platform
-    templates:
-    - Module
-  PlatformKitTests:
-    dependencies:
-    - target: PlatformKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/BuySellKit
-    templateAttributes:
-      featureName: Platform
-    templates:
-    - ModuleTests
-  PlatformUIKit:
-    dependencies:
-    - package: Lottie
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/Charts.xcframework
-    - framework: Carthage/Build/Differentiator.xcframework
-    - framework: Carthage/Build/PhoneNumberKit.xcframework
-    - framework: Carthage/Build/RIBs.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxDataSources.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/Zxcvbn.xcframework
-    - target: AnalyticsKit
-    - target: Localization
-    - target: PlatformKit
-    - target: ToolKit
-    - target: RxAnalyticsKit
-    scheme:
-      testTargets:
-      - PlatformUIKitTests
-    templateAttributes:
-      featureName: Platform
-    templates:
-    - Module
-  PlatformUIKitTests:
-    dependencies:
-    - target: PlatformUIKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AnalyticsKit
-    templateAttributes:
-      featureName: Platform
     templates:
     - ModuleTests
   SettingsKit:
@@ -1278,16 +1030,7 @@ targets:
       testTargets:
         - SettingsKitTests
     dependencies:
-    - target: ToolKit
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: CommonCryptoKit
-    - target: NetworkKit
-    - target: WalletPayloadKit
     - target: KYCKit
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
     templateAttributes:
       featureName: SettingsFeature
     templates:
@@ -1297,7 +1040,7 @@ targets:
       - target: SettingsKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/SettingsKit
     templates:
@@ -1306,22 +1049,15 @@ targets:
       featureName: SettingsFeature
   SettingsUIKit:
     dependencies:
-      - target: SharedPackagesKit
       - target: KYCKit
       - target: KYCUIKit
-      - target: ToolKit
-      - target: PlatformKit
-      - target: PlatformUIKit
-      - target: Localization
       - target: SettingsKit
-      - framework: Carthage/Build/RxSwift.xcframework
-      - framework: Carthage/Build/RxRelay.xcframework
-      - framework: Carthage/Build/RxCocoa.xcframework
     scheme:
       testTargets:
         - SettingsUIKitTests
     templates:
     - Module
+    - UIModule
     templateAttributes:
       featureName: SettingsFeature
   SettingsUIKitTests:
@@ -1335,14 +1071,13 @@ targets:
     platform: iOS
     sources:
     - path: SnapshotTestsHostApp
+    postBuildScripts:
+      - path: scripts/fix-snapshot-host-app.sh 
+        name: "[blockchain] Copy Swift Package Manager Generated Bundles"
     type: application
   StellarKit:
     dependencies:
-    - target: PlatformKit
-    - target: Localization
-    - target: ToolKit
     - target: TransactionKit
-    - framework: Carthage/Build/RxSwift.xcframework
     - framework: Carthage/Build/stellarsdk.xcframework
     scheme:
       testTargets:
@@ -1356,11 +1091,11 @@ targets:
     - target: StellarKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/StellarKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: CryptoAssets
     templates:
@@ -1368,17 +1103,6 @@ targets:
   TodayExtension:
     dependencies:
     - sdk: NotificationCenter.framework
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: ToolKit
-    - target: NetworkKit
-    - target: Localization
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxDataSources.xcframework
-    - framework: Carthage/Build/DIKit.xcframework
-    - framework: Carthage/Build/Differentiator.xcframework
     - target: SharedPackagesKit
     platform: iOS
     scheme: {}
@@ -1411,40 +1135,7 @@ targets:
     sources:
     - TodayExtension
     type: app-extension
-  ToolKit:
-    dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/DIKit.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxCombine.xcframework
-    scheme:
-      testTargets:
-      - ToolKitTests
-    templateAttributes:
-      featureName: Tool
-    templates:
-    - Module
-  ToolKitTests:
-    dependencies:
-    - target: ToolKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
-    templateAttributes:
-      featureName: Tool
-    templates:
-    - ModuleTests
   TransactionKit:
-    dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - target: Localization
-    - target: NetworkKit
-    - target: PlatformKit
-    - target: ToolKit
-    - target: AnalyticsKit
     scheme:
       testTargets:
       - TransactionKitTests
@@ -1457,11 +1148,11 @@ targets:
     - target: TransactionKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/TransactionKit
     templateAttributes:
@@ -1471,9 +1162,6 @@ targets:
   TransactionDataKit:
     dependencies:
     - target: TransactionKit
-    - target: PlatformKit
-    - target: NetworkKit
-    - target: ToolKit
     scheme:
       testTargets:
       - TransactionDataKitTests
@@ -1486,9 +1174,9 @@ targets:
     - target: TransactionDataKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     templateAttributes:
       featureName: TransactionFeature
     templates:
@@ -1498,36 +1186,28 @@ targets:
       testTargets:
       - TransactionUIKitTests
     dependencies:
-    - framework: Carthage/Build/BigInt.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - target: AnalyticsKit
     - target: KYCKit
     - target: KYCUIKit
-    - target: Localization
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: ToolKit
     - target: TransactionKit
     templateAttributes:
       featureName: TransactionFeature
     templates:
     - Module
+    - UIModule
   TransactionUIKitTests:
     dependencies:
     - target: TransactionUIKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AnalyticsKit
+      path: Modules/Analytics/Sources/AnalyticsKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
+      path: Modules/Platform/Sources/PlatformKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
+      path: Modules/Platform/Sources/PlatformUIKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/TransactionKit
     - createIntermediateGroups: true
@@ -1536,41 +1216,7 @@ targets:
       featureName: TransactionFeature
     templates:
     - ModuleTests
-  WalletPayloadKit:
-    dependencies:
-    - framework: Carthage/Build/CryptoSwift.xcframework
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCombine.xcframework
-    - target: CommonCryptoKit
-    - target: Localization
-    - target: ToolKit
-    scheme:
-      testTargets:
-      - WalletPayloadKitTests
-    templateAttributes:
-      featureName: WalletPayload
-    templates:
-    - Module
-  WalletPayloadKitTests:
-    dependencies:
-    - target: WalletPayloadKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
-    templateAttributes:
-      featureName: WalletPayload
-    templates:
-    - ModuleTests
   RemoteNotificationsKit:
-    dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxCocoa.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - target: PlatformKit
-    - target: PlatformUIKit
-    - target: ToolKit
-    - target: AnalyticsKit
-    - target: NetworkKit
     scheme:
       testTargets:
       - RemoteNotificationsKitTests
@@ -1583,102 +1229,14 @@ targets:
     - target: RemoteNotificationsKit
     sources:
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
+      path: Modules/Tool/Sources/ToolKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/NetworkKit
+      path: Modules/Network/Sources/NetworkKitMock
     - createIntermediateGroups: true
       path: TestKit/TestKit/Mocks/RemoteNotificationsKit
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AnalyticsKit
+      path: Modules/Analytics/Sources/AnalyticsKitMock
     templateAttributes:
       featureName: RemoteNotifications
     templates:
     - ModuleTests
-  AuthenticationKit:
-    configFiles:
-      Debug Dev: Config/AuthenticationKitConfig/AuthenticationKit-Dev.xcconfig
-      Debug Production: Config/AuthenticationKitConfig/AuthenticationKit-Production.xcconfig
-      Debug Staging: Config/AuthenticationKitConfig/AuthenticationKit-Staging.xcconfig
-      Debug Alpha: Config/AuthenticationKitConfig/AuthenticationKit-Production.xcconfig
-      Release Alpha: Config/AuthenticationKitConfig/AuthenticationKit-Production.xcconfig
-      Release: Config/AuthenticationKitConfig/AuthenticationKit-Production.xcconfig
-      Release Internal: Config/AuthenticationKitConfig/AuthenticationKit-Production.xcconfig
-      Release Staging: Config/AuthenticationKitConfig/AuthenticationKit-Staging.xcconfig
-    dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - framework: Carthage/Build/RxRelay.xcframework
-    - target: HDWalletKit
-    - target: NetworkKit
-    info:
-      path: Modules/AuthenticationFeature/AuthenticationKit/Info.plist
-      properties:
-        LOGIN_URL: $(LOGIN_URL)
-        GOOGLE_RECAPTCHA_SITE_KEY: $(GOOGLE_RECAPTCHA_SITE_KEY)
-    platform: iOS
-    scheme:
-      testTargets:
-      - AuthenticationKitTests
-    templateAttributes:
-      featureName: AuthenticationFeature
-    templates:
-    - Module
-  AuthenticationKitTests:
-    dependencies:
-    - target: AuthenticationKit
-    templateAttributes:
-      featureName: AuthenticationFeature
-    templates:
-      - ModuleTests
-  AuthenticationUIKit:
-    dependencies:
-    - target: AnalyticsKit
-    - target: AuthenticationKit
-    - target: PlatformUIKit
-    scheme:
-      testTargets:
-      - AuthenticationUIKitTests
-    templateAttributes:
-      featureName: AuthenticationFeature
-    templates:
-      - Module
-  AuthenticationUIKitTests:
-    dependencies:
-    - target: AuthenticationUIKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AuthenticationKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/AnalyticsKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ToolKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformUIKit
-    templateAttributes:
-      featureName: AuthenticationFeature
-    templates:
-      - ModuleTests
-  AuthenticationDataKit:
-    dependencies:
-    - framework: Carthage/Build/RxSwift.xcframework
-    - target: AuthenticationKit
-    - target: NetworkKit
-    - target: WalletPayloadKit
-    - target: CommonCryptoKit
-    scheme:
-      testTargets:
-      - AuthenticationDataKitTests
-    templateAttributes:
-      featureName: AuthenticationFeature
-    templates:
-      - Module
-  AuthenticationDataKitTests:
-    dependencies:
-    - target: AuthenticationDataKit
-    - target: PlatformKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/PlatformKit
-    templateAttributes:
-      featureName: AuthenticationFeature
-    templates:
-      - ModuleTests

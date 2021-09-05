@@ -124,7 +124,7 @@ public class BlockchainAnalyticsProvider: AnalyticsServiceProviding {
     
     public var supportedEventTypes: [AnalyticsEventType] = [.new]
     
-    public init() { }
+    public init() {}
     
     public func trackEvent(title: String, parameters: [String : Any]? = nil) {
         print("New Event:\n\(title)\n\(parameters)")

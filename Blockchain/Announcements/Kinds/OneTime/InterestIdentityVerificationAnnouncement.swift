@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 protocol InterestIdentityVerificationAnnouncementRouting: AnyObject {
@@ -41,7 +42,6 @@ final class InterestIdentityVerificationAnnouncement: OneTimeAnnouncement & Acti
                 cornerRadius: .round,
                 size: .init(edge: 32.0)
             ),
-            image: .hidden,
             title: LocalizationId.title,
             description: isKYCVerified ? LocalizationId.Description.kycd : LocalizationId.Description.notKYCd,
             buttons: [button],
@@ -91,3 +91,30 @@ final class InterestIdentityVerificationAnnouncement: OneTimeAnnouncement & Acti
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct InterestIdentityVerificationAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = InterestIdentityVerificationAnnouncement(
+            isKYCVerified: true,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct InterestIdentityVerificationAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            InterestIdentityVerificationAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

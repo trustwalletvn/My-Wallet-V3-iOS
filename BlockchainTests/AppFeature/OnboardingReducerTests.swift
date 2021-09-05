@@ -8,8 +8,8 @@ import RxSwift
 import SettingsKit
 import XCTest
 
-@testable import AuthenticationUIKit
 @testable import Blockchain
+@testable import FeatureAuthenticationUI
 
 class OnboardingReducerTests: XCTestCase {
 
@@ -24,11 +24,7 @@ class OnboardingReducerTests: XCTestCase {
         super.setUp()
 
         mockWallet = MockWallet()
-        settingsApp = MockBlockchainSettingsApp(
-            enabledCurrenciesService: MockEnabledCurrenciesService(),
-            keychainItemWrapper: MockKeychainItemWrapping(),
-            legacyPasswordProvider: MockLegacyPasswordProvider()
-        )
+        settingsApp = MockBlockchainSettingsApp()
         mockWalletManager = WalletManager(
             wallet: mockWallet,
             appSettings: settingsApp,
@@ -62,7 +58,7 @@ class OnboardingReducerTests: XCTestCase {
             initialState: Onboarding.State(),
             reducer: onBoardingReducer,
             environment: Onboarding.Environment(
-                blockchainSettings: settingsApp,
+                appSettings: settingsApp,
                 walletManager: mockWalletManager,
                 alertPresenter: mockAlertPresenter,
                 mainQueue: mockQueue.eraseToAnyScheduler(),
@@ -90,7 +86,7 @@ class OnboardingReducerTests: XCTestCase {
             initialState: Onboarding.State(),
             reducer: onBoardingReducer,
             environment: Onboarding.Environment(
-                blockchainSettings: settingsApp,
+                appSettings: settingsApp,
                 walletManager: mockWalletManager,
                 alertPresenter: mockAlertPresenter,
                 mainQueue: mockQueue.eraseToAnyScheduler(),
@@ -120,7 +116,7 @@ class OnboardingReducerTests: XCTestCase {
             initialState: Onboarding.State(),
             reducer: onBoardingReducer,
             environment: Onboarding.Environment(
-                blockchainSettings: settingsApp,
+                appSettings: settingsApp,
                 walletManager: mockWalletManager,
                 alertPresenter: mockAlertPresenter,
                 mainQueue: mockQueue.eraseToAnyScheduler(),
@@ -148,7 +144,7 @@ class OnboardingReducerTests: XCTestCase {
             initialState: Onboarding.State(),
             reducer: onBoardingReducer,
             environment: Onboarding.Environment(
-                blockchainSettings: settingsApp,
+                appSettings: settingsApp,
                 walletManager: mockWalletManager,
                 alertPresenter: mockAlertPresenter,
                 mainQueue: mockQueue.eraseToAnyScheduler(),
@@ -178,7 +174,7 @@ class OnboardingReducerTests: XCTestCase {
             initialState: Onboarding.State(),
             reducer: onBoardingReducer,
             environment: Onboarding.Environment(
-                blockchainSettings: settingsApp,
+                appSettings: settingsApp,
                 walletManager: mockWalletManager,
                 alertPresenter: mockAlertPresenter,
                 mainQueue: mockQueue.eraseToAnyScheduler(),
@@ -210,7 +206,7 @@ class OnboardingReducerTests: XCTestCase {
             initialState: Onboarding.State(),
             reducer: onBoardingReducer,
             environment: Onboarding.Environment(
-                blockchainSettings: settingsApp,
+                appSettings: settingsApp,
                 walletManager: mockWalletManager,
                 alertPresenter: mockAlertPresenter,
                 mainQueue: mockQueue.eraseToAnyScheduler(),
@@ -249,7 +245,7 @@ class OnboardingReducerTests: XCTestCase {
             initialState: Onboarding.State(),
             reducer: onBoardingReducer,
             environment: Onboarding.Environment(
-                blockchainSettings: settingsApp,
+                appSettings: settingsApp,
                 walletManager: mockWalletManager,
                 alertPresenter: mockAlertPresenter,
                 mainQueue: mockQueue.eraseToAnyScheduler(),

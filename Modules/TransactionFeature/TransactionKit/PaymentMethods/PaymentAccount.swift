@@ -4,6 +4,8 @@ import PlatformKit
 import RxSwift
 import ToolKit
 
+// TODO: replace this with an AccountGroup
+
 /// A type that represents a payment method as a `BlockchainAccount`.
 public struct PaymentAccount: FiatAccount {
 

@@ -1,11 +1,12 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import AuthenticationKit
 import DIKit
 import ERC20Kit
+import FeatureAuthenticationDomain
 import PlatformKit
 import PlatformUIKit
 import RxSwift
+import ToolKit
 
 /// The announcement interactor cross all the preliminary data
 /// that is required to display announcements to the user
@@ -42,18 +43,36 @@ final class AnnouncementInteractor: AnnouncementInteracting {
                 values.contains(true)
             }
 
+        let hasLinkedBanks = beneficiariesService.hasLinkedBank.take(1).asSingle()
+        let isSimpleBuyEligible = simpleBuyEligibilityService.isEligible
+        let authenticatorType = repository.authenticatorType
+        let announcementAsset: Single<CryptoCurrency?> = featureFetcher
+            .fetchString(for: .announcementAsset)
+            .optional()
+            .catchErrorJustReturn(nil)
+            .map { [enabledCurrenciesService] code -> CryptoCurrency? in
+                guard let code = code else {
+                    return nil
+                }
+                return CryptoCurrency(
+                    code: code,
+                    enabledCurrenciesService: enabledCurrenciesService
+                )
+            }
+
         return Single.zip(
             nabuUser,
             tiers,
             sddEligibility,
             countries,
-            repository.authenticatorType,
+            authenticatorType,
             hasAnyWalletBalance,
             Single.zip(
+                announcementAsset,
                 isSimpleBuyAvailable,
                 simpleBuyOrderDetails,
-                beneficiariesService.hasLinkedBank.take(1).asSingle(),
-                simpleBuyEligibilityService.isEligible
+                hasLinkedBanks,
+                isSimpleBuyEligible
             )
         )
         .map { payload -> AnnouncementPreliminaryData in
@@ -64,7 +83,7 @@ final class AnnouncementInteractor: AnnouncementInteracting {
                 countries,
                 authenticatorType,
                 hasAnyWalletBalance,
-                (isSimpleBuyAvailable, pendingOrderDetails, hasLinkedBanks, isSimpleBuyEligible)
+                (announcementAsset, isSimpleBuyAvailable, pendingOrderDetails, hasLinkedBanks, isSimpleBuyEligible)
             ) = payload
             return AnnouncementPreliminaryData(
                 user: user,
@@ -76,7 +95,8 @@ final class AnnouncementInteractor: AnnouncementInteracting {
                 pendingOrderDetails: pendingOrderDetails,
                 isSimpleBuyAvailable: isSimpleBuyAvailable,
                 isSimpleBuyEligible: isSimpleBuyEligible,
-                hasAnyWalletBalance: hasAnyWalletBalance
+                hasAnyWalletBalance: hasAnyWalletBalance,
+                announcementAsset: announcementAsset
             )
         }
         .observeOn(MainScheduler.instance)
@@ -93,6 +113,8 @@ final class AnnouncementInteractor: AnnouncementInteracting {
     private let beneficiariesService: BeneficiariesServiceAPI
     private let pendingOrderDetailsService: PendingOrderDetailsServiceAPI
     private let simpleBuyEligibilityService: EligibilityServiceAPI
+    private let featureFetcher: FeatureFetching
+    private let enabledCurrenciesService: EnabledCurrenciesServiceAPI
     private let coincore: CoincoreAPI
 
     // MARK: - Setup
@@ -102,11 +124,13 @@ final class AnnouncementInteractor: AnnouncementInteracting {
         wallet: WalletProtocol = WalletManager.shared.wallet,
         dataRepository: BlockchainDataRepository = .shared,
         tiersService: KYCTiersServiceAPI = resolve(),
+        featureFetcher: FeatureFetching = resolve(),
         infoService: GeneralInformationServiceAPI = resolve(),
         supportedPairsInteractor: SupportedPairsInteractorServiceAPI = resolve(),
         beneficiariesService: BeneficiariesServiceAPI = resolve(),
         pendingOrderDetailsService: PendingOrderDetailsServiceAPI = resolve(),
         simpleBuyEligibilityService: EligibilityServiceAPI = resolve(),
+        enabledCurrenciesService: EnabledCurrenciesServiceAPI = resolve(),
         coincore: CoincoreAPI = resolve()
     ) {
         self.repository = repository
@@ -119,5 +143,7 @@ final class AnnouncementInteractor: AnnouncementInteracting {
         self.pendingOrderDetailsService = pendingOrderDetailsService
         self.simpleBuyEligibilityService = simpleBuyEligibilityService
         self.coincore = coincore
+        self.featureFetcher = featureFetcher
+        self.enabledCurrenciesService = enabledCurrenciesService
     }
 }

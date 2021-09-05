@@ -33,6 +33,7 @@ enum TransactionAction: MviAction {
     case availableDestinationAccountsListUpdated([BlockchainAccount])
     case updateAmount(MoneyValue) // Anytime the amount changes
     case pendingTransactionUpdated(PendingTransaction)
+    case performKYCChecks
     case prepareTransaction // When continue button is tapped on enter amount screen
     case executeTransaction
     case updateTransactionComplete(TransactionResult)
@@ -50,10 +51,15 @@ enum TransactionAction: MviAction {
     case pendingTransactionStarted(allowFiatInput: Bool)
     case modifyTransactionConfirmation(TransactionConfirmation)
     case invalidateTransaction
+}
+
+extension TransactionAction {
 
     // TODO: Clean up this function
     // swiftlint:disable function_body_length
+    // swiftlint:disable cyclomatic_complexity
     func reduce(oldState: TransactionState) -> TransactionState {
+        Logger.shared.debug("[Transaction Flow] Readucing Action: \(self)")
         switch self {
         case .pendingTransactionStarted(let allowFiatInput):
             var newState = oldState
@@ -86,51 +92,58 @@ enum TransactionAction: MviAction {
                 unimplemented()
             }
             return newState
+
         case .initialiseWithSourceAndTargetAccount(let action, let sourceAccount, let target, let passwordRequired):
-            /// If the user scans a BitPay QR code, the account will be a
-            /// BitPayInvoiceTarget. This means we do not proceed to the enter amount
-            /// screen but rather the confirmation detail screen.
-            let next: TransactionStep = target is BitPayInvoiceTarget ? .confirmDetail : .enterAmount
+            // If the user scans a BitPay QR code, the account will be a BitPayInvoiceTarget.
+            // This means we do not proceed to the enter amount screen but rather the confirmation detail screen.
+            let next: TransactionFlowStep = target is BitPayInvoiceTarget ? .confirmDetail : .enterAmount
             let step = passwordRequired ? .enterPassword : next
             return TransactionState(
                 action: action,
-                destination: target,
-                errorState: .none,
-                passwordRequired: passwordRequired,
                 source: sourceAccount,
+                destination: target,
+                passwordRequired: passwordRequired,
                 step: step
-            ).withUpdatedBackstack(oldState: oldState)
+            )
+            .withUpdatedBackstack(oldState: oldState)
+
         case .initialiseWithSourceAndPreferredTarget(let action, let sourceAccount, let target, let passwordRequired):
             return TransactionState(
                 action: action,
-                destination: target,
-                errorState: .none,
-                passwordRequired: passwordRequired,
                 source: sourceAccount,
-                step: .enterAmount
-            ).withUpdatedBackstack(oldState: oldState)
-        case .initialiseWithTargetAndNoSource(let action, let target, let passwordRequired):
-            return TransactionState(
-                action: action,
                 destination: target,
-                errorState: .none,
                 passwordRequired: passwordRequired,
-                source: nil,
-                step: .selectSource
-            ).withUpdatedBackstack(oldState: oldState)
-        case .initialiseWithNoSourceOrTargetAccount(let action, let passwordRequired):
+                step: .enterAmount
+            )
+            .withUpdatedBackstack(oldState: oldState)
+
+        case .initialiseWithTargetAndNoSource(let action, let target, let passwordRequired):
+            // On buy the source is always the default payment method returned by the API
+            // The source should be loaded based on this fact by the `TransactionModel` when processing the state change.
             return TransactionState(
                 action: action,
-                errorState: .none,
+                source: nil,
+                destination: target,
                 passwordRequired: passwordRequired,
-                step: .selectSource
-            ).withUpdatedBackstack(oldState: oldState)
+                step: action == .buy ? .initial : .selectSource
+            )
+            .withUpdatedBackstack(oldState: oldState)
+
+        case .initialiseWithNoSourceOrTargetAccount(let action, let passwordRequired):
+            // On buy the source is always the default payment method returned by the API
+            // The source should be loaded based on this fact by the `TransactionModel` when processing the state change.
+            return TransactionState(
+                action: action,
+                passwordRequired: passwordRequired,
+                step: action == .buy ? .initial : .selectSource
+            )
+            .withUpdatedBackstack(oldState: oldState)
+
         case .initialiseWithSourceAccount(let action, let sourceAccount, let passwordRequired):
             return TransactionState(
                 action: action,
-                errorState: .none,
-                passwordRequired: passwordRequired,
-                source: sourceAccount
+                source: sourceAccount,
+                passwordRequired: passwordRequired
             )
         case .fetchFiatRates:
             return oldState
@@ -145,18 +158,26 @@ enum TransactionAction: MviAction {
             newState.destinationToFiatPair = pair.destination
             newState.sourceToFiatPair = pair.source
             return newState
+
         case .sourceAccountSelected(let sourceAccount):
             var newState = oldState
             newState.source = sourceAccount
             newState.sourceDestinationPair = nil
             newState.sourceToFiatPair = nil
             newState.destinationToFiatPair = nil
+
+            // The standard flow is [select source] -> [select target] -> [enter amount] -> ...
+            // Therefore if we have ... -> [enter amount] -> [select source] -> ... we should go back to [enter amount]
+            let isGoingBack = newState.stepsBackStack.contains { $0 == .enterAmount }
             return newState
+                .update(keyPath: \.isGoingBack, value: isGoingBack)
+                .withUpdatedBackstack(oldState: oldState)
+
         case .targetAccountSelected(let destinationAccount):
-            /// If the user scans a BitPay QR code, the account will be a
-            /// BitPayInvoiceTarget. This means we do not proceed to the enter amount
-            /// screen but rather the confirmation detail screen.
-            let step: TransactionStep = destinationAccount is BitPayInvoiceTarget ? .confirmDetail : .enterAmount
+            // If the user scans a BitPay QR code, the account will be a
+            // BitPayInvoiceTarget. This means we do not proceed to the enter amount
+            // screen but rather the confirmation detail screen.
+            let step: TransactionFlowStep = destinationAccount is BitPayInvoiceTarget ? .confirmDetail : .enterAmount
             var newState = oldState
             newState.errorState = .none
             newState.destination = destinationAccount
@@ -165,42 +186,69 @@ enum TransactionAction: MviAction {
             newState.sourceDestinationPair = nil
             newState.sourceToFiatPair = nil
             newState.destinationToFiatPair = nil
-            // TODO: In `Buy`, the user would be going back
-            // if the `stepsBackStack` contains `.enterAmount`
-            return newState.withUpdatedBackstack(oldState: oldState)
+
+            // The standard flow is [select source] -> [select target] -> [enter amount] -> ...
+            // Therefore if we have ... -> [enter amount] -> [select target] -> ... we should go back to [enter amount]
+            let isGoingBack = newState.stepsBackStack.contains { $0 == .enterAmount }
+            return newState
+                .update(keyPath: \.isGoingBack, value: isGoingBack)
+                .withUpdatedBackstack(oldState: oldState)
+
         case .updateAmount:
             // Amount is updated after validation.
             var newState = oldState
             newState.nextEnabled = false
             return newState
+
         case .availableSourceAccountsListUpdated(let sources):
             var newState = oldState
             newState.availableSources = sources
             return newState.withUpdatedBackstack(oldState: oldState)
+
         case .availableDestinationAccountsListUpdated(let targets):
-            let newStep: TransactionStep = oldState.passwordRequired ? .enterPassword : .selectTarget
-            var newState = oldState
-            newState.availableTargets = targets as! [TransactionTarget]
-            newState.step = oldState.step == .enterAmount ? .enterAmount : newStep
-            return newState.withUpdatedBackstack(oldState: oldState)
+            let newStep: TransactionFlowStep
+            if oldState.source != nil, oldState.destination != nil {
+                // This operation could be done just to refresh the list of possible targets. E.g. for buy.
+                // If we have both source and destination, the next step should be to enter an amount.
+                newStep = oldState.passwordRequired ? .enterPassword : .enterAmount
+            } else {
+                // If there's not target account when this list is updated, we should have the user select one.
+                newStep = oldState.passwordRequired ? .enterPassword : .selectTarget
+            }
+            return oldState
+                .update(keyPath: \.availableTargets, value: targets as! [TransactionTarget])
+                .update(keyPath: \.step, value: newStep)
+                .update(keyPath: \.isGoingBack, value: false)
+                .withUpdatedBackstack(oldState: oldState)
+
         case .pendingTransactionUpdated(let pendingTransaction):
             var newState = oldState
             newState.pendingTransaction = pendingTransaction
             newState.nextEnabled = pendingTransaction.validationState == .canExecute
             newState.errorState = pendingTransaction.validationState.mapToTransactionErrorState
             return newState.withUpdatedBackstack(oldState: oldState)
+
         case .showSourceSelection:
-            // TODO: If the user is going through `Buy`, the user
-            // is not going back. The target selection screen should be presented modally.
             return oldState
                 .update(keyPath: \.step, value: .selectSource)
-                .update(keyPath: \.isGoingBack, value: true)
+                .update(keyPath: \.isGoingBack, value: oldState.action != .buy)
+                .withUpdatedBackstack(oldState: oldState)
+
         case .showTargetSelection:
-            // TODO: If the user is going through `Buy`, the user
-            // is not going back. The target selection screen should be presented modally.
             return oldState
                 .update(keyPath: \.step, value: .selectTarget)
-                .update(keyPath: \.isGoingBack, value: true)
+                .update(keyPath: \.isGoingBack, value: oldState.action != .buy)
+                .withUpdatedBackstack(oldState: oldState)
+
+        case .performKYCChecks:
+            return oldState
+                // KYC is shown and dismissed by a separate module so not for us to dismiss the modal
+                .update(keyPath: \.step, value: .kycChecks)
+                // Ensure this is threated as a step forward (although it won't be added to the back stack)
+                .update(keyPath: \.isGoingBack, value: false)
+                // Ensure the previoust step is in the back step
+                .withUpdatedBackstack(oldState: oldState)
+
         case .prepareTransaction:
             var newState = oldState
             newState.nextEnabled = false // Don't enable until we get a validated pendingTx from the interactor
@@ -248,6 +296,9 @@ enum TransactionAction: MviAction {
                 .withUpdatedBackstack(oldState: oldState)
         }
     }
+
+    // swiftlint:enable function_body_length
+    // swiftlint:enable cyclomatic_complexity
 
     func isValid(for oldState: TransactionState) -> Bool {
         switch self {
@@ -302,8 +353,9 @@ enum FatalTransactionError: Error, Equatable {
 }
 
 extension TransactionState {
+
     func withUpdatedBackstack(oldState: TransactionState) -> TransactionState {
-        if oldState.step != step, oldState.step.addToBackStack {
+        if !isGoingBack, oldState.step != step, oldState.step.addToBackStack {
             var newState = self
             var newStack = oldState.stepsBackStack
             newStack.append(oldState.step)

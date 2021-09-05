@@ -1,7 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import AuthenticationKit
 import Combine
+import FeatureAuthenticationDomain
 import PlatformKit
 import RxRelay
 import RxSwift
@@ -227,13 +227,13 @@ final class WalletRepository: NSObject, WalletRepositoryAPI, WalletCredentialsPr
 
     init(
         jsContextProvider: JSContextProviderAPI,
-        settings: AppSettingsAPI,
+        appSettings: AppSettingsAPI,
         reactiveWallet: ReactiveWalletAPI,
         jsScheduler: SerialDispatchQueueScheduler = MainScheduler.instance,
         combineJSScheduler: DispatchQueue = DispatchQueue.main
     ) {
         self.jsContextProvider = jsContextProvider
-        self.settings = settings
+        settings = appSettings
         self.reactiveWallet = reactiveWallet
         self.jsScheduler = jsScheduler
         self.combineJSScheduler = combineJSScheduler

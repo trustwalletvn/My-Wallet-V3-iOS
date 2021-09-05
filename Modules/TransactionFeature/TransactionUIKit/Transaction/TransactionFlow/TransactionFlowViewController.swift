@@ -67,7 +67,11 @@ final class TransactionFlowViewController: UINavigationController, TransactionFl
     }
 
     func pop() {
-        popViewController(animated: true)
+        if presentedViewController != nil {
+            dismiss()
+        } else {
+            popViewController(animated: true)
+        }
     }
 
     func dismiss() {

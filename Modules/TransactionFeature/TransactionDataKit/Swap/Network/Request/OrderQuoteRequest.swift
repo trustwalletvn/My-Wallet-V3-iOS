@@ -3,11 +3,11 @@
 import PlatformKit
 import TransactionKit
 
-extension TransactionKit.Product: Codable {}
+extension TransactionKit.ProductType: Codable {}
 
 struct OrderQuoteRequest: Encodable {
 
-    let product: TransactionKit.Product
+    let product: TransactionKit.ProductType
     let direction: OrderDirection
     let pair: TransactionKit.OrderPair
 

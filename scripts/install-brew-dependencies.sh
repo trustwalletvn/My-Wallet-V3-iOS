@@ -11,4 +11,4 @@ set -u
 
 git -C "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core" remote set-url origin https://github.com/Homebrew/homebrew-core
 brew update
-brew install autoconf automake carthage gnu-sed pkg-config swiftlint libtool xcodegen swiftformat
+brew bundle install

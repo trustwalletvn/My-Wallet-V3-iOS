@@ -80,7 +80,7 @@ struct TargetAccountAuxiliaryView: View {
                 }
             )
             .disabled(!viewStore.enabled)
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(BorderlessButtonStyle())
         }
     }
 }
@@ -108,6 +108,7 @@ extension TargetAccountAuxiliaryView {
     }
 }
 
+#if DEBUG
 struct TargetAccountAuxiliaryView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .leading) {
@@ -120,3 +121,4 @@ struct TargetAccountAuxiliaryView_Previews: PreviewProvider {
         }
     }
 }
+#endif

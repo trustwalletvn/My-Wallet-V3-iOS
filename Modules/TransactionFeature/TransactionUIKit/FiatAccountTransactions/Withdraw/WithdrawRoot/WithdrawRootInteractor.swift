@@ -166,7 +166,7 @@ final class WithdrawRootInteractor: Interactor,
             .disposeOnDeactivate(interactor: self)
     }
 
-    func presentKYCTiersScreen() {
+    func presentKYCFlowIfNeeded(from viewController: UIViewController, completion: @escaping (Bool) -> Void) {
         unimplemented()
     }
 

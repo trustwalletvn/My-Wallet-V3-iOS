@@ -27,7 +27,14 @@ final class TransactionFlowBuilder: TransactionFlowBuildable {
         // MARK: TransactionModel
 
         let transactionInteractor = TransactionInteractor()
-        let transactionModel = TransactionModel(transactionInteractor: transactionInteractor)
+        let transactionModel = TransactionModel(
+            initialState: TransactionState(
+                action: action,
+                source: sourceAccount,
+                destination: target
+            ),
+            transactionInteractor: transactionInteractor
+        )
 
         // MARK: TransactionFlow
 

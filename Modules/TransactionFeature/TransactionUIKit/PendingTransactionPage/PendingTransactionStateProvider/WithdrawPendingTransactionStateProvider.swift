@@ -50,7 +50,7 @@ final class WithdrawPendingTransactionStateProvider: PendingTransactionStateProv
                             image: currency.logoResource,
                             contentColor: .white,
                             backgroundColor: currency.isFiatCurrency ? .fiat : currency.brandColor,
-                            cornerRadius: currency.isFiatCurrency ? .value(8.0) : .round,
+                            cornerRadius: currency.isFiatCurrency ? .roundedHigh : .round,
                             accessibilityIdSuffix: "PendingTransactionSuccessBadge"
                         )
                     ),
@@ -81,7 +81,7 @@ final class WithdrawPendingTransactionStateProvider: PendingTransactionStateProv
                             image: currency.logoResource,
                             contentColor: .white,
                             backgroundColor: currency.isFiatCurrency ? .fiat : currency.brandColor,
-                            cornerRadius: currency.isFiatCurrency ? .value(8.0) : .round,
+                            cornerRadius: currency.isFiatCurrency ? .roundedHigh : .round,
                             accessibilityIdSuffix: "PendingTransactionPendingBadge"
                         )
                     ),
@@ -106,7 +106,7 @@ final class WithdrawPendingTransactionStateProvider: PendingTransactionStateProv
                             image: currency.logoResource,
                             contentColor: .white,
                             backgroundColor: currency.isFiatCurrency ? .fiat : currency.brandColor,
-                            cornerRadius: currency.isFiatCurrency ? .value(8.0) : .round,
+                            cornerRadius: currency.isFiatCurrency ? .roundedHigh : .round,
                             accessibilityIdSuffix: "PendingTransactionFailureBadge"
                         )
                     ),

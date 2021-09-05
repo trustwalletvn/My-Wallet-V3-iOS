@@ -1,10 +1,10 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import AnalyticsKit
-import AuthenticationUIKit
 import Combine
 import ComposableArchitecture
 import DIKit
+import FeatureAuthenticationUI
 import PlatformKit
 import PlatformUIKit
 import RemoteNotificationsKit
@@ -61,7 +61,7 @@ struct CoreAppEnvironment {
     var appFeatureConfigurator: FeatureConfiguratorAPI // TODO: deprecated, use featureFlagsService instead
     var internalFeatureService: InternalFeatureFlagServiceAPI // TODO: deprecated, use featureFlagsService instead
     var fiatCurrencySettingsService: FiatCurrencySettingsServiceAPI
-    var blockchainSettings: BlockchainSettings.App
+    var blockchainSettings: BlockchainSettingsAppAPI
     var credentialsStore: CredentialsStoreAPI
     var alertPresenter: AlertViewPresenterAPI
     var walletUpgradeService: WalletUpgradeServicing
@@ -84,7 +84,7 @@ let mainAppReducer = Reducer<CoreAppState, CoreAppAction, CoreAppEnvironment>.co
             action: /CoreAppAction.onboarding,
             environment: { environment -> Onboarding.Environment in
                 Onboarding.Environment(
-                    blockchainSettings: environment.blockchainSettings,
+                    appSettings: environment.blockchainSettings,
                     walletManager: environment.walletManager,
                     alertPresenter: environment.alertPresenter,
                     mainQueue: .main,
@@ -472,7 +472,7 @@ let mainAppReducerCore = Reducer<CoreAppState, CoreAppAction, CoreAppEnvironment
 ///
 /// The key used to encrypt/decrypt the guid and sharedKey is provided in the response to a successful PIN auth attempt.
 internal func syncPinKeyWithICloud(
-    blockchainSettings: BlockchainSettings.App,
+    blockchainSettings: BlockchainSettingsAppAPI,
     credentialsStore: CredentialsStoreAPI
 ) {
     guard !blockchainSettings.isPairedWithWallet else {
@@ -521,7 +521,7 @@ func handleWalletDecryption(_ decryption: WalletDecryption) -> CoreAppAction {
     return .didDecryptWallet(decryption)
 }
 
-func clearPinIfNeeded(for passwordPartHash: String?, appSettings: BlockchainSettings.App) {
+func clearPinIfNeeded(for passwordPartHash: String?, appSettings: AppSettingsAuthenticating) {
     // Because we are not storing the password on the device. We record the first few letters of the hashed password.
     // With the hash prefix we can then figure out if the password changed. If so, clear the pin
     // so that the user can reset it

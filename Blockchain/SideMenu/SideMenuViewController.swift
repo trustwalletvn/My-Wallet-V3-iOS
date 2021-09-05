@@ -129,7 +129,7 @@ class SideMenuViewController: UIViewController {
     }
 
     private func registerCells() {
-        tableView.registerNibCell(SideMenuCell.self)
+        tableView.registerNibCell(SideMenuCell.self, in: .main)
     }
 
     private func initializeTableView() {

@@ -3,6 +3,7 @@
 import BigInt
 @testable import EthereumKit
 import PlatformKit
+import TestKit
 
 enum MockEthereumWalletTestData {
     static let walletId = MockWalletTestData.walletId

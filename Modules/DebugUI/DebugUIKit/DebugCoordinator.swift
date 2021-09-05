@@ -105,6 +105,19 @@ extension DebugCoordinator: UIAdaptivePresentationControllerDelegate {
     }
 }
 
+extension Reactive where Base: UIResponder {
+    var motionEnded: ControlEvent<UIEvent.EventSubtype> {
+        let source = methodInvoked(#selector(UIResponder.motionEnded(_:with:)))
+            .map { args -> UIEvent.EventSubtype in
+                guard let type = args.first as? Int else {
+                    return .none
+                }
+                return UIEvent.EventSubtype(rawValue: type) ?? .none
+            }
+        return ControlEvent(events: source)
+    }
+}
+
 #if INTERNAL_BUILD
 /// Needed as we're capturing the shake motion on a window level
 // swiftlint:disable all

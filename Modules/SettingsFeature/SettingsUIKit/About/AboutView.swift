@@ -37,7 +37,7 @@ final class AboutView: UIView {
     }
 
     func setup() {
-        fromNib(named: AboutView.objectName)
+        fromNib(named: AboutView.objectName, in: Bundle(for: Self.self))
         logoImageView.tintColor = .textFieldText
         var hash = ""
         if let info = Bundle.main.infoDictionary {

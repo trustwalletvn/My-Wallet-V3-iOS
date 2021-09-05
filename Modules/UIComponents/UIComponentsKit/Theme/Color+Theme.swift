@@ -47,6 +47,12 @@ extension Color {
     public static let textCallOutBackground = Color(paletteColor: .grey000)
     public static let secureFieldEyeSymbol = Color(paletteColor: .grey400)
 
+    // MARK: Password Strength
+
+    public static let weakPassword = Color(paletteColor: .red600)
+    public static let mediumPassword = Color(paletteColor: .orange600)
+    public static let strongPassword = Color(paletteColor: .green600)
+
     // MARK: Badge
 
     public static let badgeTextInfo = Color(paletteColor: .blue400)

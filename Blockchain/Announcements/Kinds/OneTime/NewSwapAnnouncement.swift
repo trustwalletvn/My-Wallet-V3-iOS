@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Swap 2.0 announcement is a periodic announcement that introduces the user to in-wallet asset trading
@@ -72,7 +73,13 @@ final class NewSwapAnnouncement: OneTimeAnnouncement & ActionableAnnouncement {
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-swap"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-swap", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: style.title,
             description: style.description,
             buttons: [button],
@@ -128,3 +135,31 @@ final class NewSwapAnnouncement: OneTimeAnnouncement & ActionableAnnouncement {
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct NewSwapAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = NewSwapAnnouncement(
+            isEligibleForSimpleBuy: true,
+            isTier1Or2Verified: true,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct NewSwapAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            NewSwapAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

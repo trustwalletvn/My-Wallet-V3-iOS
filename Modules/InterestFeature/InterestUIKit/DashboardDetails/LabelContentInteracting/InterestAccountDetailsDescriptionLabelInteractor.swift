@@ -16,7 +16,7 @@ final class InterestAccountDetailsDescriptionLabelInteractor {
 
         private lazy var setup: Void = {
             service
-                .details(for: cryptoCurrency)
+                .fetchInterestAccountDetailsForCryptoCurrency(cryptoCurrency)
                 .asObservable()
                 .map(\.value)
                 .compactMap { $0?.totalInterest }
@@ -35,14 +35,14 @@ final class InterestAccountDetailsDescriptionLabelInteractor {
 
         // MARK: - Private Properties
 
-        private let service: SavingAccountServiceAPI
+        private let service: InterestAccountServiceAPI
         private let cryptoCurrency: CryptoCurrency
         private let disposeBag = DisposeBag()
 
         // MARK: - Private Accessors
 
         init(
-            service: SavingAccountServiceAPI,
+            service: InterestAccountServiceAPI,
             cryptoCurrency: CryptoCurrency
         ) {
             self.service = service
@@ -54,7 +54,7 @@ final class InterestAccountDetailsDescriptionLabelInteractor {
 
         private lazy var setup: Void = {
             service
-                .details(for: cryptoCurrency)
+                .fetchInterestAccountDetailsForCryptoCurrency(cryptoCurrency)
                 .asObservable()
                 .map(\.value)
                 .compactMap { $0?.pendingInterest }
@@ -73,14 +73,14 @@ final class InterestAccountDetailsDescriptionLabelInteractor {
 
         // MARK: - Private Properties
 
-        private let service: SavingAccountServiceAPI
+        private let service: InterestAccountServiceAPI
         private let cryptoCurrency: CryptoCurrency
         private let disposeBag = DisposeBag()
 
         // MARK: - Private Accessors
 
         init(
-            service: SavingAccountServiceAPI,
+            service: InterestAccountServiceAPI,
             cryptoCurrency: CryptoCurrency
         ) {
             self.service = service
@@ -92,7 +92,7 @@ final class InterestAccountDetailsDescriptionLabelInteractor {
 
         private lazy var setup: Void = {
             service
-                .limits(for: cryptoCurrency)
+                .fetchInterestAccountLimitsForCryptoCurrency(cryptoCurrency)
                 .asObservable()
                 .map(\.value)
                 .compactMap { $0?.lockupDescription }
@@ -109,14 +109,14 @@ final class InterestAccountDetailsDescriptionLabelInteractor {
 
         // MARK: - Private Properties
 
-        private let service: SavingAccountServiceAPI
+        private let service: InterestAccountServiceAPI
         private let cryptoCurrency: CryptoCurrency
         private let disposeBag = DisposeBag()
 
         // MARK: - Private Accessors
 
         init(
-            service: SavingAccountServiceAPI,
+            service: InterestAccountServiceAPI,
             cryptoCurrency: CryptoCurrency
         ) {
             self.service = service
@@ -145,14 +145,14 @@ final class InterestAccountDetailsDescriptionLabelInteractor {
 
         // MARK: - Private Properties
 
-        private let service: SavingAccountServiceAPI
+        private let service: InterestAccountServiceAPI
         private let cryptoCurrency: CryptoCurrency
         private let disposeBag = DisposeBag()
 
         // MARK: - Private Accessors
 
         init(
-            service: SavingAccountServiceAPI,
+            service: InterestAccountServiceAPI,
             cryptoCurrency: CryptoCurrency
         ) {
             self.service = service

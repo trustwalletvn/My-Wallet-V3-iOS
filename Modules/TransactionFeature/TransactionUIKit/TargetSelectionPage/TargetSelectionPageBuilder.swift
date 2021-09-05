@@ -14,7 +14,13 @@ enum TargetSelectionListenerBridge {
 
 // MARK: - Builder
 
-typealias BackButtonInterceptor = () -> Observable<(step: TransactionStep, backStack: [TransactionStep], isGoingBack: Bool)>
+typealias BackButtonInterceptor = () -> Observable<
+    (
+        step: TransactionFlowStep,
+        backStack: [TransactionFlowStep],
+        isGoingBack: Bool
+    )
+>
 
 protocol TargetSelectionBuildable {
     func build(

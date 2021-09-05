@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Wallet Intro announcement is a periodic announcement that can also be entirely removed
@@ -41,7 +42,13 @@ final class WalletIntroAnnouncement: PeriodicAnnouncement & RemovableAnnouncemen
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "logo_small"),
+            badgeImage: .init(
+                image: .local(name: "logo_small", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.Welcome.title,
             description: LocalizationConstants.AnnouncementCards.Welcome.description,
             buttons: [ctaButton, skipButton],
@@ -90,3 +97,30 @@ final class WalletIntroAnnouncement: PeriodicAnnouncement & RemovableAnnouncemen
         self.analyticsRecorder = analyticsRecorder
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct WalletIntroAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = WalletIntroAnnouncement(
+            reappearanceTimeInterval: 0,
+            action: {},
+            dismiss: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct WalletIntroAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            WalletIntroAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 350))
+    }
+}
+#endif

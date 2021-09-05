@@ -34,7 +34,7 @@ public final class DashboardViewController: BaseScreenViewController {
     public init(fiatBalanceCellProvider: FiatBalanceCellProviding = resolve()) {
         self.fiatBalanceCellProvider = fiatBalanceCellProvider
         presenter = DashboardScreenPresenter()
-        super.init(nibName: DashboardViewController.objectName, bundle: DashboardViewController.bundle)
+        super.init(nibName: DashboardViewController.objectName, bundle: Bundle(for: DashboardViewController.self))
     }
 
     @available(*, unavailable)
@@ -89,8 +89,8 @@ public final class DashboardViewController: BaseScreenViewController {
         tableView.register(AnnouncementTableViewCell.self)
         fiatBalanceCellProvider.registerFiatBalanceCell(for: tableView)
         tableView.register(NoticeTableViewCell.self)
-        tableView.registerNibCell(TotalBalanceTableViewCell.self)
-        tableView.registerNibCell(HistoricalBalanceTableViewCell.self)
+        tableView.registerNibCell(TotalBalanceTableViewCell.self, in: Bundle(for: TotalBalanceTableViewCell.self))
+        tableView.registerNibCell(HistoricalBalanceTableViewCell.self, in: Bundle(for: HistoricalBalanceTableViewCell.self))
         tableView.separatorColor = .clear
         tableView.delegate = self
         tableView.dataSource = self

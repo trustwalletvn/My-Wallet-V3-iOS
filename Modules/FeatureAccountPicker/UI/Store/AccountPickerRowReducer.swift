@@ -5,8 +5,8 @@ import ComposableArchitecture
 let accountPickerRowReducer =
     Reducer<AccountPickerRow, AccountPickerRowAction, AccountPickerRowEnvironment> { _, action, _ in
         switch action {
-        case .accountPickerRowDidTap(let name):
-            print("row tapped")
+        case .accountPickerRowDidTap(let title):
+            print("row tapped: \(title)")
             return .none
         }
     }

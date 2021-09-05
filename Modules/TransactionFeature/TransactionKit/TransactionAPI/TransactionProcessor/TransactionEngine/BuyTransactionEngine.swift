@@ -114,11 +114,12 @@ final class BuyTransactionEngine: TransactionEngine {
         let paymentMethod = paymentAccount.paymentMethod
         return Single.zip(
             sourceAccount.balance,
-            convertToSourceCurrencyValue(amount: amount)
+            fiatExchangeRatePairs.asSingle()
         )
-        .map { sourceBalance, amount in
-            PendingTransaction(
-                amount: amount,
+        .map { sourceBalance, exchangePairs in
+            let targetToSourceExchangeRate = exchangePairs.source
+            return PendingTransaction(
+                amount: try amount.convert(using: targetToSourceExchangeRate),
                 available: sourceBalance,
                 feeAmount: .zero(currency: fiatCurrency), // TODO: calculate the fee properly
                 feeForFullAvailable: .zero(currency: fiatCurrency), // TODO: calculate the fee properly
@@ -133,17 +134,6 @@ final class BuyTransactionEngine: TransactionEngine {
         .flatMap(weak: self) { (self, transaction) in
             self.validateAmount(pendingTransaction: transaction)
         }
-    }
-
-    private func convertToSourceCurrencyValue(amount: MoneyValue) -> Single<MoneyValue> {
-        guard amount.currency != sourceAccount.currencyType else {
-            return .just(amount)
-        }
-        return fetchExchangeRate(from: amount.currency, to: sourceAccount.currencyType)
-            .map { exchangeRate in
-                try amount.convert(using: exchangeRate.quote)
-            }
-            .asSingle()
     }
 
     private func fetchExchangeRate(from source: CurrencyType, to target: CurrencyType) -> Observable<MoneyValuePair> {

@@ -5,36 +5,53 @@ import PlatformKit
 import ToolKit
 import TransactionKit
 
-struct TransactionState: Equatable, StateType {
+struct TransactionState: StateType {
 
-    var action: AssetAction = .send
-    var allowFiatInput: Bool = false
+    // MARK: Actual Transaction Data
+
+    let action: AssetAction
+
     var availableSources: [BlockchainAccount] = []
     var availableTargets: [TransactionTarget] = []
-    var destination: TransactionTarget? {
-        didSet {
-            Logger.shared.debug("TransactionTarget: \(String(describing: destination))")
-        }
-    }
 
-    var destinationToFiatPair: MoneyValuePair?
-    var errorState: TransactionErrorState = .none
-    var executionStatus: TransactionExecutionStatus = .notStarted
-    var isGoingBack: Bool = false
-    var nextEnabled: Bool = false
-    var passwordRequired: Bool = false
-    var pendingTransaction: PendingTransaction?
-    var secondPassword: String = ""
     var source: BlockchainAccount?
+    var destination: TransactionTarget?
+
     var sourceDestinationPair: MoneyValuePair?
+
     var sourceToFiatPair: MoneyValuePair?
-    var step: TransactionStep = .initial {
+    var destinationToFiatPair: MoneyValuePair?
+
+    // MARK: Execution Supporting Data
+
+    var pendingTransaction: PendingTransaction?
+    var executionStatus: TransactionExecutionStatus = .notStarted
+    var errorState: TransactionErrorState = .none // TODO: make it associated data of execution status, if related?
+
+    // MARK: UI Supporting Data
+
+    var allowFiatInput: Bool = false
+
+    // MARK: Second Password Supporting Data
+
+    var passwordRequired: Bool = false
+    var secondPassword: String = ""
+
+    // MARK: Navigation Supporting Data
+
+    var nextEnabled: Bool = false
+    var isGoingBack: Bool = false
+
+    var step: TransactionFlowStep = .initial {
         didSet {
             isGoingBack = false
         }
     }
 
-    var stepsBackStack: [TransactionStep] = []
+    var stepsBackStack: [TransactionFlowStep] = []
+}
+
+extension TransactionState: Equatable {
 
     static func == (lhs: TransactionState, rhs: TransactionState) -> Bool {
         lhs.action == rhs.action
@@ -56,6 +73,9 @@ struct TransactionState: Equatable, StateType {
             && lhs.availableSources.map(\.identifier) == rhs.availableSources.map(\.identifier)
             && lhs.availableTargets.map(\.label) == rhs.availableTargets.map(\.label)
     }
+}
+
+extension TransactionState {
 
     /// The source account `CryptoCurrency`.
     var asset: CurrencyType {
@@ -314,7 +334,7 @@ extension TransactionState {
     }
 }
 
-enum TransactionStep: Equatable {
+enum TransactionFlowStep: Equatable {
     case initial
     case enterPassword
     case selectSource
@@ -322,6 +342,7 @@ enum TransactionStep: Equatable {
     case enterAddress
     case selectTarget
     case enterAmount
+    case kycChecks
     case confirmDetail
     case inProgress
     case closed
@@ -338,6 +359,7 @@ enum TransactionStep: Equatable {
              .enterPassword,
              .inProgress,
              .initial,
+             .kycChecks,
              .linkABank:
             return false
         }

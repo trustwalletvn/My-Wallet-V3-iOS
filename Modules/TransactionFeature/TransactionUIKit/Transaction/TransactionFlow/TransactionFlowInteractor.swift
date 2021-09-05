@@ -10,6 +10,8 @@ import ToolKit
 
 protocol TransactionFlowRouting: Routing {
 
+    var isDisplayingRootViewController: Bool { get }
+
     /// Pop the current screen off the stack.
     func pop()
 
@@ -32,6 +34,9 @@ protocol TransactionFlowRouting: Routing {
 
     /// Show the `source` selection screen. This replaces the root.
     func routeToSourceAccountPicker(transactionModel: TransactionModel, action: AssetAction)
+
+    /// Present the destination account picker modally over the current screen
+    func presentSourceAccountPicker(transactionModel: TransactionModel, action: AssetAction)
 
     /// Show the target selection screen (currently only used in `Send`).
     /// This pushes onto the prior screen.
@@ -63,10 +68,13 @@ protocol TransactionFlowRouting: Routing {
 
     /// Show the confirmation screen. This pushes onto the prior screen.
     func routeToConfirmation(transactionModel: TransactionModel)
+
+    /// Presents the KYC Flow if needed or progresses the transactionModel to the next step otherwise
+    func presentKYCFlowIfNeeded(completion: @escaping (Bool) -> Void)
 }
 
 protocol TransactionFlowListener: AnyObject {
-    func presentKYCTiersScreen()
+    func presentKYCFlowIfNeeded(from viewController: UIViewController, completion: @escaping (Bool) -> Void)
     func dismissTransactionFlow()
 }
 
@@ -81,9 +89,9 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
     weak var listener: TransactionFlowListener?
     private var initialStep: Bool = true
     private let transactionModel: TransactionModel
-    private let action: AssetAction
-    private let sourceAccount: BlockchainAccount?
-    private let target: TransactionTarget?
+    private let action: AssetAction // TODO: this should be removed and taken from TransactionModel
+    private let sourceAccount: BlockchainAccount? // TODO: this should be removed and taken from TransactionModel
+    private let target: TransactionTarget? // TODO: this should be removed and taken from TransactionModel
     private let analyticsHook: TransactionAnalyticsHook
 
     init(
@@ -111,10 +119,17 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
         super.didBecomeActive()
         transactionModel
             .state
+            .do(onNext: { state in
+                #if DEBUG
+                print("[\(TransactionFlowInteractor.self)] State changed:")
+                dump(state, maxDepth: 1)
+                #endif
+            })
             .distinctUntilChanged(\.step)
+            .withPrevious()
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe { [weak self] state in
-                self?.handleStateChange(newState: state)
+            .subscribe { [weak self] previousState, newState in
+                self?.handleStateChange(previousState: previousState, newState: newState)
             }
             .disposeOnDeactivate(interactor: self)
 
@@ -123,39 +138,47 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
         requireSecondPassword
             .observeOn(MainScheduler.asyncInstance)
             .map { [sourceAccount, target, action] passwordRequired -> TransactionAction in
-                if action == .deposit {
+                switch action {
+                case .deposit:
                     return self.handleFiatDeposit(
                         sourceAccount: sourceAccount,
                         target: target,
                         passwordRequired: passwordRequired
                     )
-                }
-                guard let sourceAccount = sourceAccount else {
-                    return .initialiseWithNoSourceOrTargetAccount(
-                        action: action,
-                        passwordRequired: passwordRequired
-                    )
-                }
-                guard let target = target else {
-                    return .initialiseWithSourceAccount(
-                        action: action,
-                        sourceAccount: sourceAccount,
-                        passwordRequired: passwordRequired
-                    )
-                }
-                switch action {
-                case .swap:
+
+                case .swap where sourceAccount != nil && target != nil:
                     return .initialiseWithSourceAndPreferredTarget(
                         action: action,
-                        sourceAccount: sourceAccount,
-                        target: target,
+                        sourceAccount: sourceAccount!,
+                        target: target!,
                         passwordRequired: passwordRequired
                     )
-                default:
+
+                case _ where sourceAccount != nil && target != nil:
                     return .initialiseWithSourceAndTargetAccount(
                         action: action,
-                        sourceAccount: sourceAccount,
-                        target: target,
+                        sourceAccount: sourceAccount!,
+                        target: target!,
+                        passwordRequired: passwordRequired
+                    )
+
+                case _ where sourceAccount != nil:
+                    return .initialiseWithSourceAccount(
+                        action: action,
+                        sourceAccount: sourceAccount!,
+                        passwordRequired: passwordRequired
+                    )
+
+                case _ where target != nil:
+                    return .initialiseWithTargetAndNoSource(
+                        action: action,
+                        target: target!,
+                        passwordRequired: passwordRequired
+                    )
+
+                default:
+                    return .initialiseWithNoSourceOrTargetAccount(
+                        action: action,
                         passwordRequired: passwordRequired
                     )
                 }
@@ -226,9 +249,12 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
     }
 
     func didTapClose() {
-        // TODO: For `Buy`, the user may tap `close` on the target selection
-        // screen, which is presented modally over the `EnterAmount` screen.
-        // If this is the case we need to `process(action: .returnToPreviousStep)`
+        guard router?.isDisplayingRootViewController == true else {
+            // there's a modal to dismiss
+            transactionModel.process(action: .returnToPreviousStep)
+            return
+        }
+        // the top most view controller is at the root of the flow, so dismissing it means closing the flow itself.
         router?.closeFlow()
         analyticsHook.onClose(action: action)
     }
@@ -261,7 +287,10 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
     }
 
     func continueToKYCTiersScreen() {
-        listener?.presentKYCTiersScreen()
+        router?.presentKYCFlowIfNeeded { _ in
+            // NOOP: this was designed for Swap where presenting KYC means replacing the root view with a KYC prompt.
+            // This completion block is never called.
+        }
     }
 
     func showGenericFailure(error: Error) {
@@ -275,12 +304,12 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
         analyticsHook.onClose(action: action)
     }
 
-    private func handleStateChange(newState: TransactionState) {
-        if !initialStep, newState.step == TransactionStep.initial {
+    private func handleStateChange(previousState: TransactionState?, newState: TransactionState) {
+        if !initialStep, newState.step == .initial {
             finishFlow()
         } else {
-            initialStep = false
-            showFlowStep(newState: newState)
+            initialStep = newState.step == .initial
+            showFlowStep(previousState: previousState, newState: newState)
             analyticsHook.onStepChanged(newState)
         }
     }
@@ -289,14 +318,21 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
         transactionModel.process(action: .resetFlow)
     }
 
-    private func showFlowStep(newState: TransactionState) {
+    private func showFlowStep(previousState: TransactionState?, newState: TransactionState) {
         guard !newState.isGoingBack else {
-            // TODO: If the user is dismissing a modally presented screen,
-            // we should not call `didTapBack()`, but rather `.dismiss()`
-            // as the user is only dismissing a single screen.
-            router?.didTapBack()
+            guard previousState?.step != .kycChecks else {
+                // KYC gets dismissed automatically
+                return
+            }
+
+            if router?.isDisplayingRootViewController == false {
+                router?.dismiss()
+            } else {
+                router?.didTapBack()
+            }
             return
         }
+
         switch newState.step {
         case .initial:
             break
@@ -328,15 +364,17 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
                     action: action
                 )
             case .buy:
-                // `Buy` should present the destination picker
-                // above the `Enter Amount` screen.
-                guard newState.stepsBackStack.contains(.enterAmount) else {
-                    fatalError("Expected to present over Enter Amount")
+                if newState.stepsBackStack.contains(.enterAmount) {
+                    router?.presentDestinationAccountPicker(
+                        transactionModel: transactionModel,
+                        action: action
+                    )
+                } else {
+                    router?.routeToDestinationAccountPicker(
+                        transactionModel: transactionModel,
+                        action: action
+                    )
                 }
-                router?.presentDestinationAccountPicker(
-                    transactionModel: transactionModel,
-                    action: action
-                )
             case .withdraw:
                 // `Withdraw` shows the destination screen modally. It does not
                 // present over another screen (and thus replaces the root).
@@ -356,6 +394,15 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
                 )
             }
 
+        case .kycChecks:
+            router?.presentKYCFlowIfNeeded { [transactionModel] didCompleteKYC in
+                if didCompleteKYC {
+                    transactionModel.process(action: .prepareTransaction)
+                } else {
+                    transactionModel.process(action: .returnToPreviousStep)
+                }
+            }
+
         case .confirmDetail:
             router?.routeToConfirmation(transactionModel: transactionModel)
 
@@ -366,10 +413,32 @@ final class TransactionFlowInteractor: PresentableInteractor<TransactionFlowPres
             )
 
         case .selectSource:
-            router?.routeToSourceAccountPicker(
-                transactionModel: transactionModel,
-                action: action
-            )
+            switch action {
+            case .buy:
+                if newState.stepsBackStack.contains(.enterAmount) {
+                    router?.presentSourceAccountPicker(
+                        transactionModel: transactionModel,
+                        action: action
+                    )
+                } else {
+                    router?.routeToSourceAccountPicker(
+                        transactionModel: transactionModel,
+                        action: action
+                    )
+                }
+
+            case .deposit,
+                 .withdraw,
+                 .sell,
+                 .swap,
+                 .send,
+                 .receive,
+                 .viewActivity:
+                router?.routeToSourceAccountPicker(
+                    transactionModel: transactionModel,
+                    action: action
+                )
+            }
 
         case .enterAddress:
             router?.routeToDestinationAccountPicker(

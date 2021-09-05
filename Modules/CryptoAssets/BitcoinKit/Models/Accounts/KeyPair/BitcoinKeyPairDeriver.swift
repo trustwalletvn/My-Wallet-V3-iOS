@@ -33,12 +33,12 @@ struct BitcoinKeyDerivationInput: KeyDerivationInput, Equatable {
 }
 
 protocol BitcoinKeyPairDeriverAPI: KeyPairDeriverAPI where Input == BitcoinKeyDerivationInput, Pair == BitcoinKeyPair {
-    func derive(input: Input) -> Result<Pair, Error>
+    func derive(input: Input) -> Result<Pair, HDWalletError>
 }
 
 class AnyBitcoinKeyPairDeriver: BitcoinKeyPairDeriverAPI {
 
-    private let deriver: AnyKeyPairDeriver<BitcoinKeyPair, BitcoinKeyDerivationInput>
+    private let deriver: AnyKeyPairDeriver<BitcoinKeyPair, BitcoinKeyDerivationInput, HDWalletError>
 
     // MARK: - Init
 
@@ -46,20 +46,24 @@ class AnyBitcoinKeyPairDeriver: BitcoinKeyPairDeriverAPI {
         self.init(with: BitcoinKeyPairDeriver())
     }
 
-    init<D: KeyPairDeriverAPI>(with deriver: D) where D.Input == BitcoinKeyDerivationInput, D.Pair == BitcoinKeyPair {
-        self.deriver = AnyKeyPairDeriver<BitcoinKeyPair, BitcoinKeyDerivationInput>(deriver: deriver)
+    init<D: KeyPairDeriverAPI>(
+        with deriver: D
+    ) where D.Input == BitcoinKeyDerivationInput, D.Pair == BitcoinKeyPair, D.Error == HDWalletError {
+        self.deriver = AnyKeyPairDeriver(deriver: deriver)
     }
 
-    func derive(input: BitcoinKeyDerivationInput) -> Result<BitcoinKeyPair, Error> {
+    func derive(input: BitcoinKeyDerivationInput) -> Result<BitcoinKeyPair, HDWalletError> {
         deriver.derive(input: input)
     }
 }
 
 class BitcoinKeyPairDeriver: BitcoinKeyPairDeriverAPI {
 
-    func derive(input: BitcoinKeyDerivationInput) -> Result<BitcoinKeyPair, Error> {
+    func derive(input: BitcoinKeyDerivationInput) -> Result<BitcoinKeyPair, HDWalletError> {
         let bitcoinCoinType = CoinType.bitcoin
-        let hdwallet = HDWallet(mnemonic: input.mnemonic, passphrase: input.passphrase)
+        guard let hdwallet = HDWallet(mnemonic: input.mnemonic, passphrase: input.passphrase) else {
+            return .failure(.walletFailedToInitialise())
+        }
         let privateKey = hdwallet.getExtendedPrivateKey(purpose: .bip44, coin: bitcoinCoinType, version: .xprv)
         let xpub = hdwallet.getExtendedPublicKey(purpose: .bip44, coin: bitcoinCoinType, version: .xpub)
         let bitcoinPrivateKey = BitcoinPrivateKey(xpriv: privateKey)

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="186" id="KGk-i7-Jjw" customClass="ButtonsTableViewCell" customModule="PlatformUIKit">
+            <rect key="frame" x="0.0" y="0.0" width="343" height="186"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="343" height="186"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="fec-no-phf">
+                        <rect key="frame" x="24" y="16" width="295" height="154"/>
+                    </stackView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="fec-no-phf" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="1Wb-Wg-mhV"/>
+                    <constraint firstAttribute="trailing" secondItem="fec-no-phf" secondAttribute="trailing" constant="24" id="4HG-NX-jiF"/>
+                    <constraint firstItem="fec-no-phf" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="24" id="YFl-jL-pt7"/>
+                    <constraint firstAttribute="bottom" secondItem="fec-no-phf" secondAttribute="bottom" constant="16" id="vGr-WI-hl0"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="stackView" destination="fec-no-phf" id="Lkz-r0-P7e"/>
+            </connections>
+            <point key="canvasLocation" x="60.14492753623189" y="101.11607142857143"/>
+        </tableViewCell>
+    </objects>
+</document>

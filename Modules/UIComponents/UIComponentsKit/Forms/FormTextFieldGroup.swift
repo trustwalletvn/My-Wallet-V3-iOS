@@ -143,13 +143,7 @@ struct FormTextFieldGroupDemoView: View {
                     $0.autocapitalizationType = .none
                 },
                 trailingAccessoryView: {
-                    Button(
-                        action: { isPasswordVisible.toggle() },
-                        label: {
-                            Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
-                                .foregroundColor(Color.secureFieldEyeSymbol)
-                        }
-                    )
+                    PasswordEyeSymbolButton(isPasswordVisible: $isPasswordVisible)
                 }
             )
             FormTextFieldGroup(

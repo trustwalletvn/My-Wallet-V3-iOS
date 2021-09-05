@@ -3,7 +3,6 @@
 
 @import CommonCryptoKit;
 @import WalletPayloadKit;
-@import NetworkKit;
 @import ToolKit;
 #import <CommonCrypto/CommonKeyDerivation.h>
 #import <JavaScriptCore/JavaScriptCore.h>
@@ -788,16 +787,6 @@ NSString * const kLockboxInvitation = @"lockbox";
     self.emptyAccountIndex = 0;
     self.recoveredAccountIndex = 0;
     [self.context evaluateScriptCheckIsOnMainQueue:[NSString stringWithFormat:@"MyWalletPhone.recoverWithMetadata(\"%@\")", [mnemonicPassphrase escapedForJS]]];
-}
-
-- (void)updateServerURL:(NSString *)newURL
-{
-    [self.context evaluateScriptCheckIsOnMainQueue:[NSString stringWithFormat:@"MyWalletPhone.updateServerURL(\"%@\")", [newURL escapedForJS]]];
-}
-
-- (void)updateAPIURL:(NSString *)newURL
-{
-    [self.context evaluateScriptCheckIsOnMainQueue:[NSString stringWithFormat:@"MyWalletPhone.updateAPIURL(\"%@\")", [newURL escapedForJS]]];
 }
 
 - (NSString *)getXpubForAccount:(int)accountIndex assetType:(LegacyAssetType)assetType
@@ -1736,14 +1725,6 @@ NSString * const kLockboxInvitation = @"lockbox";
     }
 
     return [NSData dataWithBytesNoCopy:derivedBytes length:derivedKeyLen];
-}
-
-#pragma mark - Debugging
-
-- (void)useDebugSettingsIfSet
-{
-    [self updateServerURL:[BlockchainAPI.shared walletUrl]];
-    [self updateAPIURL:[BlockchainAPI.shared apiUrl]];
 }
 
 @end

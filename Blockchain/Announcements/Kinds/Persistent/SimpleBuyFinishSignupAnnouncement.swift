@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 final class SimpleBuyFinishSignupAnnouncement: PersistentAnnouncement & ActionableAnnouncement {
@@ -30,7 +31,13 @@ final class SimpleBuyFinishSignupAnnouncement: PersistentAnnouncement & Actionab
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-v"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-v", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizedString.title,
             description: LocalizedString.description,
             buttons: [button],
@@ -71,3 +78,30 @@ final class SimpleBuyFinishSignupAnnouncement: PersistentAnnouncement & Actionab
         self.analyticsRecorder = analyticsRecorder
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct SimpleBuyFinishSignupAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = SimpleBuyFinishSignupAnnouncement(
+            canCompleteTier2: true,
+            hasIncompleteBuyFlow: true,
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct SimpleBuyFinishSignupAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            SimpleBuyFinishSignupAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

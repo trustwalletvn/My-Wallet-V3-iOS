@@ -1,5 +1,0 @@
-"NSCameraUsageDescription" = "Questo è richiesto affinché l'app scansioni i codici QR.";
-"NSMicrophoneUsageDescription" = "Richiesto per l'acquisizione video.";
-"NSFaceIDUsageDescription" = "L'attivazione di Face ID ti consente di accedere in modo sicuro al tuo portafoglio.";
-"NSLocationWhenInUseUsageDescription" = "Blockchain ha bisogno di accedere alla tua posizione per mostrarti le attività commerciali nelle vicinanze che accettano Bitcoin.";
-"NSPhotoLibraryUsageDescription" = "La tua autorizzazione è necessaria per caricare documenti dalla tua libreria di foto.";

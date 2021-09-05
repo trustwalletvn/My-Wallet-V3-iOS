@@ -126,7 +126,7 @@ final class NetworkFeeSelectionViewController: UIViewController, NetworkFeeSelec
         tableView.register(RadioLineItemTableViewCell.self)
         tableView.register(SeparatorTableViewCell.self)
         tableView.register(LabelTableViewCell.self)
-        tableView.registerNibCell(ButtonsTableViewCell.self)
+        tableView.registerNibCell(ButtonsTableViewCell.self, in: .platformUIKit)
         tableView.separatorInset = .zero
         tableView.tableFooterView = UIView()
         tableView.estimatedRowHeight = 80

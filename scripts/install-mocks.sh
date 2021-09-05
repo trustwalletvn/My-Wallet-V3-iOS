@@ -11,4 +11,13 @@
 #
 #  Mocks will be actually generated when you first run tests.
 
-mockingbird install --target AnalyticsKitTests --sources AnalyticsKit --disable-swiftlint
+echo "generate_mocks.sh begin"
+echo "\n"
+
+echo "AnalyticsKit mocks"
+cd Modules/Analytics
+sh Scripts/generate_mocks.sh
+cd ../..
+
+echo "\n"
+echo "generate_mocks.sh end"

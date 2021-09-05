@@ -30,6 +30,7 @@
 "Welcome to Blockchain" = "Blockchain'e Hoşgeldiniz";
 "Recover Funds" = "Fonları Kurtarın";
 "Backup phrase" = "Yedekleme ifadesi";
+"Password" = "Parola";
 "email" = "E-posta Adresiniz";
 "Continue" = "Devam et";
 "Weak" = "Güçsüz";
@@ -42,6 +43,7 @@
 "Rate us" = "Bizi değerlendirin";
 "Forget wallet" = "Cüzdanı unut";
 "Confirm Payment" = "Ödemeyi Onayla";
+"Fee" = "ücret";
 "Imported Addresses" = "İçe Aktarılan Adresler";
 "Change PIN" = "Pin'i değiştir";
 "Addresses" = "Adresler";
@@ -56,6 +58,7 @@
 "Edit" = "Düzenle";
 "Warning" = "Uyarı";
 "Extended Public Key" = "Genişletilmiş Genel Anahtar";
+"Address" = "Adres";
 "copy_address" = "Adres kopyala";
 "Archive" = "Arşiv";
 "Unarchive" = "Arşivden Çıkar";
@@ -181,6 +184,7 @@
 "National ID Card" = "Ulusal kimlik kartı";
 "Residence Card" = "Ev kartı";
 "Application Complete" = "Başvuru Tamamlandı";
+"Need some help?" = "Yardıma ihtiyacım var?";
 "Read Now" = "Şimdi Oku";
 "Failed" = "Başarısız oldu";
 "Verified" = "Doğrulanmış";
@@ -211,6 +215,7 @@
 "By completing the Gold Level requirements you are automatically eligible for our airdrop program." = "Altın Seviyesi gereksinimlerini tamamlayarak otomatik olarak airdrop programımıza hak kazanırsınız.";
 "Approved!" = "Onaylandı!";
 "In Review" = "İncelemede";
+"Available" = "Mevcut";
 "Swap Currently Unavailable" = "Şu Anda Kullanılamıyor";
 "Requires Email, Name, Date of Birth and Address" = "E-posta, Ad, Doğum Tarihi ve Adres gerektirir";
 "View Your Portfolio" = "Portföyünüzü Görüntüleyin";
@@ -240,6 +245,7 @@
 "Amount to send" = "Gönderilecek tutar";
 "Only send funds from a bank account in your name. If not, your deposit could be delayed or rejected." = "Yalnızca adınızdaki bir banka hesabından para gönderin. Aksi takdirde, depozitonuz ertelenebilir veya reddedilebilir.";
 "Are you sure?" = "Emin misiniz?";
+"Cancel Order" = "Siparişi iptal et";
 "Transfer Details" = "Transfer Ayrıntıları";
 "Oops!" = "Hata!";
 "Something went wrong. Please try again." = "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.";
@@ -2000,3 +2006,80 @@ Stellar airdrop için uzun bir bekleme listesi olduğunu ve ücretsiz XLM talepl
 "Your Sell Order Has Started." = "Satış Emriniz Başlatıldı.";
 "Your wallet is safe. We have blocked this device from logging into your wallet." = "Cüzdanınız güvende. Bu cihazın cüzdanınızda oturum açmasını engelledik.";
 "your@email.com" = "e-posta@adresiniz.com";
+"+Add New" = "+Yeni Ekle";
+"Earn Interest" = "Faiz Kazanın";
+"Email: " = "E-posta: ";
+"Incorrect 2FA code. %d attempts left" = "Hatalı 2FA Kodu. %d deneme hakkı kaldı";
+"Keep track of your crypto balances from your Wallet's dashboard. Your Wallet currently supports Bitcoin, Ether, Bitcoin Cash, Stellar XLM and PAX." = "Cüzdanınızın anasayfasından kripto sepetinizi görüntüleyin. Cüzdanınız Bitcoin, Ethereum, Bitcoin Cash, Stellar Lumen ve USD PAX'ı desteklemektedir.";
+"Missing 2FA code" = "Eksik 2FA kodu";
+"Resend SMS" = "Yeniden SMS Gönder";
+"This account has been locked due to too many failed authentications" = "Başarısız çok fazla kimlik doğrulaması yapıldığı için bu hesap kilitlendi.";
+"USD Digital is now Paxos Standard" = "USD Dijital artık Paxos Standart oldu";
+"We’ve updated the naming of USD Digital (USD-D) to Paxos Standard (PAX). USD Digital was built using the Paxos standard. If you held USD-D, your funds are not affected." = "USD Digital (USD-D) adını Paxos Standart (PAX) olarak güncelledik. USD Digital, Paxos standart kullanılarak oluşturuldu. Elinizde USD-D varsa paranız etkilenmez.";
+"%@ (%@) is Now Trading" = "%1$@ (%2$@) Artık İşlem Görüyor";
+"1 %@ = %@" = "1 %1$@ = %2$@";
+"and" = "ve";
+"Buy %@" = "%@ Al";
+"Buy, sell, swap, send, receive and store %@ in your Blockchain.com Wallet." = "Blockchain.com Wallet'ınızda %@ satın alın, satın, takas edin, gönderin, tahsil edin ve saklayın.";
+"Can't log in?" = "Giriş yapamıyor musunuz?";
+"Can’t find your phrase?" = "İfadenizi bulamıyor musunuz?";
+"Continue to Reset" = "Sıfırlamaya Devam Et";
+"Create Account" = "Hesap Oluştur";
+"Enter new password" = "Yeni şifre gir";
+"Enter recovery phrase" = "Kurtarma i̇fadesini gir";
+"Enter your twelve word Secret Private Key Recovery Phrase to log in. Separate each word with a space." = "Oturum açmak için 12 kelimelik Gizli Özel Anahtar Kurtarma İ̇fadenizi girin. Her kelime sonrasında bir boşluk bırakın.";
+"Error Sending SMS" = "SMS Gönderme Hatası";
+"Error Signing In" = "Oturum Açma Hatası";
+"For security reasons you cannot proceed with signing in.\nPlease try to log in on web." = "Güvenlik gerekçesiyle oturum açma işlemine devam edemiyorsunuz.\
+Lütfen web sitesinden giriş yapmayı deneyin.";
+"For your security, you may have to re-verify your identity before accessing your trading or interest account." = "Güvenliğiniz için al-sat veya faiz hesabınıza erişmeden önce kimliğinizi yeniden doğrulamanız gerekebilir.";
+"Go Back" = "Geri Dön";
+"If your account has added security measures like Google Authenticator, please have that ready." = "Hesabınızda Google Authenticator gibi ilave güvenlik önlemleri varsa lütfen hazır halde tutun.";
+"Import Wallet" = "Cüzdan İçeri Aktar";
+"Import Your Wallet?" = "Cüzdanınız İçeri Aktarılsın mı?";
+"Incorrect Wallet Identifier" = "Yanlış Cüzdan Kimlik Tanıtıcı";
+"Invalid recovery phrase" = "Geçersiz kurtarma ifadesi";
+"Log In on the Web ->" = "Web Sitesinden Giriş ->";
+"Log In Request From Web" = "Web Sitesinden Giriş Talebi";
+"Log In with Browser" = "Tarayıcı ile Giriş Yap";
+"Manual Login" = "Manuel Giriş";
+"Manual Pairing Login" = "Manuel Eşleştirme Girişi";
+"Message sent" = "Mesaj gönderildi";
+"Network Error" = "Ağ Hatası";
+"Password Strength" = "Şifre Zorluk Seviyesi";
+"Passwords don't match" = "Şifreler uyuşmuyor";
+"PIN Disabled" = "PIN Devre Dışı";
+"Re-enter new password" = "Yeni şifreyi tekrar girin";
+"Reset Account" = "Hesap Sıfırla";
+"Reset Password" = "Şifre Sıfırla";
+"Reset Your Account?" = "Hesabınız Sıfırlansın mı?";
+"Resetting Account May Result In\nLost Funds" = "Hesabı Sıfırlamak Paraların Kaybolmasına\
+Yol Açabilir";
+"Resetting will restore your Trading, Interest, and Exchange accounts." = "Sıfırlama işlemi Al-Sat, Faiz ve Exchange hesaplarınızı kurtarır.";
+"Retry Recovery Phrase" = "Kurtarma Aşamasını Tekrar Dene";
+"Second Password Detected" = "İ̇kinci Şifre Tespit Edildi";
+"Select a Crypto Currency" = "Kripto Para Seçin";
+"Select a Payment Method" = "Ödeme Yöntemi Seçin";
+"The minimum buy is %@" = "En az %@ tutarında alım yapılabilir.";
+"There was an error sending you the SMS message.\nPlease try again." = "SMS mesajı gönderilirken bir hata oluştu.\
+Lütfen tekrar deneyin.";
+"There’s no account associated with the seed phrase you entered. You can import and manage your wallet instead." = "Girdiğiniz çekirdek ifade ile ilişkili hesap bulunmuyor. Bunun yerine cüzdanınızı içeri aktarıp yönetebilirsiniz.";
+"This is the unique password you entered when creating your wallet." = "Cüzdanınızı oluştururken girdiğiniz benzersiz şifre budur.";
+"This means that if you lose your recovery phrase, you will lose access to your Private Key Wallet funds. You can always restore your Private Key Wallet funds later if you find your recovery phrase." = "Yani kurtarma ifadenizi kaybederseniz Özel Anahtarlı Cüzdanınızdaki paralara erişimi kaybedersiniz. Kurtarma ifadenizi bulursanız Özel Anahtarlı Cüzdanınızdaki paraları daima geri alabilirsiniz.";
+"To access your Wallet, please log in on the web.\nBelow is what you'll need." = "Cüzdanınıza erişmek için lütfen web sitesinden giriş yapın.\
+Gerekenler aşağıda belirtilmiştir.";
+"Trouble Logging In" = "Giriş Yaparken Sorunla Karşılaşıldı";
+"Try again in" = "Sonra tekrar deneyin";
+"Use at least 8 characters and a mix of letters, numbers, and symbols" = "Harf, rakam ve sembol karışımından oluşan en az 8 karakter kullanın.";
+"Use your email address or the Wallet ID. Locate your Wallet ID at the bottom of most Blockchain.com emails." = "E-posta adresinizi veya Cüzdan Kimliğini kullanın. Cüzdan Kimliğinizi çoğu Blockchain.com e-postasının alt kısmında bulabilirsiniz.";
+"Wallet ID or Email" = "Cüzdan Kimliği ve E-posta";
+"We cannot establish a connection with our server.\nPlease try to sign in again." = "Sunucumuzla bağlantı kuramıyoruz.\
+Lütfen tekrar oturum açmayı deneyin.";
+"We have sent you a verification code message." = "Size doğrulama kodu içeren bir mesaj gönderdik.";
+"We noticed a log in attempt from a device you don't usually use." = "Genellikle kullanmadığınız bir cihazdan oturum açma denemesi fark ettik.";
+"We’re moving away from 2nd passwords.\nTo use the mobile app, log in on web to enable 2FA." = "İkinci şifreleri kaldırıyoruz.\
+Mobil uygulamayı kullanmak için web sitesinden oturum açıp 2FA'yı etkinleştirin.";
+"You can buy up to %@" = "En fazla %@ satın alabilirsiniz";
+"You've made too many failed attempts to log in with your PIN. Please try again in 60 seconds." = "PIN ile çok fazla başarısız oturum açma denemesi yaptınız. Lütfen 60 saniye sonra tekrar deneyin.";
+"Your Password" = "Şifreniz";
+"© %i Blockchain Luxembourg S.A. All rights reserved." = "© %i Blockchain Luxembourg S.A. Her hakkı saklıdır.";

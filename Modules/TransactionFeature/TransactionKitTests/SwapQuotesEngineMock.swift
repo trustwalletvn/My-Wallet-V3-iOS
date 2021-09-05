@@ -3,7 +3,6 @@
 import BigInt
 import PlatformKit
 import RxSwift
-import RxTest
 @testable import TransactionKit
 import XCTest
 

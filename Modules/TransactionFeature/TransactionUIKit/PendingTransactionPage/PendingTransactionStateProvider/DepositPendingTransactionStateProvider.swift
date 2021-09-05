@@ -49,7 +49,7 @@ final class DepositPendingTransactionStateProvider: PendingTransactionStateProvi
                             image: currency.logoResource,
                             contentColor: .white,
                             backgroundColor: currency.isFiatCurrency ? .fiat : currency.brandColor,
-                            cornerRadius: .value(8.0),
+                            cornerRadius: .roundedHigh,
                             accessibilityIdSuffix: "PendingTransactionSuccessBadge"
                         )
                     ),
@@ -80,7 +80,7 @@ final class DepositPendingTransactionStateProvider: PendingTransactionStateProvi
                             image: amount.currency.logoResource,
                             contentColor: .white,
                             backgroundColor: currency.isFiatCurrency ? .fiat : currency.brandColor,
-                            cornerRadius: .value(8.0),
+                            cornerRadius: .roundedHigh,
                             accessibilityIdSuffix: "PendingTransactionPendingBadge"
                         )
                     ),
@@ -104,7 +104,7 @@ final class DepositPendingTransactionStateProvider: PendingTransactionStateProvi
                             image: currency.logoResource,
                             contentColor: .white,
                             backgroundColor: currency.isFiatCurrency ? .fiat : currency.brandColor,
-                            cornerRadius: .value(8.0),
+                            cornerRadius: .roundedHigh,
                             accessibilityIdSuffix: "PendingTransactionFailureBadge"
                         )
                     ),

@@ -151,7 +151,7 @@ let emailVerificationReducer = Reducer.combine(
                     message: TextState(L10n.EmailVerification.couldNotLoadVerificationStatusAlertMessage),
                     primaryButton: .default(
                         TextState(L10n.GenericError.retryButtonTitle),
-                        send: .loadVerificationState
+                        action: .send(.loadVerificationState)
                     ),
                     secondaryButton: .cancel()
                 )

@@ -47,7 +47,10 @@ let cryptoCurrencySelectionReducer = CryptoCurrencySelectionReducer { state, act
             state.loadingErrorAlert = AlertState(
                 title: TextState("Something went wrong"),
                 message: TextState("Couldn't load a list of available cryptocurrencies: \(String(describing: error))"),
-                primaryButton: .default(TextState("Retry"), send: .loadCryptoCurrencies),
+                primaryButton: .default(
+                    TextState("Retry"),
+                    action: .send(.loadCryptoCurrencies)
+                ),
                 secondaryButton: .cancel()
             )
         }

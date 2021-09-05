@@ -1,6 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import AnalyticsKit
+import Combine
 import DashboardUIKit
 import DIKit
 import InterestKit
@@ -49,6 +50,9 @@ import WalletPayloadKit
     @LazyInject private var recorder: AnalyticsEventRecorderAPI
     @LazyInject private var secureChannelRouter: SecureChannelRouting
     @LazyInject private var transactionsAdapter: TransactionsAdapterAPI
+    @LazyInject private var alertPresenter: AlertViewPresenterAPI
+
+    @LazyInject private var coincore: CoincoreAPI
 
     @Inject var airdropRouter: AirdropRouterAPI
     private var settingsRouterAPI: SettingsRouterAPI?
@@ -62,7 +66,9 @@ import WalletPayloadKit
     @objc var tabControllerManager: TabControllerManager?
     private(set) var sideMenuViewController: SideMenuViewController!
     private weak var accountsAndAddressesNavigationController: AccountsAndAddressesNavigationController?
+
     private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: NSObject
 
@@ -309,7 +315,7 @@ extension AppCoordinator: SideMenuViewControllerDelegate {
         case .logout:
             handleLogout()
         case .buy:
-            handleBuyCrypto()
+            handleBuyCrypto(account: nil)
         case .sell:
             handleSellCrypto()
         case .exchange:
@@ -456,8 +462,25 @@ extension AppCoordinator: SideMenuViewControllerDelegate {
     }
 
     /// Starts Buy Crypto flow.
-    func handleBuyCrypto(currency: CryptoCurrency = .coin(.bitcoin)) {
-        transactionsAdapter.presentTransactionFlow(to: .buy(currency), from: topMostViewController) { result in
+    func handleBuyCrypto(currency: CryptoCurrency) {
+        coincore
+            .cryptoAccounts(for: currency, supporting: .buy, filter: .custodial)
+            .map(\.first)
+            .sink { [alertPresenter] completionResult in
+                guard case .failure(let error) = completionResult else {
+                    return
+                }
+                let errorDescription = String(describing: error)
+                Logger.shared.error(errorDescription)
+                alertPresenter.error(in: nil, message: errorDescription, action: nil)
+            } receiveValue: { [weak self] account in
+                self?.handleBuyCrypto(account: account)
+            }
+            .store(in: &cancellables)
+    }
+
+    func handleBuyCrypto(account: CryptoAccount?) {
+        transactionsAdapter.presentTransactionFlow(to: .buy(account), from: topMostViewController) { result in
             Logger.shared.info("[AppCoordinator] Transaction Flow completed with result '\(result)'")
         }
     }
@@ -477,7 +500,7 @@ extension AppCoordinator: SideMenuViewControllerDelegate {
     }
 
     func startSimpleBuyAtLogin() {
-        handleBuyCrypto()
+        handleBuyCrypto(account: nil)
     }
 
     func showFundTrasferDetails(fiatCurrency: FiatCurrency, isOriginDeposit: Bool) {

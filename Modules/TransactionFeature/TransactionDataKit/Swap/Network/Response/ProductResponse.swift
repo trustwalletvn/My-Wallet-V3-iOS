@@ -6,7 +6,7 @@ enum ProductResponse: String, Codable {
     case brokerage = "BROKERAGE"
 }
 
-extension Product {
+extension ProductType {
 
     init(response: ProductResponse) {
         switch response {

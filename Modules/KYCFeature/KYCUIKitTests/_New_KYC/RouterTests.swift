@@ -5,6 +5,7 @@ import ComposableArchitecture
 @testable import KYCUIKit
 import PlatformUIKit
 import SwiftUI
+import TestKit
 import XCTest
 
 final class RouterTests: XCTestCase {
@@ -19,6 +20,8 @@ final class RouterTests: XCTestCase {
         mockEmailVerificationService = MockEmailVerificationService()
         router = .init(
             analyticsRecorder: MockAnalyticsRecorder(),
+            legacyRouter: MockLegacyKYCRouter(),
+            kycService: MockKYCTiersService(),
             emailVerificationService: mockEmailVerificationService,
             openMailApp: mockExternalAppOpener.openMailApp
         )
@@ -58,7 +61,9 @@ final class RouterTests: XCTestCase {
             })
         let openMailRequest = mockExternalAppOpener.recordedInvocations.open.first
         XCTAssertEqual(openMailRequest?.url, URL(string: "message://"))
-        openMailRequest?.completionHandler(true)
+        if let completionHandler = openMailRequest?.completionHandler {
+            completionHandler(true)
+        }
         waitForExpectations(timeout: 3)
         XCTAssertTrue(valueReceived)
         cancellable.cancel()

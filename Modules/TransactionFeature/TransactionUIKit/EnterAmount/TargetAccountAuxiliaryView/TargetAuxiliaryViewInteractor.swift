@@ -8,6 +8,10 @@ final class TargetAuxiliaryViewInteractor {
 
     weak var enterAmountInteractor: EnterAmountPageInteractor?
 
+    init(enterAmountInteractor: EnterAmountPageInteractor) {
+        self.enterAmountInteractor = enterAmountInteractor
+    }
+
     func handleTopAuxiliaryViewTapped(state: TransactionState) {
         enterAmountInteractor?.handleTopAuxiliaryViewTapped(state: state)
     }

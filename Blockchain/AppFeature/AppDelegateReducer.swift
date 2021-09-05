@@ -80,8 +80,6 @@ let appDelegateReducer = Reducer<
     case .didFinishLaunching(let window):
         state.window = window
         return .merge(
-            migrateAnnouncements(),
-
             environment.supportedAssetsRemoteService
                 .refreshCustodialAssetsCache()
                 .eraseToEffect()
@@ -198,11 +196,5 @@ private func applyGlobalNavigationAppearance(using barStyle: Screen.Style.Bar) -
         navigationBarAppearance.titleTextAttributes = barStyle.titleTextAttributes
         navigationBarAppearance.barTintColor = barStyle.backgroundColor
         navigationBarAppearance.tintColor = barStyle.tintColor
-    }
-}
-
-private func migrateAnnouncements() -> AppDelegateEffect {
-    Effect.fireAndForget {
-        AnnouncementRecorder.migrate(errorRecorder: CrashlyticsRecorder())
     }
 }

@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 protocol CashIdentityVerificationAnnouncementRouting: AnyObject {
@@ -38,10 +39,9 @@ final class CashIdentityVerificationAnnouncement: OneTimeAnnouncement & Actionab
                 image: .local(name: "icon-gbp", bundle: .platformUIKit),
                 contentColor: .white,
                 backgroundColor: .fiat,
-                cornerRadius: .value(4.0),
-                size: .init(edge: 32.0)
+                cornerRadius: .roundedLow,
+                size: .edge(32)
             ),
-            image: .hidden,
             title: LocalizationId.title,
             description: LocalizationId.description,
             buttons: [button],
@@ -94,3 +94,30 @@ final class CashIdentityVerificationAnnouncement: OneTimeAnnouncement & Actionab
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct CashIdentityVerificationAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = CashIdentityVerificationAnnouncement(
+            shouldShowCashIdentityAnnouncement: true,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct CashIdentityVerificationAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            CashIdentityVerificationAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

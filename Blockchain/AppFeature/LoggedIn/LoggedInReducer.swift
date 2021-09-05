@@ -1,9 +1,9 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import AnalyticsKit
-import AuthenticationKit
 import Combine
 import ComposableArchitecture
+import FeatureAuthenticationDomain
 import PlatformKit
 import PlatformUIKit
 import RemoteNotificationsKit
@@ -57,7 +57,7 @@ public enum LoggedIn {
         var remoteNotificationAuthorizer: RemoteNotificationAuthorizationRequesting
         var walletManager: WalletManager
         var coincore: CoincoreAPI
-        var appSettings: BlockchainSettings.App
+        var appSettings: BlockchainSettingsAppAPI
         var deeplinkRouter: DeepLinkRouting
         var featureFlagsService: FeatureFlagsServiceAPI
         var fiatCurrencySettingsService: FiatCurrencySettingsServiceAPI

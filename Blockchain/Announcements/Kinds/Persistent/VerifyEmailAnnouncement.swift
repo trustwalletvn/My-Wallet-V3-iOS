@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Verify email announcement is a persistent announcement that should persist
@@ -28,7 +29,13 @@ final class VerifyEmailAnnouncement: PersistentAnnouncement & ActionableAnnounce
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-email"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-email", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.VerifyEmail.title,
             description: LocalizationConstants.AnnouncementCards.VerifyEmail.description,
             buttons: [button],
@@ -66,3 +73,29 @@ final class VerifyEmailAnnouncement: PersistentAnnouncement & ActionableAnnounce
         self.analyticsRecorder = analyticsRecorder
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct VerifyEmailAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = VerifyEmailAnnouncement(
+            isEmailVerified: false,
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct VerifyEmailAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VerifyEmailAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

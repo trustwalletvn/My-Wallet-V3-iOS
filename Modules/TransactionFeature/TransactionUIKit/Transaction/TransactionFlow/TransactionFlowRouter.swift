@@ -41,6 +41,10 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
     private let disposeBag = DisposeBag()
     private var linkBankFlowRouter: LinkBankFlowStarter?
 
+    var isDisplayingRootViewController: Bool {
+        viewController.uiviewController.presentedViewController == nil
+    }
+
     init(
         interactor: TransactionFlowInteractable,
         viewController: TransactionFlowViewControllable,
@@ -51,10 +55,6 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
         self.alertViewPresenter = alertViewPresenter
         super.init(interactor: interactor, viewController: viewController)
         interactor.router = self
-    }
-
-    func routeToSourceAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
-        showSourceAccountPicker(transactionModel: transactionModel, action: action)
     }
 
     func routeToConfirmation(transactionModel: TransactionModel) {
@@ -108,11 +108,22 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
         detachChild(child)
     }
 
+    func routeToSourceAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
+        showSourceAccountPicker(transactionModel: transactionModel, action: action)
+    }
+
     func showSourceAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
         let router = sourceAccountPickerRouter(with: transactionModel, action: action)
         let viewControllable = router.viewControllable
         attachChild(router)
         viewController.replaceRoot(viewController: viewControllable, animated: false)
+    }
+
+    func presentSourceAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
+        let router = sourceAccountPickerRouter(with: transactionModel, action: action)
+        let viewControllable = router.viewControllable
+        attachChild(router)
+        viewController.present(viewController: viewControllable, animated: true)
     }
 
     func showDestinationAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
@@ -122,6 +133,71 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
                 title: TransactionFlowDescriptor.AccountPicker.destinationTitle(action: action)
             ),
             action: action
+        )
+        let viewControllable = router.viewControllable
+        attachChild(router)
+        viewController.replaceRoot(viewController: viewControllable, animated: false)
+    }
+
+    func presentDestinationAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
+        let router = destinationAccountPicker(
+            with: transactionModel,
+            navigationModel: ScreenNavigationModel.AccountPicker.modal(
+                title: TransactionFlowDescriptor.AccountPicker.destinationTitle(action: action)
+            ),
+            action: action
+        )
+        let viewControllable = router.viewControllable
+        attachChild(router)
+        viewController.present(viewController: viewControllable, animated: true)
+    }
+
+    func routeToDestinationAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
+        let shouldPush = action != .buy
+        let navigationModel: ScreenNavigationModel
+        if shouldPush {
+            navigationModel = ScreenNavigationModel.AccountPicker.navigationClose(
+                title: TransactionFlowDescriptor.AccountPicker.destinationTitle(action: action)
+            )
+        } else {
+            navigationModel = ScreenNavigationModel.AccountPicker.modal(
+                title: TransactionFlowDescriptor.AccountPicker.destinationTitle(action: action)
+            )
+        }
+
+        let router = destinationAccountPicker(
+            with: transactionModel,
+            navigationModel: navigationModel,
+            action: action
+        )
+        let viewControllable = router.viewControllable
+        attachChild(router)
+
+        if shouldPush {
+            viewController.push(viewController: viewControllable)
+        } else {
+            viewController.replaceRoot(viewController: viewControllable, animated: false)
+        }
+    }
+
+    func routeToTargetSelectionPicker(transactionModel: TransactionModel, action: AssetAction) {
+        let builder = TargetSelectionPageBuilder(
+            accountProvider: TransactionModelAccountProvider(
+                transactionModel: transactionModel,
+                transform: { $0.availableTargets as? [BlockchainAccount] ?? [] }
+            ),
+            action: action
+        )
+        let router = builder.build(
+            listener: .listener(interactor),
+            navigationModel: ScreenNavigationModel.TargetSelection.navigation(
+                title: TransactionFlowDescriptor.TargetSelection.navigationTitle(action: action)
+            ),
+            backButtonInterceptor: {
+                transactionModel.state.map {
+                    ($0.step, $0.stepsBackStack, $0.isGoingBack)
+                }
+            }
         )
         let viewControllable = router.viewControllable
         attachChild(router)
@@ -152,54 +228,6 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
             .disposed(by: disposeBag)
     }
 
-    func presentDestinationAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
-        let router = destinationAccountPicker(
-            with: transactionModel,
-            navigationModel: ScreenNavigationModel.AccountPicker.modal(
-                title: TransactionFlowDescriptor.AccountPicker.destinationTitle(action: action)
-            ),
-            action: action
-        )
-        let viewControllable = router.viewControllable
-        attachChild(router)
-        viewController.present(viewController: viewControllable, animated: true)
-    }
-
-    func routeToDestinationAccountPicker(transactionModel: TransactionModel, action: AssetAction) {
-        let router = destinationAccountPicker(
-            with: transactionModel,
-            navigationModel: ScreenNavigationModel.AccountPicker.navigationClose(
-                title: TransactionFlowDescriptor.AccountPicker.destinationTitle(action: action)
-            ),
-            action: action
-        )
-        let viewControllable = router.viewControllable
-        attachChild(router)
-        viewController.push(viewController: viewControllable)
-    }
-
-    func routeToTargetSelectionPicker(transactionModel: TransactionModel, action: AssetAction) {
-        let builder = TargetSelectionPageBuilder(
-            accountProvider: TransactionModelAccountProvider(
-                transactionModel: transactionModel,
-                transform: { $0.availableTargets as? [BlockchainAccount] ?? [] }
-            ),
-            action: action
-        )
-        let router = builder.build(
-            listener: .listener(interactor),
-            navigationModel: ScreenNavigationModel.TargetSelection.navigation(
-                title: TransactionFlowDescriptor.TargetSelection.navigationTitle(action: action)
-            ),
-            backButtonInterceptor: {
-                transactionModel.state.map { ($0.step, $0.stepsBackStack, $0.isGoingBack) }
-            }
-        )
-        let viewControllable = router.viewControllable
-        attachChild(router)
-        viewController.replaceRoot(viewController: viewControllable, animated: false)
-    }
-
     func routeToPriceInput(
         source: BlockchainAccount,
         destination: TransactionTarget,
@@ -228,15 +256,18 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
         }
     }
 
+    func presentKYCFlowIfNeeded(completion: @escaping (Bool) -> Void) {
+        let presenter = topMostViewControllerProvider.topMostViewController ?? viewController.uiviewController
+        interactor.listener?.presentKYCFlowIfNeeded(from: presenter, completion: completion)
+    }
+
     // MARK: - Private Functions
 
     private func sourceAccountPickerRouter(
         with transactionModel: TransactionModel,
         action: AssetAction
     ) -> AccountPickerRouting {
-        let header = AccountPickerSimpleHeaderModel(
-            subtitle: TransactionFlowDescriptor.AccountPicker.sourceSubtitle(action: action)
-        )
+        let subtitle = TransactionFlowDescriptor.AccountPicker.sourceSubtitle(action: action)
         let builder = AccountPickerBuilder(
             accountProvider: TransactionModelAccountProvider(
                 transactionModel: transactionModel,
@@ -250,7 +281,7 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
             navigationModel: ScreenNavigationModel.AccountPicker.modal(
                 title: TransactionFlowDescriptor.AccountPicker.sourceTitle(action: action)
             ),
-            headerModel: action == .deposit ? .none : .simple(header),
+            headerModel: subtitle.isEmpty ? .none : .simple(AccountPickerSimpleHeaderModel(subtitle: subtitle)),
             buttonViewModel: button
         )
     }
@@ -260,13 +291,13 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
         navigationModel: ScreenNavigationModel,
         action: AssetAction
     ) -> AccountPickerRouting {
-        let header = AccountPickerSimpleHeaderModel(
-            subtitle: TransactionFlowDescriptor.AccountPicker.destinationSubtitle(action: action)
-        )
+        let subtitle = TransactionFlowDescriptor.AccountPicker.destinationSubtitle(action: action)
         let builder = AccountPickerBuilder(
             accountProvider: TransactionModelAccountProvider(
                 transactionModel: transactionModel,
-                transform: { $0.availableTargets as? [BlockchainAccount] ?? [] }
+                transform: {
+                    $0.availableTargets as? [BlockchainAccount] ?? []
+                }
             ),
             action: action
         )
@@ -274,7 +305,7 @@ final class TransactionFlowRouter: TransactionViewableRouter, TransactionFlowRou
         return builder.build(
             listener: .listener(interactor),
             navigationModel: navigationModel,
-            headerModel: action == .withdraw ? .none : .simple(header),
+            headerModel: subtitle.isEmpty ? .none : .simple(AccountPickerSimpleHeaderModel(subtitle: subtitle)),
             buttonViewModel: button
         )
     }

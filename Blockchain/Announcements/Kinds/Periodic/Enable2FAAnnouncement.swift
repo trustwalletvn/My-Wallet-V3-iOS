@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Enable 2-FA announcement
@@ -29,7 +30,13 @@ final class Enable2FAAnnouncement: PeriodicAnnouncement & ActionableAnnouncement
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-lock"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-lock", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.TwoFA.title,
             description: LocalizationConstants.AnnouncementCards.TwoFA.description,
             buttons: [button],
@@ -86,3 +93,31 @@ final class Enable2FAAnnouncement: PeriodicAnnouncement & ActionableAnnouncement
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct Enable2FAAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = Enable2FAAnnouncement(
+            shouldEnable2FA: true,
+            reappearanceTimeInterval: 0,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct Enable2FAAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            Enable2FAAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

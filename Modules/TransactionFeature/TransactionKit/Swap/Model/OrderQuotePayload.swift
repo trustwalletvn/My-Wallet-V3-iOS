@@ -5,7 +5,7 @@ import PlatformKit
 public struct OrderQuotePayload {
 
     let identifier: String
-    let product: Product
+    let product: ProductType
     let pair: OrderPair
     let quote: OrderQuote
 
@@ -19,7 +19,7 @@ public struct OrderQuotePayload {
 
     public init(
         identifier: String,
-        product: Product = .brokerage,
+        product: ProductType = .brokerage,
         pair: OrderPair,
         quote: OrderQuote,
         networkFee: MoneyValue,

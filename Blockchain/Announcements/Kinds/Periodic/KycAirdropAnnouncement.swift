@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Kyc airdrop announcement is a periodic announcement that introduces the user to airdrop verification
@@ -29,7 +30,13 @@ final class KycAirdropAnnouncement: PeriodicAnnouncement & ActionableAnnouncemen
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-airdrop"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-airdrop", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.KycAirdrop.title,
             description: LocalizationConstants.AnnouncementCards.KycAirdrop.description,
             buttons: [button],
@@ -92,3 +99,32 @@ final class KycAirdropAnnouncement: PeriodicAnnouncement & ActionableAnnouncemen
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct KycAirdropAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = KycAirdropAnnouncement(
+            canCompleteTier2: true,
+            isKycSupported: true,
+            reappearanceTimeInterval: 0,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct KycAirdropAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            KycAirdropAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

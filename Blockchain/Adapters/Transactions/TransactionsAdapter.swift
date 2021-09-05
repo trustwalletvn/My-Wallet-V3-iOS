@@ -2,14 +2,21 @@
 
 import Combine
 import DIKit
-import PlatformKit // TODO: replace with MoneyKit when available
+import PlatformKit
 import TransactionUIKit
 
 /// Represents all types of transactions the user can perform.
 enum TransactionType: Equatable {
 
-    /// Performs a buy. If `CrytoCurrency` is `nil`, the users will be presented with a crypto currency selector.
-    case buy(CryptoCurrency?)
+    /// Performs a buy. If `CrytoAccount` is `nil`, the users will be presented with a crypto currency selector.
+    case buy(CryptoAccount?)
+
+    static func == (lhs: TransactionType, rhs: TransactionType) -> Bool {
+        switch (lhs, rhs) {
+        case (.buy(let lhsAccount), .buy(let rhsAccount)):
+            return lhsAccount?.identifier == rhsAccount?.identifier
+        }
+    }
 }
 
 /// Represents the possible outcomes of going through the transaction flow.
@@ -50,8 +57,8 @@ extension TransactionType {
 
     fileprivate var transactionFlowActionValue: TransactionFlowAction {
         switch self {
-        case .buy(let cryptoCurrency):
-            return .buy(cryptoCurrency)
+        case .buy(let cryptoAccount):
+            return .buy(cryptoAccount)
         }
     }
 }

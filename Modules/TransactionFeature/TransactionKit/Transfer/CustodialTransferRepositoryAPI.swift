@@ -17,5 +17,7 @@ public protocol CustodialTransferRepositoryAPI {
         memo: String?
     ) -> AnyPublisher<CustodialWithdrawalIdentifier, NabuNetworkError>
 
+    func feesAndLimitsForInterest() -> AnyPublisher<CustodialTransferFee, NabuNetworkError>
+
     func fees() -> AnyPublisher<CustodialTransferFee, NabuNetworkError>
 }

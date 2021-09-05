@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ePw-zB-XFB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ePw-zB-XFB">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -263,7 +262,7 @@
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="mFc-yI-Vjf">
                                                         <rect key="frame" x="0.0" y="546.5" width="343" height="120"/>
                                                         <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="giL-gE-QMt">
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="giL-gE-QMt">
                                                                 <rect key="frame" x="16" y="0.0" width="311" height="56"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="56" id="ATa-Y9-06d"/>
@@ -273,7 +272,7 @@
                                                                     <color key="titleColor" red="0.29999999999999999" green="0.089999999999999997" blue="0.72999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                                                 </state>
                                                             </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UDb-Me-gxs">
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UDb-Me-gxs">
                                                                 <rect key="frame" x="16" y="64" width="311" height="56"/>
                                                                 <color key="backgroundColor" red="0.29999999999999999" green="0.089999999999999997" blue="0.72999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <constraints>
@@ -322,6 +321,7 @@
                                 </constraints>
                             </scrollView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="HX2-gJ-TIj"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="HX2-gJ-TIj" firstAttribute="trailing" secondItem="bcM-Hp-Vz2" secondAttribute="trailing" id="1SJ-WE-4AN"/>
@@ -329,7 +329,6 @@
                             <constraint firstItem="bcM-Hp-Vz2" firstAttribute="top" secondItem="xPt-bv-WLj" secondAttribute="top" id="X10-cG-zoD"/>
                             <constraint firstItem="bcM-Hp-Vz2" firstAttribute="leading" secondItem="HX2-gJ-TIj" secondAttribute="leading" id="s55-EW-WmN"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="HX2-gJ-TIj"/>
                     </view>
                     <connections>
                         <outlet property="ableToLabel" destination="dOS-7a-oaY" id="NpW-tl-JDQ"/>

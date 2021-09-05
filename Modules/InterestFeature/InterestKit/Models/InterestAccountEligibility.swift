@@ -18,7 +18,7 @@ public struct InterestAccountEligibility {
         self.ineligibilityReason = ineligibilityReason
     }
 
-    init(
+    public init(
         currencyType: CurrencyType,
         interestEligibility: InterestEligibility
     ) {
@@ -27,7 +27,7 @@ public struct InterestAccountEligibility {
         ineligibilityReason = .init(ineligibilityReason: interestEligibility.ineligibilityReason)
     }
 
-    static func notEligible(currencyType: CurrencyType) -> InterestAccountEligibility {
+    public static func notEligible(currencyType: CurrencyType) -> InterestAccountEligibility {
         .init(
             currencyType: currencyType,
             isEligible: false,

@@ -1,7 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import AuthenticationKit
 import DIKit
+import FeatureAuthenticationDomain
 import NetworkKit
 import PlatformKit
 import RxSwift

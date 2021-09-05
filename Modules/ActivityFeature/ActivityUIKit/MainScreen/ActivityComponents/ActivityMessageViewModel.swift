@@ -46,6 +46,7 @@ final class ActivityMessageViewModel {
             image: .local(name: imageName, bundle: .platformUIKit),
             templateColor: currency.brandColor,
             backgroundColor: currency.accentColor,
+            cornerRadius: .round,
             accessibilityIdSuffix: ""
         )
         badgeImageViewModel.marginOffsetRelay.accept(0.0)

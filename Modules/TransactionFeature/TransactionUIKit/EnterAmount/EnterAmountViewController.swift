@@ -25,23 +25,30 @@ final class EnterAmountViewController: BaseScreenViewController,
 
         enum Standard {
             static let topSelectionViewHeight: CGFloat = 78
+            static let bottomSelectionViewHeight: CGFloat = 78
         }
     }
 
-    // MARK: - Properties
+    // MARK: - Auxiliary Views
 
     private let topAuxiliaryViewContainer = UIView()
-    private let topInfoView = SelectionButtonView()
-    private var topAuxiliaryViewController: UIViewController?
-
-    private let amountViewable: AmountViewable
-    private let bottomAuxiliaryItemSeparatorView = TitledSeparatorView()
-    private let bottomAuxiliaryView = UIView()
-    private let continueButtonView = ButtonView()
-    private let digitPadView = DigitPadView()
+    private let bottomAuxiliaryViewContainer = UIView()
 
     private var topAuxiliaryViewHeightConstraint: NSLayoutConstraint!
     private var bottomAuxiliaryViewHeightConstraint: NSLayoutConstraint!
+
+    private var topAuxiliaryViewController: UIViewController?
+    private var bottomAuxiliaryViewController: UIViewController?
+
+    private let topAuxiliaryItemSeparatorView = TitledSeparatorView()
+    private let bottomAuxiliaryItemSeparatorView = TitledSeparatorView()
+
+    // MARK: - Other Properties
+
+    private let amountViewable: AmountViewable
+    private let continueButtonView = ButtonView()
+    private let digitPadView = DigitPadView()
+
     private var digitPadHeightConstraint: NSLayoutConstraint!
     private var continueButtonTopConstraint: NSLayoutConstraint!
     private var digitPadSeparatorTopConstraint: NSLayoutConstraint!
@@ -75,13 +82,8 @@ final class EnterAmountViewController: BaseScreenViewController,
         digitPadView.viewModel = digitPadViewModel
         continueButtonView.viewModel = continueButtonViewModel
 
-        topInfoView.viewModel = SelectionButtonViewModel(showSeparator: true)
-
-        bottomAuxiliaryItemSeparatorView.viewModel = TitledSeparatorViewModel()
-        bottomAuxiliaryViewHeightConstraint = bottomAuxiliaryView.layout(
-            dimension: .height,
-            to: 1
-        )
+        topAuxiliaryItemSeparatorView.viewModel = TitledSeparatorViewModel(separatorColor: .lightBorder)
+        bottomAuxiliaryItemSeparatorView.viewModel = TitledSeparatorViewModel(separatorColor: .lightBorder)
     }
 
     @available(*, unavailable)
@@ -95,9 +97,10 @@ final class EnterAmountViewController: BaseScreenViewController,
 
         let amountView = amountViewable.view
         view.addSubview(topAuxiliaryViewContainer)
+        view.addSubview(topAuxiliaryItemSeparatorView)
         view.addSubview(amountView)
         view.addSubview(bottomAuxiliaryItemSeparatorView)
-        view.addSubview(bottomAuxiliaryView)
+        view.addSubview(bottomAuxiliaryViewContainer)
         view.addSubview(continueButtonView)
         view.addSubview(digitPadTopSeparatorView)
         view.addSubview(digitPadView)
@@ -109,15 +112,26 @@ final class EnterAmountViewController: BaseScreenViewController,
             to: Constant.Standard.topSelectionViewHeight
         )
 
+        topAuxiliaryItemSeparatorView.layout(edge: .top, to: .bottom, of: topAuxiliaryViewContainer)
+        topAuxiliaryItemSeparatorView.layoutToSuperview(.leading)
+        topAuxiliaryItemSeparatorView.layoutToSuperview(.trailing)
+        topAuxiliaryItemSeparatorView.layout(dimension: .height, to: 1)
+
         amountView.layoutToSuperview(axis: .horizontal)
-        amountView.layout(edge: .top, to: .bottom, of: topAuxiliaryViewContainer)
+        amountView.layout(edge: .top, to: .bottom, of: topAuxiliaryItemSeparatorView)
 
         bottomAuxiliaryItemSeparatorView.layout(edge: .top, to: .bottom, of: amountView)
-        bottomAuxiliaryItemSeparatorView.layoutToSuperview(.leading, offset: 24, priority: .defaultHigh)
+        bottomAuxiliaryItemSeparatorView.layoutToSuperview(.leading, priority: .defaultHigh)
         bottomAuxiliaryItemSeparatorView.layoutToSuperview(.trailing)
+        bottomAuxiliaryItemSeparatorView.layout(dimension: .height, to: 1)
 
-        bottomAuxiliaryView.layoutToSuperview(.leading, .trailing)
-        bottomAuxiliaryView.layout(
+        bottomAuxiliaryViewHeightConstraint = bottomAuxiliaryViewContainer.layout(
+            dimension: .height,
+            to: Constant.Standard.topSelectionViewHeight
+        )
+
+        bottomAuxiliaryViewContainer.layoutToSuperview(.leading, .trailing)
+        bottomAuxiliaryViewContainer.layout(
             edge: .top,
             to: .bottom,
             of: bottomAuxiliaryItemSeparatorView,
@@ -128,7 +142,7 @@ final class EnterAmountViewController: BaseScreenViewController,
         continueButtonTopConstraint = continueButtonView.layout(
             edge: .top,
             to: .bottom,
-            of: bottomAuxiliaryView,
+            of: bottomAuxiliaryViewContainer,
             offset: 16
         )
         continueButtonView.layout(dimension: .height, to: 48)
@@ -173,12 +187,19 @@ final class EnterAmountViewController: BaseScreenViewController,
     func connect(
         state: Driver<EnterAmountPageInteractor.State>
     ) -> Driver<EnterAmountPageInteractor.NavigationEffects> {
-        reactToChangesInTopAuxiliaryViewModel(state)
-
-        state.map(\.bottomAuxiliaryState)
+        state
             .distinctUntilChanged()
-            .drive(weak: self) { (self, state) in
-                self.bottomAuxiliaryViewModelStateDidChange(to: state)
+            .map(\.topAuxiliaryViewPresenter)
+            .drive(weak: self) { (self, presenter) in
+                self.topAuxiliaryViewModelStateDidChange(to: presenter)
+            }
+            .disposed(by: disposeBag)
+
+        state
+            .distinctUntilChanged()
+            .map(\.bottomAuxiliaryViewPresenter)
+            .drive(weak: self) { (self, presenter) in
+                self.bottomAuxiliaryViewModelStateDidChange(to: presenter)
             }
             .disposed(by: disposeBag)
 
@@ -226,51 +247,6 @@ final class EnterAmountViewController: BaseScreenViewController,
             .asDriver(onErrorJustReturn: .none)
     }
 
-    private func reactToChangesInTopAuxiliaryViewModel(_ state: Driver<EnterAmountPageInteractor.State>) {
-        state.map(\.topAuxiliaryModel)
-            .distinctUntilChanged()
-            .drive(weak: self) { (self, viewModel) in
-                self.topAuxiliaryViewModelStateDidChange(to: viewModel)
-            }
-            .disposed(by: disposeBag)
-
-        let topSelection = state.map(\.topAuxiliaryModel)
-            .compactMap(\.viewState)
-        topSelection.map(\.title)
-            .drive(topInfoView.viewModel.titleRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.subtitle)
-            .drive(topInfoView.viewModel.subtitleRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.titleAccessibility)
-            .drive(topInfoView.viewModel.titleAccessibilityRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.subtitleAccessibility)
-            .drive(topInfoView.viewModel.subtitleAccessibilityRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.isEnabled)
-            .drive(topInfoView.viewModel.isButtonEnabledRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.leadingContent)
-            .drive(topInfoView.viewModel.leadingContentTypeRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.trailingContent)
-            .drive(topInfoView.viewModel.trailingContentRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.titleDescriptor.font)
-            .drive(topInfoView.viewModel.titleFontRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.titleDescriptor.textColor)
-            .drive(topInfoView.viewModel.titleFontColor)
-            .disposed(by: disposeBag)
-        topSelection.map(\.subtitleDescriptor.font)
-            .drive(topInfoView.viewModel.subtitleFontRelay)
-            .disposed(by: disposeBag)
-        topSelection.map(\.subtitleDescriptor.textColor)
-            .drive(topInfoView.viewModel.subtitleFontColor)
-            .disposed(by: disposeBag)
-    }
-
     // MARK: - Setup
 
     private func setupNavigationBar(model: ScreenNavigationModel) {
@@ -283,108 +259,41 @@ final class EnterAmountViewController: BaseScreenViewController,
         )
     }
 
-    private func topAuxiliaryViewModelStateDidChange(to viewModel: EnterAmountPageInteractor.TopAuxiliaryViewModel) {
+    private func topAuxiliaryViewModelStateDidChange(to presenter: AuxiliaryViewPresenting?) {
         loadViewIfNeeded()
         topAuxiliaryViewController?.view.removeFromSuperview()
         topAuxiliaryViewController?.removeFromParent()
-        topAuxiliaryViewController = nil
-
-        switch viewModel {
-        case .none:
-            topAuxiliaryViewHeightConstraint.constant = .zero
-
-        case .info:
-            topAuxiliaryViewHeightConstraint.constant = Constant.Standard.topSelectionViewHeight
-            let viewController = UIViewController()
-            viewController.view.addSubview(topInfoView)
-            topInfoView.constraint(edgesTo: viewController.view)
-            topAuxiliaryViewController = viewController
-
-        case .destinationAccountSelector(let transactionState, let interactor):
-            topAuxiliaryViewHeightConstraint.constant = Constant.Standard.topSelectionViewHeight
-            switch transactionState.action {
-            case .buy:
-                guard
-                    let account = transactionState.destination as? CryptoAccount,
-                    let conversionRate = transactionState.sourceToFiatPair
-                else {
-                    fatalError("Impossible: a buy can only have a crypto destination and needs to have a fiat rate!")
-                }
-                topAuxiliaryViewController = UIHostingController(
-                    rootView: TargetAccountAuxiliaryView(
-                        asset: account.asset,
-                        price: conversionRate.quote,
-                        action: {
-                            interactor.handleTopAuxiliaryViewTapped(state: transactionState)
-                        }
-                    )
-                )
-            default:
-                fatalError("Unimplemented")
-            }
-        }
+        topAuxiliaryViewController = presenter?.makeViewController()
 
         if let viewController = topAuxiliaryViewController {
+            topAuxiliaryViewHeightConstraint.constant = Constant.Standard.topSelectionViewHeight
             addChild(viewController)
             topAuxiliaryViewContainer.addSubview(viewController.view)
             viewController.view.constraint(edgesTo: topAuxiliaryViewContainer)
+            topAuxiliaryItemSeparatorView.alpha = 1
+        } else {
+            topAuxiliaryViewHeightConstraint.constant = .zero
+            topAuxiliaryItemSeparatorView.alpha = .zero
         }
     }
 
-    private func bottomAuxiliaryViewModelStateDidChange(
-        to state: EnterAmountPageInteractor.BottomAuxiliaryViewModelState
-    ) {
-        let height: CGFloat
-        let visibility: Visibility
-        let subviewsToRemove: [UIView]
-        switch state {
-        case .hidden:
-            subviewsToRemove = bottomAuxiliaryView.subviews
-            height = 0.5
-            visibility = .hidden
-        case .account(let presenter):
-            subviewsToRemove = []
-            let accountAuxiliaryView: AccountAuxiliaryView
-            let firstMatchingView = bottomAuxiliaryView.subviews.first(where: { $0 is AccountAuxiliaryView })
-            if let view = firstMatchingView as? AccountAuxiliaryView {
-                accountAuxiliaryView = view
-            } else {
-                accountAuxiliaryView = AccountAuxiliaryView()
-                bottomAuxiliaryView.addSubview(accountAuxiliaryView)
-                accountAuxiliaryView.fillSuperview()
-            }
-            accountAuxiliaryView.presenter = presenter
-            visibility = .visible
-            height = Constant.Standard.topSelectionViewHeight
-        case .send(let presenter):
-            subviewsToRemove = []
-            let sendAuxiliaryView: SendAuxiliaryView
-            if let view = bottomAuxiliaryView.subviews.first(where: { $0 is SendAuxiliaryView }) {
-                sendAuxiliaryView = view as! SendAuxiliaryView
-            } else {
-                sendAuxiliaryView = SendAuxiliaryView()
-                bottomAuxiliaryView.addSubview(sendAuxiliaryView)
-                sendAuxiliaryView.fillSuperview()
-            }
-            sendAuxiliaryView.presenter = presenter
-            visibility = .visible
-            height = Constant.Standard.topSelectionViewHeight
+    private func bottomAuxiliaryViewModelStateDidChange(to presenter: AuxiliaryViewPresenting?) {
+        loadViewIfNeeded()
+        bottomAuxiliaryViewController?.view.removeFromSuperview()
+        bottomAuxiliaryViewController?.removeFromParent()
+        bottomAuxiliaryViewController = presenter?.makeViewController()
+
+        if let viewController = bottomAuxiliaryViewController {
+            bottomAuxiliaryViewHeightConstraint.constant = Constant.Standard.bottomSelectionViewHeight
+            addChild(viewController)
+            bottomAuxiliaryViewContainer.addSubview(viewController.view)
+            viewController.view.constraint(edgesTo: bottomAuxiliaryViewContainer)
+            // NOTE: ATM this separator is unused as some auxiliary views already have one.
+            bottomAuxiliaryItemSeparatorView.alpha = .zero
+        } else {
+            bottomAuxiliaryViewHeightConstraint.constant = .zero
+            bottomAuxiliaryItemSeparatorView.alpha = .zero
         }
-        UIView.animate(
-            withDuration: 0.25,
-            delay: 0,
-            usingSpringWithDamping: 1,
-            initialSpringVelocity: 0,
-            options: [.beginFromCurrentState, .curveEaseOut],
-            animations: {
-                self.bottomAuxiliaryItemSeparatorView.alpha = visibility.defaultAlpha
-                self.bottomAuxiliaryView.alpha = visibility.defaultAlpha
-                self.bottomAuxiliaryViewHeightConstraint.constant = height
-            },
-            completion: { _ in
-                subviewsToRemove.forEach { $0.removeFromSuperview() }
-            }
-        )
     }
 
     // MARK: - Navigation

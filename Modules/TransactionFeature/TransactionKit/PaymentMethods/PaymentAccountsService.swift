@@ -8,7 +8,10 @@ import ToolKit
 
 public protocol PaymentAccountsServiceAPI {
 
-    func fetchPaymentAccounts(for currency: CryptoCurrency, amount: MoneyValue) -> AnyPublisher<[PaymentAccount], NetworkError>
+    func fetchPaymentAccounts(
+        for currency: CryptoCurrency,
+        amount: MoneyValue
+    ) -> AnyPublisher<[PaymentAccount], NetworkError>
 }
 
 final class PaymentAccountsService: PaymentAccountsServiceAPI {
@@ -19,7 +22,10 @@ final class PaymentAccountsService: PaymentAccountsServiceAPI {
         self.client = client
     }
 
-    func fetchPaymentAccounts(for currency: CryptoCurrency, amount: MoneyValue) -> AnyPublisher<[PaymentAccount], NetworkError> {
+    func fetchPaymentAccounts(
+        for currency: CryptoCurrency,
+        amount: MoneyValue
+    ) -> AnyPublisher<[PaymentAccount], NetworkError> {
         // TODO: implement me again when Lorenzo has finished working on the new API
         client.paymentMethods
             .asPublisher()

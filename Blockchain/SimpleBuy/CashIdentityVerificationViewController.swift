@@ -39,7 +39,7 @@ final class CashIdentityVerificationViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(AnnouncementTableViewCell.self)
         tableView.register(BadgeNumberedTableViewCell.self)
-        tableView.registerNibCell(ButtonsTableViewCell.self)
+        tableView.registerNibCell(ButtonsTableViewCell.self, in: .main)
         tableView.separatorColor = .clear
         tableView.delegate = self
         tableView.dataSource = self

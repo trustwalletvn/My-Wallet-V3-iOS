@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Let the user know that something went wrong during KYC, and that he needs to send his docs once more
@@ -29,7 +30,13 @@ final class ResubmitDocumentsAnnouncement: OneTimeAnnouncement & ActionableAnnou
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-v"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-v", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.ResubmitDocuments.title,
             description: LocalizationConstants.AnnouncementCards.ResubmitDocuments.description,
             buttons: [button],
@@ -47,10 +54,7 @@ final class ResubmitDocumentsAnnouncement: OneTimeAnnouncement & ActionableAnnou
     }
 
     var shouldShow: Bool {
-        guard user.needsDocumentResubmission != nil else {
-            return false
-        }
-        return !isDismissed
+        needsDocumentResubmission && !isDismissed
     }
 
     let type = AnnouncementType.resubmitDocuments
@@ -61,24 +65,51 @@ final class ResubmitDocumentsAnnouncement: OneTimeAnnouncement & ActionableAnnou
 
     let action: CardAnnouncementAction
 
-    private let user: NabuUser
+    private let needsDocumentResubmission: Bool
 
     private let disposeBag = DisposeBag()
 
     // MARK: - Setup
 
     init(
-        user: NabuUser,
+        needsDocumentResubmission: Bool,
         cacheSuite: CacheSuite = resolve(),
         analyticsRecorder: AnalyticsEventRecorderAPI = resolve(),
         errorRecorder: ErrorRecording = CrashlyticsRecorder(),
         dismiss: @escaping CardAnnouncementAction,
         action: @escaping CardAnnouncementAction
     ) {
-        self.user = user
+        self.needsDocumentResubmission = needsDocumentResubmission
         recorder = AnnouncementRecorder(cache: cacheSuite, errorRecorder: errorRecorder)
         self.analyticsRecorder = analyticsRecorder
         self.dismiss = dismiss
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct ResubmitDocumentsAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = ResubmitDocumentsAnnouncement(
+            needsDocumentResubmission: true,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct ResubmitDocumentsAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ResubmitDocumentsAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

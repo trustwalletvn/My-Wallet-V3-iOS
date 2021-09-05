@@ -193,8 +193,8 @@ final class AnnouncementPresenter {
                 )
             case .newSwap:
                 announcement = newSwap(using: preliminaryData, reappearanceTimeInterval: metadata.interval)
-            case .paxRenaming:
-                announcement = paxRenaming
+            case .newAsset:
+                announcement = newAsset(cryptoCurrency: preliminaryData.announcementAsset)
             }
             // Return the first different announcement that should show
             if announcement.shouldShow {
@@ -233,7 +233,7 @@ extension AnnouncementPresenter {
     /// Computes Simple Buy Pending Transaction Announcement
     private func simpleBuyPendingTransaction(for order: OrderDetails?) -> Announcement {
         SimpleBuyPendingTransactionAnnouncement(
-            order: order,
+            orderDetails: order,
             action: { [weak self] in
                 self?.hideAnnouncement()
                 self?.handleBuyCrypto()
@@ -318,7 +318,7 @@ extension AnnouncementPresenter {
     /// Computes identity verification card announcement
     private func verifyIdentity(using user: NabuUser) -> Announcement {
         VerifyIdentityAnnouncement(
-            user: user,
+            isSunriverAirdropRegistered: user.isSunriverAirdropRegistered,
             isCompletingKyc: kycSettings.isCompletingKyc,
             dismiss: { [weak self] in
                 self?.hideAnnouncement()
@@ -359,22 +359,17 @@ extension AnnouncementPresenter {
     }
 
     /// Computes PAX Renaming card announcement
-    private var paxRenaming: Announcement {
-        PaxRenamingAnnouncement(
+    private func newAsset(cryptoCurrency: CryptoCurrency?) -> Announcement {
+        NewAssetAnnouncement(
+            cryptoCurrency: cryptoCurrency,
             dismiss: { [weak self] in
                 self?.hideAnnouncement()
             },
             action: { [weak self] in
-                guard let self = self else {
+                guard let cryptoCurrency = cryptoCurrency else {
                     return
                 }
-                guard let topMostViewController = self.topMostViewControllerProvider.topMostViewController else {
-                    return
-                }
-                self.webViewServiceAPI.openSafari(
-                    url: "https://support.blockchain.com/hc/en-us/articles/360040777891-USD-Digital-is-now-Paxos-Standard",
-                    from: topMostViewController
-                )
+                self?.handleBuyCrypto(currency: cryptoCurrency)
             }
         )
     }
@@ -525,7 +520,7 @@ extension AnnouncementPresenter {
     /// Computes Upload Documents card announcement
     private func resubmitDocuments(user: NabuUser) -> Announcement {
         ResubmitDocumentsAnnouncement(
-            user: user,
+            needsDocumentResubmission: user.needsDocumentResubmission != nil,
             dismiss: { [weak self] in
                 self?.hideAnnouncement()
             },

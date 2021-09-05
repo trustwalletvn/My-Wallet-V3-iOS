@@ -170,6 +170,21 @@ final class APIClient: TransactionKitClientAPI {
         return retailNetworkAdapter.perform(request: request)
     }
 
+    func custodialTransferFeesForProduct(
+        _ product: Product
+    ) -> AnyPublisher<CustodialTransferFeesResponse, NabuNetworkError> {
+        let parameters: [URLQueryItem] = [
+            URLQueryItem(name: Parameter.product, value: product.rawValue),
+            URLQueryItem(name: Parameter.paymentMethod, value: Parameter.default)
+        ]
+        let request = retailRequestBuilder.get(
+            path: Path.transferFees,
+            parameters: parameters,
+            authenticated: false
+        )!
+        return retailNetworkAdapter.perform(request: request)
+    }
+
     func custodialTransferFees() -> AnyPublisher<CustodialTransferFeesResponse, NabuNetworkError> {
         let headers = [HttpHeaderField.blockchainOrigin: HttpHeaderValue.simpleBuy]
         let parameters: [URLQueryItem] = [

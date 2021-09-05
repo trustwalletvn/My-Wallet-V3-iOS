@@ -61,7 +61,7 @@ let emailVerificationHelpReducer = EmailVerificationHelpReducer { state, action,
                 message: TextState(L10n.EmailVerificationHelp.couldNotSendEmailAlertMessage),
                 primaryButton: .default(
                     TextState(L10n.GenericError.retryButtonTitle),
-                    send: .sendVerificationEmail
+                    action: .send(.sendVerificationEmail)
                 ),
                 secondaryButton: .cancel()
             )

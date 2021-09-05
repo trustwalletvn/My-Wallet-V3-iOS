@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Transfer in crypto announcement
@@ -29,7 +30,13 @@ final class TransferInCryptoAnnouncement: PeriodicAnnouncement & ActionableAnnou
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "card-icon-transfer"),
+            badgeImage: .init(
+                image: .local(name: "card-icon-transfer", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.TransferInCrypto.title,
             description: LocalizationConstants.AnnouncementCards.TransferInCrypto.description,
             buttons: [button],
@@ -85,3 +92,31 @@ final class TransferInCryptoAnnouncement: PeriodicAnnouncement & ActionableAnnou
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct TransferInCryptoAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = TransferInCryptoAnnouncement(
+            isKycSupported: true,
+            reappearanceTimeInterval: 0,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct TransferInCryptoAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            TransferInCryptoAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif

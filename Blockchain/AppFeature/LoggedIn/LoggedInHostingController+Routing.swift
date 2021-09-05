@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DashboardUIKit
 import DIKit
 import PlatformKit
@@ -128,8 +129,20 @@ extension LoggedInHostingController {
 
     /// Starts Buy Crypto flow.
     func handleBuyCrypto(currency: CryptoCurrency = .coin(.bitcoin)) {
+        coincore
+            .cryptoAccounts(for: currency, supporting: .buy, filter: .custodial)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                // NOOP
+            } receiveValue: { [weak self] accounts in
+                self?.handleBuyCrypto(account: accounts.first)
+            }
+            .store(in: &cancellables)
+    }
+
+    func handleBuyCrypto(account: CryptoAccount?) {
         let presenter = topMostViewController ?? self
-        transactionsAdapter.presentTransactionFlow(to: .buy(currency), from: presenter) { result in
+        transactionsAdapter.presentTransactionFlow(to: .buy(account), from: presenter) { result in
             Logger.shared.info("[AppCoordinator] Transaction Flow completed with result '\(result)'")
         }
     }

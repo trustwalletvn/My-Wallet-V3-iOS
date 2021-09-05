@@ -6,6 +6,7 @@ import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
+import SwiftUI
 import ToolKit
 
 /// Card announcement for Wallet-Exchange linking
@@ -31,7 +32,13 @@ final class ExchangeLinkingAnnouncement: OneTimeAnnouncement & ActionableAnnounc
 
         return AnnouncementCardViewModel(
             type: type,
-            image: AnnouncementCardViewModel.Image(name: "exchange-icon-small"),
+            badgeImage: .init(
+                image: .local(name: "exchange-icon-small", bundle: .main),
+                contentColor: nil,
+                backgroundColor: .clear,
+                cornerRadius: .none,
+                size: .edge(40)
+            ),
             title: LocalizationConstants.AnnouncementCards.Exchange.title,
             description: LocalizationConstants.AnnouncementCards.Exchange.description,
             buttons: [button],
@@ -84,3 +91,30 @@ final class ExchangeLinkingAnnouncement: OneTimeAnnouncement & ActionableAnnounc
         self.action = action
     }
 }
+
+// MARK: SwiftUI Preview
+
+#if DEBUG
+struct ExchangeLinkingAnnouncementContainer: UIViewRepresentable {
+    typealias UIViewType = AnnouncementCardView
+
+    func makeUIView(context: Context) -> UIViewType {
+        let presenter = ExchangeLinkingAnnouncement(
+            shouldShowExchangeAnnouncement: true,
+            dismiss: {},
+            action: {}
+        )
+        return AnnouncementCardView(using: presenter.viewModel)
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+
+struct ExchangeLinkingAnnouncementContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ExchangeLinkingAnnouncementContainer().colorScheme(.light)
+        }.previewLayout(.fixed(width: 375, height: 250))
+    }
+}
+#endif
