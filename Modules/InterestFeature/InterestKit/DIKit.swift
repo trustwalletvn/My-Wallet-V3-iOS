@@ -9,7 +9,7 @@ extension DependencyContainer {
 
     public static var interestKit = module {
 
-        factory { InterestAccountService() as InterestAccountServiceAPI }
+        single { InterestAccountService() as InterestAccountServiceAPI }
 
         factory { () -> InterestAccountOverviewAPI in
             let service: InterestAccountServiceAPI = DIKit.resolve()

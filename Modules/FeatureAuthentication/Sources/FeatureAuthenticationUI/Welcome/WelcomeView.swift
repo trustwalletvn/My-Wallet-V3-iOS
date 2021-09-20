@@ -54,53 +54,61 @@ public struct WelcomeView: View {
                 trailing: Layout.trailingPadding
             )
         )
-        .sheet(isPresented: .constant(viewStore.screenFlow == .emailLoginScreen)) {
-            IfLetStore(
-                store.scope(
-                    state: \.emailLoginState,
-                    action: WelcomeAction.emailLogin
-                ),
-                then: EmailLoginView.init(store:)
-            )
-        }
-        .sheet(isPresented: .constant(viewStore.screenFlow == .manualLoginScreen)) {
-            IfLetStore(
-                store.scope(
-                    state: \.manualCredentialsState,
-                    action: WelcomeAction.manualPairing
-                ),
-                then: { store in
-                    NavigationView {
-                        CredentialsView(
-                            context: .manualPairing,
-                            store: store
-                        )
-                        .trailingNavigationButton(.close) {
-                            viewStore.send(.manualPairing(.closeButtonTapped))
-                        }
-                        .whiteNavigationBarStyle()
-                        .navigationTitle(
-                            LocalizedString.Button.manualPairing
-                        )
-                    }
-                }
-            )
-        }
         .sheet(
-            isPresented: .constant(viewStore.modals == .secondPasswordNoticeScreen),
-            onDismiss: { viewStore.send(.modalDismissed(.secondPasswordNoticeScreen)) },
+            isPresented: .constant(
+                viewStore.screenFlow == .emailLoginScreen
+                    || viewStore.screenFlow == .manualLoginScreen
+                    || viewStore.modals == .secondPasswordNoticeScreen
+            ),
+            onDismiss: {
+                if viewStore.modals == .secondPasswordNoticeScreen {
+                    viewStore.send(.modalDismissed(.secondPasswordNoticeScreen))
+                }
+            },
             content: {
-                IfLetStore(
-                    store.scope(
-                        state: \.secondPasswordNoticeState,
-                        action: WelcomeAction.secondPasswordNotice
-                    ),
-                    then: { store in
-                        NavigationView {
-                            SecondPasswordNoticeView(store: store)
+                if viewStore.screenFlow == .emailLoginScreen {
+                    IfLetStore(
+                        store.scope(
+                            state: \.emailLoginState,
+                            action: WelcomeAction.emailLogin
+                        ),
+                        then: EmailLoginView.init(store:)
+                    )
+                } else if viewStore.screenFlow == .manualLoginScreen {
+                    IfLetStore(
+                        store.scope(
+                            state: \.manualCredentialsState,
+                            action: WelcomeAction.manualPairing
+                        ),
+                        then: { store in
+                            NavigationView {
+                                CredentialsView(
+                                    context: .manualPairing,
+                                    store: store
+                                )
+                                .trailingNavigationButton(.close) {
+                                    viewStore.send(.manualPairing(.closeButtonTapped))
+                                }
+                                .whiteNavigationBarStyle()
+                                .navigationTitle(
+                                    LocalizedString.Button.manualPairing
+                                )
+                            }
                         }
-                    }
-                )
+                    )
+                } else if viewStore.modals == .secondPasswordNoticeScreen {
+                    IfLetStore(
+                        store.scope(
+                            state: \.secondPasswordNoticeState,
+                            action: WelcomeAction.secondPasswordNotice
+                        ),
+                        then: { store in
+                            NavigationView {
+                                SecondPasswordNoticeView(store: store)
+                            }
+                        }
+                    )
+                }
             }
         )
     }
