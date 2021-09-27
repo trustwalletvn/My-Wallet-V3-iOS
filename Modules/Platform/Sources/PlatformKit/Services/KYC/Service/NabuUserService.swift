@@ -55,6 +55,7 @@ final class NabuUserService: NabuUserServiceAPI {
 
         cachedUser.setFetch(weak: self) { (self) in
             self.client.user()
+                .asSingle()
                 .do(
                     onSuccess: { [weak self] nabuUser in
                         self?.siftService.set(userId: nabuUser.identifier)

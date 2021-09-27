@@ -11,11 +11,15 @@ let package = Package(
         .library(name: "CommonCryptoKit", targets: ["CommonCryptoKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.4.1"),
+        .package(
+            name: "CryptoSwift",
+            url: "https://github.com/krzyzanowskim/CryptoSwift.git",
+            from: "1.4.1"
+        ),
         .package(
             name: "WalletCore",
-            url: "git@github.com:oliveratkinson-bc/wallet-core.git",
-            .revision("44bf856ce6cea5d804c2182804e8659dc59fc82a")
+            url: "https://github.com/oliveratkinson-bc/wallet-core.git",
+            .revision("3d42f6995032828a3e1a0a372fb9873cdd357f03")
         ),
         .package(path: "../Test")
     ],

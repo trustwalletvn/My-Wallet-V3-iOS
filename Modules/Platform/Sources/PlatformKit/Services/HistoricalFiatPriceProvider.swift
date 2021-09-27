@@ -1,5 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import DIKit
+import Foundation
+
 public protocol HistoricalFiatPriceProviding: AnyObject {
 
     /// Returns the service that matches the `CryptoCurrency`
@@ -19,12 +22,27 @@ public final class HistoricalFiatPriceProvider: HistoricalFiatPriceProviding {
 
     // MARK: - Setup
 
-    public init(services: [CryptoCurrency: HistoricalFiatPriceServiceAPI]) {
-        self.services = services
+    public init(
+        enabledCurrenciesService: EnabledCurrenciesServiceAPI = resolve(),
+        exchangeProvider: ExchangeProviding = resolve(),
+        fiatCurrencyService: FiatCurrencyServiceAPI = resolve()
+    ) {
+        services = enabledCurrenciesService
+            .allEnabledCryptoCurrencies
+            .reduce(into: [CryptoCurrency: HistoricalFiatPriceServiceAPI]()) { result, cryptoCurrency in
+                result[cryptoCurrency] = HistoricalFiatPriceService(
+                    cryptoCurrency: cryptoCurrency,
+                    exchangeAPI: exchangeProvider[cryptoCurrency],
+                    fiatCurrencyService: fiatCurrencyService
+                )
+            }
+
         refresh()
     }
 
     public func refresh(window: PriceWindow = .day(.oneHour)) {
-        services.values.forEach { $0.fetchTriggerRelay.accept(window) }
+        services.values.forEach { service in
+            service.fetchTriggerRelay.accept(window)
+        }
     }
 }

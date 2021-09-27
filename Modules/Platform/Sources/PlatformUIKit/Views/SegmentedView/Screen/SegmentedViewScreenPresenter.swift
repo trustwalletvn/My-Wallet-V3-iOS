@@ -15,6 +15,13 @@ public struct SegmentedViewScreenItem {
     }
 }
 
+public enum SegmentedViewScreenLocation {
+    /// SegmentedView will be on top of view, and the given `Screen.Style.TitleView` will be set to the navigation bar.
+    case top(Screen.Style.TitleView)
+    /// SegmentedView will be on navigation bar.
+    case navBar
+}
+
 public protocol SegmentedViewScreenPresenting: AnyObject {
 
     // MARK: - Navigation Properties
@@ -26,6 +33,7 @@ public protocol SegmentedViewScreenPresenting: AnyObject {
     var trailingButtonTapRelay: PublishRelay<Void> { get }
 
     var barStyle: Screen.Style.Bar { get }
+    var segmentedViewLocation: SegmentedViewScreenLocation { get }
 
     // MARK: - Segmented View
 
@@ -39,8 +47,8 @@ public protocol SegmentedViewScreenPresenting: AnyObject {
 }
 
 extension SegmentedViewScreenPresenting {
-    public func createSegmentedViewModel() -> SegmentedViewModel {
-        let items: [SegmentedViewModel.Item] = self.items
+    public func createSegmentedViewModelItems() -> [SegmentedViewModel.Item] {
+        items
             .map(\.title)
             .enumerated()
             .map { index, title in
@@ -51,11 +59,6 @@ extension SegmentedViewScreenPresenting {
                     }
                 )
             }
-        return SegmentedViewModel.default(
-            items: items,
-            isMomentary: false,
-            defaultSelectedSegmentIndex: 0
-        )
     }
 
     public var itemIndexSelected: Observable<Int?> {

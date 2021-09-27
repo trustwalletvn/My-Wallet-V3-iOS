@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import ComposableArchitecture
 import Localization
 import SwiftUI
 import UIComponentsKit
@@ -19,6 +20,14 @@ struct LostFundsWarningView: View {
         static let trailingPadding: CGFloat = 24
         static let titleTopPadding: CGFloat = 16
         static let buttonBottomPadding: CGFloat = 10
+    }
+
+    private let store: Store<LostFundsWarningState, LostFundsWarningAction>
+    @ObservedObject private var viewStore: ViewStore<LostFundsWarningState, LostFundsWarningAction>
+
+    init(store: Store<LostFundsWarningState, LostFundsWarningAction>) {
+        self.store = store
+        viewStore = ViewStore(store)
     }
 
     var body: some View {
@@ -41,13 +50,13 @@ struct LostFundsWarningView: View {
             Spacer()
 
             PrimaryButton(title: LocalizedStrings.Button.resetAccount) {
-                // TODO: reset password screen
+                viewStore.send(.resetAccountButtonTapped)
             }
             .padding(.bottom, Layout.buttonBottomPadding)
             .accessibility(identifier: AccessibilityIdentifiers.LostFundsWarningScreen.resetAccountButton)
 
             SecondaryButton(title: LocalizedStrings.Button.goBack) {
-                // TODO: go back to seed phrase screen
+                viewStore.send(.goBackButtonTapped)
             }
             .accessibility(identifier: AccessibilityIdentifiers.LostFundsWarningScreen.goBackButton)
         }
@@ -66,7 +75,13 @@ struct LostFundsWarningView: View {
 #if DEBUG
 struct LostFundsWarningView_Previews: PreviewProvider {
     static var previews: some View {
-        LostFundsWarningView()
+        LostFundsWarningView(
+            store: .init(
+                initialState: .init(),
+                reducer: lostFundsWarningReducer,
+                environment: .init()
+            )
+        )
     }
 }
 #endif

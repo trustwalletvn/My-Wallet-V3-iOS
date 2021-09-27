@@ -1,10 +1,10 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import DIKit
+import FeatureSettingsDomain
 import NetworkKit
 import PlatformKit
 import RxSwift
-import SettingsKit
 import ToolKit
 
 protocol ExchangeAccountAuthenticatorAPI {

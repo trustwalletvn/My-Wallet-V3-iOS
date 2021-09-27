@@ -1,7 +1,9 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
 
 protocol SuggestedAmountsClientAPI: AnyObject {
-    func suggestedAmounts(for currency: FiatCurrency) -> Single<SuggestedAmountsResponse>
+    func suggestedAmounts(
+        for currency: FiatCurrency
+    ) -> AnyPublisher<SuggestedAmountsResponse, NabuNetworkError>
 }

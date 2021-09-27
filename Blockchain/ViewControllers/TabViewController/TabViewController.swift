@@ -1,9 +1,9 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RxSwift
-import SettingsKit
 import ToolKit
 
 @objc protocol TabViewControllerDelegate: AnyObject {

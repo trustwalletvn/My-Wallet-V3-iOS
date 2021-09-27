@@ -1,11 +1,12 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
+import NetworkKit
 import PlatformKit
-import RxSwift
 
 class WalletNabuSynchronizerServiceAPIMock: WalletNabuSynchronizerServiceAPI {
 
-    func sync() -> Completable {
-        .empty()
+    func sync() -> AnyPublisher<Void, WalletNabuSynchronizerServiceError> {
+        .just(())
     }
 }

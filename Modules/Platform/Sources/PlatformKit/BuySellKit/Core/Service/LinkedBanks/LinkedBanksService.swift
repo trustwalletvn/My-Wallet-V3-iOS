@@ -61,11 +61,12 @@ final class LinkedBanksService: LinkedBanksServiceAPI {
                     // So the filtering is a patch until we remove the older backend APIs
                     response.compactMap(LinkedBankData.init(response:))
                 }
+                .asSingle()
         }
 
         bankLinkageStartup = fiatCurrencyService.fiatCurrency
             .flatMap { currency -> Single<CreateBankLinkageResponse> in
-                client.createBankLinkage(for: currency)
+                client.createBankLinkage(for: currency).asSingle()
             }
             .mapToResult(
                 successMap: { BankLinkageData(from: $0) },
@@ -85,6 +86,6 @@ final class LinkedBanksService: LinkedBanksServiceAPI {
     }
 
     func deleteBank(by id: String) -> Completable {
-        client.deleteLinkedBank(for: id)
+        client.deleteLinkedBank(for: id).asObservable().ignoreElements()
     }
 }

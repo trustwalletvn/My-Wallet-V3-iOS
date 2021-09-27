@@ -20,9 +20,21 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(name: "CombineExt", url: "https://github.com/CombineCommunity/CombineExt.git", from: "1.3.0"),
-        .package(name: "RxSwift", url: "git@github.com:ReactiveX/RxSwift.git", from: "5.1.3"),
-        .package(name: "Mockingbird", url: "https://github.com/birdrides/mockingbird", from: "0.16.0")
+        .package(
+            name: "CombineExt",
+            url: "https://github.com/CombineCommunity/CombineExt.git",
+            from: "1.3.0"
+        ),
+        .package(
+            name: "RxSwift",
+            url: "https://github.com/ReactiveX/RxSwift.git",
+            from: "5.1.3"
+        ),
+        .package(
+            name: "Mockingbird",
+            url: "https://github.com/birdrides/mockingbird.git",
+            from: "0.16.0"
+        )
     ],
     targets: [
         .target(
@@ -34,20 +46,22 @@ let package = Package(
         .target(
             name: "RxAnalyticsKit",
             dependencies: [
-                "AnalyticsKit",
+                .target(name: "AnalyticsKit"),
                 .product(name: "RxSwift", package: "RxSwift")
             ]
         ),
         .target(
             name: "AnalyticsKitMock",
-            dependencies: ["AnalyticsKit"]
+            dependencies: [
+                .target(name: "AnalyticsKit")
+            ]
         ),
         .testTarget(
             name: "AnalyticsKitTests",
             dependencies: [
-                "AnalyticsKit",
-                "RxAnalyticsKit",
-                "Mockingbird"
+                .target(name: "AnalyticsKit"),
+                .target(name: "RxAnalyticsKit"),
+                .product(name: "Mockingbird", package: "Mockingbird")
             ]
         )
     ]

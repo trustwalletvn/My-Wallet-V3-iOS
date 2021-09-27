@@ -2,9 +2,9 @@
 
 import Combine
 import ComposableArchitecture
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
-import SettingsKit
 
 public enum PinCore {
     public enum Action: Equatable {

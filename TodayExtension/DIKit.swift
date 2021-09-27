@@ -17,18 +17,6 @@ extension DependencyContainer {
 
         factory { UIDevice.current as DeviceInfo }
 
-        single { DataProvider() }
-
-        factory { () -> HistoricalFiatPriceProviding in
-            let dataProvider: DataProvider = DIKit.resolve()
-            return dataProvider.historicalPrices as HistoricalFiatPriceProviding
-        }
-
-        factory { () -> ExchangeProviding in
-            let dataProvider: DataProvider = DIKit.resolve()
-            return dataProvider.exchange as ExchangeProviding
-        }
-
         factory { FiatCurrencyService() as FiatCurrencyServiceAPI }
 
         factory { ErrorRecorderMock() as ErrorRecording }

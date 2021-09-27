@@ -82,5 +82,6 @@ final class SuggestedAmountsService: SuggestedAmountsServiceAPI {
         client.suggestedAmounts(for: currency)
             .map { SuggestedAmounts(response: $0) }
             .map { $0[currency] }
+            .asSingle()
     }
 }

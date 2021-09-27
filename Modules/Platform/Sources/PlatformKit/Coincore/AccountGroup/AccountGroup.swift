@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import RxSwift
 import ToolKit
 
@@ -117,12 +118,14 @@ public enum AccountGroupError: Error {
     case noReceiveAddress
 }
 
-extension PrimitiveSequence where Trait == SingleTrait, Element == [AccountGroup] {
-    public func flatMapAllAccountGroup() -> Single<AccountGroup> {
+extension AnyPublisher where Output == [AccountGroup] {
+
+    public func flatMapAllAccountGroup() -> AnyPublisher<AccountGroup, Failure> {
         map { groups in
             AllAccountsGroup(
                 accounts: groups.map(\.accounts).flatMap { $0 }
             )
         }
+        .eraseToAnyPublisher()
     }
 }

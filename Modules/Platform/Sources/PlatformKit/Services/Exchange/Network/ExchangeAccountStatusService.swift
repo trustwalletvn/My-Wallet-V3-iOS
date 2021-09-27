@@ -1,26 +1,36 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
 import RxSwift
 import ToolKit
 
+public enum ExchangeAccountStatusServiceError: Error {
+    case unknown(Error)
+    case network(NabuNetworkError)
+}
+
 public protocol ExchangeAccountStatusServiceAPI {
-    var hasLinkedExchangeAccount: Single<Bool> { get }
-    var hasEnabled2FA: Single<Bool> { get }
+
+    var hasLinkedExchangeAccount: AnyPublisher<Bool, ExchangeAccountStatusServiceError> { get }
+
+    var hasEnabled2FA: AnyPublisher<Bool, NabuNetworkError> { get }
 }
 
 public final class ExchangeAccountStatusService: ExchangeAccountStatusServiceAPI {
 
     // MARK: - ExchangeLinkStatusServiceAPI
 
-    public var hasLinkedExchangeAccount: Single<Bool> {
-        nabuUserService
-            .user
+    public var hasLinkedExchangeAccount: AnyPublisher<Bool, ExchangeAccountStatusServiceError> {
+        nabuUserService.user
+            .asPublisher()
+            .mapError(ExchangeAccountStatusServiceError.unknown)
             .map(\.hasLinkedExchangeAccount)
+            .eraseToAnyPublisher()
     }
 
-    public var hasEnabled2FA: Single<Bool> {
+    public var hasEnabled2FA: AnyPublisher<Bool, NabuNetworkError> {
         // It does not matter what asset we fetch.
         client.exchangeAddress(with: .coin(.bitcoin))
             // If the user has accounts returned,
@@ -29,18 +39,16 @@ public final class ExchangeAccountStatusService: ExchangeAccountStatusServiceAPI
             // If an error is thrown when fetching accounts
             // parse the error to determine if it is because 2FA is
             // not enabled.
-            .catchError { error in
-                guard let networkError = error as? NabuNetworkError else {
-                    throw error
-                }
+            .catch { networkError -> AnyPublisher<Bool, NabuNetworkError> in
                 guard case .nabuError(let nabuError) = networkError else {
-                    throw error
+                    return .failure(networkError)
                 }
                 guard nabuError.code == .bad2fa else {
-                    throw nabuError
+                    return .failure(networkError)
                 }
                 return .just(false)
             }
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Private Properties

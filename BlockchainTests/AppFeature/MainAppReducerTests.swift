@@ -4,10 +4,10 @@ import AnalyticsKit
 import Combine
 import ComposableArchitecture
 import DIKit
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RxSwift
-import SettingsKit
 import WalletPayloadKit
 import XCTest
 
@@ -451,8 +451,9 @@ final class MainAppReducerTests: XCTestCase {
 
         testStore.receive(.onboarding(.welcomeScreen(.start)))
 
-        testStore.send(.onboarding(.welcomeScreen(.presentScreenFlow(.recoverWalletScreen)))) { state in
-            state.onboarding?.welcomeState?.screenFlow = .recoverWalletScreen
+        testStore.send(.onboarding(.welcomeScreen(.presentScreenFlow(.restoreWalletScreen)))) { state in
+            state.onboarding?.welcomeState?.restoreWalletState = .init()
+            state.onboarding?.welcomeState?.screenFlow = .restoreWalletScreen
             state.onboarding?.walletCreationContext = .recovery
             state.onboarding?.showLegacyRecoverWalletScreen = true
         }
@@ -475,9 +476,10 @@ final class MainAppReducerTests: XCTestCase {
         testStore.receive(.didDecryptWallet(walletDecryption))
         testStore.receive(.authenticated(.success(true))) { state in
             state.onboarding?.showLegacyRecoverWalletScreen = false
-            state.onboarding?.welcomeState?.screenFlow = .recoverWalletScreen
+            state.onboarding?.welcomeState?.screenFlow = .restoreWalletScreen
         }
         testStore.receive(.onboarding(.welcomeScreen(.presentScreenFlow(.welcomeScreen)))) { state in
+            state.onboarding?.welcomeState?.restoreWalletState = nil
             state.onboarding?.welcomeState?.screenFlow = .welcomeScreen
         }
         testStore.receive(.setupPin) { state in

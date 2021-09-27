@@ -7,7 +7,7 @@ import ComposableArchitecture
 public enum PasswordAction: Equatable {
     case didChangePassword(String)
     case didChangeFocusedState(Bool)
-    case incorrectPasswordErrorVisibility(Bool)
+    case showIncorrectPasswordError(Bool)
 }
 
 // MARK: - Properties
@@ -43,8 +43,8 @@ let passwordReducer = Reducer<
     case .didChangeFocusedState(let isFocused):
         state.isFocused = isFocused
         return .none
-    case .incorrectPasswordErrorVisibility(let isVisible):
-        state.isPasswordIncorrect = isVisible
+    case .showIncorrectPasswordError(let shouldShow):
+        state.isPasswordIncorrect = shouldShow
         return .none
     }
 }

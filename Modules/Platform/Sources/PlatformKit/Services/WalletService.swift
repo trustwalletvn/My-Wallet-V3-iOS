@@ -14,6 +14,7 @@ class WalletService: WalletOptionsAPI {
         let url = URL(string: BlockchainAPI.shared.walletOptionsUrl)!
         return networkAdapter
             .perform(request: NetworkRequest(endpoint: url, method: .get))
+            .asSingle()
             .do(onSuccess: { [weak self] in
                 self?.cachedWalletOptions.value = $0
             })

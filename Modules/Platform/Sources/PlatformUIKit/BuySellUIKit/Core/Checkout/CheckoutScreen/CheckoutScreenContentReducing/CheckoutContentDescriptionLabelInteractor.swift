@@ -13,7 +13,7 @@ final class CheckoutContentDescriptionLabelInteractor {
     final class AssetPrice: LabelContentInteracting {
         private lazy var setup: Void = {
             service
-                .price(for: quoteCurrency, in: baseCurrency)
+                .price(of: quoteCurrency, in: baseCurrency)
                 .asObservable()
                 .map(\.moneyValue)
                 // This should never happen.

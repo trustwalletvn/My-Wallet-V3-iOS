@@ -1,8 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 import ToolKit
 
 public final class EveryPayClient: EveryPayClientAPI {
@@ -47,7 +47,7 @@ public final class EveryPayClient: EveryPayClientAPI {
         cardDetails: CardPartnerPayload.EveryPay.SendCardDetailsRequest.CardDetails,
         apiUserName: String,
         token: String
-    ) -> Single<CardPartnerPayload.EveryPay.CardDetailsResponse> {
+    ) -> AnyPublisher<CardPartnerPayload.EveryPay.CardDetailsResponse, NetworkError> {
         let path = Path.cardDetails
         let headers = [HttpHeaderField.authorization: "Bearer \(token)"]
         let payload = CardPartnerPayload.EveryPay.SendCardDetailsRequest(

@@ -3,14 +3,15 @@
 import Foundation
 
 extension DateFormatter {
-    public static var iso8601Format: ISO8601DateFormatter {
+    public static let iso8601Format: ISO8601DateFormatter = {
         ISO8601DateFormatter()
-    }
+    }()
 
     public static let long: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
+        formatter.isLenient = true
         return formatter
     }()
 
@@ -18,18 +19,21 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
+        formatter.isLenient = true
         return formatter
     }()
 
     public static var nominalReadable: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM. dd, yyyy"
+        formatter.isLenient = true
         return formatter
     }
 
     public static func ddMMyyyy(separatedBy separator: String) -> DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd\(separator)MM\(separator)yyyy"
+        formatter.isLenient = true
         return formatter
     }
 
@@ -38,6 +42,7 @@ extension DateFormatter {
         formatter.dateFormat = "MMMM dd, yyyy @ h:mm a"
         formatter.amSymbol = "AM"
         formatter.pmSymbol = "PM"
+        formatter.isLenient = true
         return formatter
     }
 
@@ -49,6 +54,7 @@ extension DateFormatter {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         formatter.locale = Locale.Posix
         formatter.timeZone = TimeZone(abbreviation: "UTC")
+        formatter.isLenient = true
         return formatter
     }()
 
@@ -56,6 +62,8 @@ extension DateFormatter {
     public static let sessionDateFormat: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        formatter.locale = Locale.Posix
+        formatter.isLenient = true
         return formatter
     }()
 
@@ -63,6 +71,7 @@ extension DateFormatter {
     public static let birthday: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
+        formatter.isLenient = true
         return formatter
     }()
 
@@ -70,12 +79,14 @@ extension DateFormatter {
     public static let cardExpirationDate: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/yyyy"
+        formatter.isLenient = true
         return formatter
     }()
 
     static let HTTPRequestDateFormat: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:SS'Z'"
+        formatter.isLenient = true
         return formatter
     }()
 }

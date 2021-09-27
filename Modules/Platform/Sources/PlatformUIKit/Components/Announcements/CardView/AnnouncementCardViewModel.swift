@@ -185,13 +185,14 @@ public final class AnnouncementCardViewModel {
         }
     }
 
-    // MARK: - Properties
+    // MARK: - Public Properties
 
     public var priority: Priority { .high }
-
     public let presentation: Presentation
+    public let type: AnnouncementType?
 
-    let type: AnnouncementType?
+    // MARK: - Properties
+
     let interaction: Interaction
     let badgeImage: BadgeImage
     let contentAlignment: Alignment

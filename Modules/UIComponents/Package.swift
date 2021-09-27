@@ -18,8 +18,6 @@ let package = Package(
     targets: [
         .target(
             name: "UIComponentsKit",
-            dependencies: [
-            ],
             path: "UIComponentsKit",
             resources: [.process("Fonts")]
         ),

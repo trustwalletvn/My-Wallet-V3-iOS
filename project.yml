@@ -39,75 +39,39 @@ schemeTemplates:
       config: ${debugConfig}
       gatherCoverageData: true
       targets:
-      - name: ActivityKitTests
-        randomExecutionOrder: true
-      - name: BitcoinKitTests
-        randomExecutionOrder: true
-      - name: BitcoinChainKitTests
-        randomExecutionOrder: true
-      - name: BitcoinCashKitTests
-        randomExecutionOrder: true
-      - name: DashboardKitTests
-        randomExecutionOrder: true
-      - name: DashboardUIKitTests
-        randomExecutionOrder: true
-      - name: ERC20KitTests
-        randomExecutionOrder: true
-      - name: EthereumKitTests
-        randomExecutionOrder: true
-      - name: TransactionKitTests
-        randomExecutionOrder: true
-      - name: TransactionUIKitTests
-        randomExecutionOrder: true
-      - name: StellarKitTests
-        randomExecutionOrder: true
-      - name: KYCKitTests
-        randomExecutionOrder: true
-      - name: KYCUIKitTests
-        randomExecutionOrder: true
-      - name: OnboardingKitTests
-        randomExecutionOrder: true
-      - name: OnboardingUIKitTests
-        randomExecutionOrder: true
-      - name: SettingsKitTests
-        randomExecutionOrder: true
-      - name: SettingsUIKitTests
-        randomExecutionOrder: true
-      - name: RemoteNotificationsKitTests
-        randomExecutionOrder: true
-      - name: BlockchainTests
-        randomExecutionOrder: true
+        - name: BlockchainTests
+          randomExecutionOrder: true
 schemes:
   Blockchain:
     templateAttributes:
       debugConfig: Debug Production
       releaseConfig: Release
     templates:
-    - BlockchainScheme
+      - BlockchainScheme
   Blockchain (Dev):
     templateAttributes:
       debugConfig: Debug Dev
       releaseConfig: Release
     templates:
-    - BlockchainScheme
+      - BlockchainScheme
   Blockchain (Internal Production):
     templateAttributes:
       debugConfig: Debug Production
       releaseConfig: Release Internal
     templates:
-    - BlockchainScheme
+      - BlockchainScheme
   Blockchain (Staging):
     templateAttributes:
       debugConfig: Debug Staging
       releaseConfig: Release Staging
     templates:
-    - BlockchainScheme
+      - BlockchainScheme
   Blockchain (Alpha):
     templateAttributes:
       debugConfig: Debug Alpha
       releaseConfig: Release Alpha
     templates:
-    - BlockchainScheme
+      - BlockchainScheme
 settingGroups:
   base_ios:
     base:
@@ -123,25 +87,25 @@ settingGroups:
       CODE_SIGN_IDENTITY: iPhone Developer
       PROVISIONING_PROFILE_SPECIFIER: match Development com.rainydayapps.Blockchain.dev
     groups:
-    - base_signing
+      - base_signing
   debug_signing_staging:
     base:
       CODE_SIGN_IDENTITY: iPhone Developer
       PROVISIONING_PROFILE_SPECIFIER: match Development com.rainydayapps.Blockchain.staging
     groups:
-    - base_signing
+      - base_signing
   release_signing_staging:
     base:
       CODE_SIGN_IDENTITY: iPhone Distribution
       PROVISIONING_PROFILE_SPECIFIER: match AdHoc com.rainydayapps.Blockchain.staging
     groups:
-    - base_signing
+      - base_signing
   debug_signing_alpha:
     base:
       CODE_SIGN_IDENTITY: iPhone Developer
       PROVISIONING_PROFILE_SPECIFIER: match Development com.rainydayapps.Blockchain.alpha
     groups:
-    - base_signing
+      - base_signing
   release_signing_alpha:
     base:
       CODE_SIGN_IDENTITY: iPhone Distribution
@@ -179,56 +143,56 @@ settingGroups:
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.dev.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match Development com.rainydayapps.Blockchain.dev.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
   debug_signing_today_extension_staging:
     base:
       CODE_SIGN_IDENTITY: iPhone Developer
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.staging.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match Development com.rainydayapps.Blockchain.staging.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
   release_signing_today_extension_staging:
     base:
       CODE_SIGN_IDENTITY: iPhone Distribution
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.staging.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match AdHoc com.rainydayapps.Blockchain.staging.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
   debug_signing_today_extension_alpha:
     base:
       CODE_SIGN_IDENTITY: iPhone Developer
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.alpha.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match Development com.rainydayapps.Blockchain.alpha.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
   release_signing_today_extension_alpha:
     base:
       CODE_SIGN_IDENTITY: iPhone Distribution
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.alpha.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match AppStore com.rainydayapps.Blockchain.alpha.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
   debug_signing_today_extension:
     base:
       CODE_SIGN_IDENTITY: iPhone Developer
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match Development com.rainydayapps.Blockchain.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
   release_signing_today_extension_internal:
     base:
       CODE_SIGN_IDENTITY: iPhone Distribution
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match AdHoc com.rainydayapps.Blockchain.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
   release_signing_today_extension:
     base:
       CODE_SIGN_IDENTITY: iPhone Distribution
       PRODUCT_BUNDLE_IDENTIFIER: com.rainydayapps.Blockchain.TodayExtension
       PROVISIONING_PROFILE_SPECIFIER: match AppStore com.rainydayapps.Blockchain.TodayExtension
     groups:
-    - base_signing_today_extension
+      - base_signing_today_extension
 
 settings:
   base:
@@ -252,36 +216,10 @@ settings:
       OTHER_SWIFT_FLAGS: -DINTERNAL_BUILD
     Release Alpha:
       OTHER_SWIFT_FLAGS: -DINTERNAL_BUILD -DALPHA_BUILD
-targetTemplates:
-  Module:
-    dependencies:
-    - target: SharedPackagesKit
-    platform: iOS
-    schemes:
-      gatherCoverageData: true
-    sources:
-    - createIntermediateGroups: true
-      excludes:
-      - Scripts
-      path: Modules/${featureName}/${target_name}
-    - path: Modules/${featureName}/README.md
-    type: framework
-  ModuleTests:
-    dependencies:
-    - target: SharedPackagesKit
-    - package: Test
-      product: TestKit
-    platform: iOS
-    sources:
-    - createIntermediateGroups: true
-      excludes:
-      - "**/__Snapshots__"
-      path: Modules/${featureName}/${target_name}
-    type: bundle.unit-test
-  UIModule:
-    settings:
-      SWIFT_INSTALL_OBJC_HEADER: NO
 packages:
+  SnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing
+    version: 1.9.0
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
     version: 0.24.0
@@ -292,197 +230,83 @@ packages:
     url: https://github.com/airbnb/lottie-ios.git
     version: 3.2.1
   Nuke:
-    url: https://github.com/kean/Nuke
+    url: https://github.com/kean/Nuke.git
     from: 10.3.1
   NukeUI:
-    url: https://github.com/kean/NukeUI
+    url: https://github.com/kean/NukeUI.git
     from: 0.6.5
   Mockingbird:
-    url: https://github.com/birdrides/mockingbird
+    url: https://github.com/birdrides/mockingbird.git
     version: 0.16.0
-  UIComponents:
-    path: Modules/UIComponents
-  FeatureAccountPicker:
-    path: Modules/FeatureAccountPicker
   DIKit:
-    url: git@github.com:jackpooleybc/DIKit.git
+    url: https://github.com/jackpooleybc/DIKit.git
     branch: safe-property-wrappers
   BigInt:
-    url: git@github.com:attaswift/BigInt.git
+    url: https://github.com/attaswift/BigInt.git
     version: 5.2.1
   RxSwift:
-    url: git@github.com:ReactiveX/RxSwift.git
+    url: https://github.com/ReactiveX/RxSwift.git
     version: 5.1.3
   RxDataSources:
-    url: git@github.com:RxSwiftCommunity/RxDataSources.git
+    url: https://github.com/RxSwiftCommunity/RxDataSources.git
     version: 4.0.1
   RxCombine:
-    url: git@github.com:paulo-bc/RxCombine.git
+    url: https://github.com/paulo-bc/RxCombine.git
     version: 1.6.2
   RIBs:
-    url: git@github.com:paulo-bc/RIBs.git
+    url: https://github.com/paulo-bc/RIBs.git
     version: 0.10.2
   PhoneNumberKit:
-    url: git@github.com:marmelroy/PhoneNumberKit.git
+    url: https://github.com/marmelroy/PhoneNumberKit.git
     version: 3.3.3
-  Tool:
-    path: Modules/Tool
+  WalletCore:
+    url: https://github.com/oliveratkinson-bc/wallet-core.git
+    revision: 3d42f6995032828a3e1a0a372fb9873cdd357f03
   Analytics:
     path: Modules/Analytics
-  Network:
-    path: Modules/Network
-  Test:
-    path: Modules/Test
   CommonCrypto:
     path: Modules/CommonCrypto
-  WalletCore:
-    url: git@github.com:oliveratkinson-bc/wallet-core.git
-    revision: 44bf856ce6cea5d804c2182804e8659dc59fc82a
-  Localization:
-    path: Modules/Localization
-  WalletPayload:
-    path: Modules/WalletPayload
-  HDWallet:
-    path: Modules/HDWallet
-  Test:
-    path: Modules/Test
+  CryptoAssets:
+    path: Modules/CryptoAssets
+  FeatureAccountPicker:
+    path: Modules/FeatureAccountPicker
+  FeatureActivity:
+    path: Modules/FeatureActivity
   FeatureAuthentication:
     path: Modules/FeatureAuthentication
+  FeatureDashboard:
+    path: Modules/FeatureDashboard
+  FeatureDebug:
+    path: Modules/FeatureDebug
+  FeatureInterest:
+    path: Modules/FeatureInterest
+  FeatureKYC:
+    path: Modules/FeatureKYC
+  FeatureOnboarding:
+    path: Modules/FeatureOnboarding
+  FeatureSettings:
+    path: Modules/FeatureSettings
+  FeatureTransaction:
+    path: Modules/FeatureTransaction
+  HDWallet:
+    path: Modules/HDWallet
+  Localization:
+    path: Modules/Localization
+  Network:
+    path: Modules/Network
   Platform:
     path: Modules/Platform
+  RemoteNotifications:
+    path: Modules/RemoteNotifications
+  Test:
+    path: Modules/Test
+  Tool:
+    path: Modules/Tool
+  UIComponents:
+    path: Modules/UIComponents
+  WalletPayload:
+    path: Modules/WalletPayload
 targets:
-  ActivityKit:
-    dependencies:
-    - target: BitcoinCashKit
-    - target: BitcoinKit
-    - target: ERC20Kit
-    - target: EthereumKit
-    - target: StellarKit
-    scheme:
-      testTargets:
-      - ActivityKitTests
-    templateAttributes:
-      featureName: ActivityFeature
-    templates:
-    - Module
-  ActivityKitTests:
-    dependencies:
-    - target: ActivityKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: ActivityFeature
-    templates:
-    - ModuleTests
-  ActivityUIKit:
-    dependencies:
-    - sdk: LinkPresentation.framework
-    - sdk: SafariServices.framework
-    - target: ActivityKit
-    scheme:
-      testTargets:
-      - ActivityUIKitTests
-    templateAttributes:
-      featureName: ActivityFeature
-    templates:
-    - Module
-    - UIModule
-  ActivityUIKitTests:
-    dependencies:
-    - target: ActivityUIKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformUIKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: ActivityFeature
-    templates:
-    - ModuleTests
-  BitcoinCashKit:
-    dependencies:
-    - target: BitcoinChainKit
-    scheme:
-      testTargets:
-      - BitcoinCashKitTests
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - Module
-  BitcoinCashKitTests:
-    dependencies:
-    - target: BitcoinCashKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - ModuleTests
-  BitcoinChainKit:
-    dependencies:
-    - target: TransactionKit
-    scheme:
-      testTargets:
-      - BitcoinChainKitTests
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - Module
-  BitcoinChainKitTests:
-    dependencies:
-    - target: BitcoinChainKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - ModuleTests
-  BitcoinKit:
-    dependencies:
-    - target: BitcoinChainKit
-    - target: TransactionKit
-    scheme:
-      testTargets:
-      - BitcoinKitTests
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - Module
-  BitcoinKitTests:
-    dependencies:
-    - target: BitcoinKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/BitcoinKit
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - ModuleTests
   Blockchain:
     configFiles:
       Debug Dev: Config/BlockchainConfig/Blockchain-Dev.xcconfig
@@ -494,182 +318,228 @@ targets:
       Release Staging: Config/BlockchainConfig/Blockchain-Staging.xcconfig
       Release Alpha: Config/BlockchainConfig/Blockchain-Alpha.xcconfig
     dependencies:
-    - sdk: libicucore.tbd
-    - framework: Carthage/Build/FirebaseABTesting.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseAnalytics.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseCore.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseCoreDiagnostics.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseCrashlytics.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseDynamicLinks.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseInstallations.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseMessaging.xcframework
-      embed: false
-    - framework: Carthage/Build/FirebaseRemoteConfig.xcframework
-      embed: false
-    - framework: Carthage/Build/GoogleAppMeasurement.xcframework
-      embed: false
-    - framework: Carthage/Build/GoogleDataTransport.xcframework
-      embed: false
-    - framework: Carthage/Build/GoogleUtilities.xcframework
-      embed: false
-    - framework: Carthage/Build/nanopb.xcframework
-      embed: false
-    - framework: Carthage/Build/PromisesObjC.xcframework
-      embed: false
-    - framework: Carthage/Build/recaptcha.framework
-      embed: false
-    - framework: Carthage/Build/GoogleToolboxForMac.xcframework
-      embed: false
-    - framework: Carthage/Build/GTMSessionFetcher.xcframework
-      embed: false
-    - framework: Carthage/Build/Protobuf.xcframework
-      embed: false
-    - framework: Carthage/Build/Promises.xcframework
-      embed: false
-    - framework: Carthage/Build/Sift.xcframework
-    - framework: Carthage/Build/stellarsdk.xcframework
-    - framework: Carthage/Build/Veriff.xcframework
-    - embed: false
-      framework: Submodules/OpenSSL-for-iPhone/lib/libcrypto.a
-    - target: TodayExtension
-    - target: InterestKit
-    - target: InterestDataKit
-    - target: InterestUIKit
-    - target: TransactionKit
-    - target: TransactionDataKit
-    - target: TransactionUIKit
-    - target: StellarKit
-    - target: EthereumKit
-    - target: ERC20Kit
-    - target: BitcoinKit
-    - target: BitcoinCashKit
-    - target: BitcoinChainKit
-    - target: ActivityKit
-    - target: ActivityUIKit
-    - target: DashboardKit
-    - target: DashboardUIKit
-    - target: KYCKit
-    - target: KYCUIKit
-    - target: OnboardingKit
-    - target: OnboardingUIKit
-    - target: DebugUIKit
-    - target: SettingsUIKit
-    - target: SettingsKit
-    - target: SharedPackagesKit
-    - target: RemoteNotificationsKit
-    - target: InterestDataKit
+      - sdk: libicucore.tbd
+      - framework: Carthage/Build/FirebaseABTesting.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseAnalytics.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseCore.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseCoreDiagnostics.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseCrashlytics.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseDynamicLinks.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseInstallations.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseMessaging.xcframework
+        embed: false
+      - framework: Carthage/Build/FirebaseRemoteConfig.xcframework
+        embed: false
+      - framework: Carthage/Build/GoogleAppMeasurement.xcframework
+        embed: false
+      - framework: Carthage/Build/GoogleDataTransport.xcframework
+        embed: false
+      - framework: Carthage/Build/GoogleUtilities.xcframework
+        embed: false
+      - framework: Carthage/Build/nanopb.xcframework
+        embed: false
+      - framework: Carthage/Build/PromisesObjC.xcframework
+        embed: false
+      - framework: Carthage/Build/recaptcha.framework
+        embed: false
+      - framework: Carthage/Build/GoogleToolboxForMac.xcframework
+        embed: false
+      - framework: Carthage/Build/GTMSessionFetcher.xcframework
+        embed: false
+      - framework: Carthage/Build/Protobuf.xcframework
+        embed: false
+      - framework: Carthage/Build/Promises.xcframework
+        embed: false
+      - framework: Carthage/Build/Sift.xcframework
+      - embed: false
+        framework: Submodules/OpenSSL-for-iPhone/lib/libcrypto.a
+
+      - package: FeatureAccountPicker
+      - package: FeatureActivity
+      - package: FeatureAuthentication
+      - package: FeatureDashboard
+      - package: FeatureDebug
+      - package: FeatureInterest
+      - package: FeatureKYC
+      - package: FeatureOnboarding
+      - package: FeatureSettings
+      - package: FeatureTransaction
+
+      - package: BigInt
+      - package: CombineExt
+      - package: ComposableArchitecture
+      - package: DIKit
+      - package: Nuke
+      - package: NukeUI   
+      - package: RIBs
+      - package: RxCombine
+      - package: RxDataSources
+        product: Differentiator
+      - package: RxDataSources
+        product: RxDataSources
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+      - package: RxSwift
+        product: RxSwift
+
+      - package: Analytics
+        product: AnalyticsKit
+      - package: CommonCrypto
+        product: CommonCryptoKit
+      - package: CryptoAssets
+        product: BitcoinCashKit
+      - package: CryptoAssets
+        product: BitcoinChainKit
+      - package: CryptoAssets
+        product: BitcoinKit
+      - package: CryptoAssets
+        product: EthereumKit
+      - package: CryptoAssets
+        product: ERC20Kit
+      - package: CryptoAssets
+        product: ERC20DataKit
+      - package: CryptoAssets
+        product: StellarKit
+      - package: HDWallet
+        product: HDWalletKit
+      - package: Localization
+        product: Localization
+      - package: Network
+        product: NetworkKit
+      - package: Platform
+        product: PlatformKit
+      - package: Platform
+        product: PlatformUIKit
+      - package: RemoteNotifications
+        product: RemoteNotificationsKit
+      - package: Tool
+        product: ToolKit
+      - package: UIComponents
+        product: UIComponents
+      - package: WalletPayload
+        product: WalletPayloadKit
+        
+      - target: TodayExtension
     platform: iOS
     postBuildScripts:
-    - inputFiles:
-      - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}
-      - ${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}
-      name: Run Crashlytics
-      script: ${PROJECT_DIR}/scripts/crashlytics/run
+      - name: Run Crashlytics
+        inputFiles:
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}
+          - ${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}
+        script: ${PROJECT_DIR}/scripts/crashlytics/run
+      - name: Remove Nested Frameworks from Today Extension
+        script: ${PROJECT_DIR}/scripts/remove-nested-frameworks.sh
     postCompileScripts:
-    - name: Get SSL Certificate
-      path: Blockchain/Scripts/get_ssl_certificate.sh
-    - name: Swiftlint
-      path: Blockchain/Scripts/swiftlint.sh
-    - name: Setup Firebase Environment
-      path: Blockchain/Scripts/firebase_copy_plist.sh
-    - name: Envman BUILT_PRODUCTS_DIR
-      path: Blockchain/Scripts/export_built_products_dir.sh
+      - name: Get SSL Certificate
+        path: Blockchain/Scripts/get_ssl_certificate.sh
+      - name: Swiftlint
+        path: Blockchain/Scripts/swiftlint.sh
+      - name: Setup Firebase Environment
+        path: Blockchain/Scripts/firebase_copy_plist.sh
+      - name: Envman BUILT_PRODUCTS_DIR
+        path: Blockchain/Scripts/export_built_products_dir.sh
     preBuildScripts:
-    - name: my-wallet SHA256
-      script: "if [[ -z \"${BITRISE_PROJECT_PATH}\" ]]; then\n  exit 0\nfi\ncd ${PROJECT_DIR}\n\
-        if ! shasum -a 256 -c ${PROJECT_DIR}/my-wallet.js.sha256; then\n  echo \"\
-        Checksum failed:\" >&2\n  exit 1\nfi\n"
+      - name: my-wallet SHA256
+        script: "if [[ -z \"${BITRISE_PROJECT_PATH}\" ]]; then\n  exit 0\nfi\ncd ${PROJECT_DIR}\n\
+          if ! shasum -a 256 -c ${PROJECT_DIR}/my-wallet.js.sha256; then\n  echo \"\
+          Checksum failed:\" >&2\n  exit 1\nfi\n"
     settings:
       base:
         COMMIT_HASH: ${COMMIT_HASH}
         GCC_PREFIX_HEADER: Blockchain/Blockchain-Prefix.pch
         FRAMEWORK_SEARCH_PATHS:
-        - $(PROJECT_DIR)/Carthage/Build/iOS/
-        - $(PROJECT_DIR)/Carthage/Build/
-        - Submodules/OpenSSL-for-iPhone/lib
+          - $(PROJECT_DIR)/Carthage/Build/iOS/
+          - $(PROJECT_DIR)/Carthage/Build/
+          - Submodules/OpenSSL-for-iPhone/lib
         HEADER_SEARCH_PATHS:
-        - $(PROJECT_DIR)/Submodules/OpenSSL-for-iPhone/include
+          - $(PROJECT_DIR)/Submodules/OpenSSL-for-iPhone/include
         LIBRARY_SEARCH_PATHS:
-        - $(PROJECT_DIR)/Submodules/OpenSSL-for-iPhone/lib
+          - $(PROJECT_DIR)/Submodules/OpenSSL-for-iPhone/lib
         OTHER_LDFLAGS:
-        - -ObjC
+          - -ObjC
         SWIFT_OBJC_BRIDGING_HEADER: Blockchain/Blockchain-Bridging-Header.h
       configs:
         Debug Dev:
           groups:
-          - debug_signing_dev
-          - base_ios
+            - debug_signing_dev
+            - base_ios
         Debug Staging:
           groups:
-          - debug_signing_staging
-          - base_ios
+            - debug_signing_staging
+            - base_ios
         Release Staging:
           groups:
-          - release_signing_staging
-          - base_ios
+            - release_signing_staging
+            - base_ios
         Debug Alpha:
           groups:
-          - debug_signing_alpha
-          - base_ios
+            - debug_signing_alpha
+            - base_ios
         Release Alpha:
           groups:
-          - release_signing_alpha
-          - base_ios
+            - release_signing_alpha
+            - base_ios
         Debug Production:
           groups:
-          - debug_signing
-          - base_ios
+            - debug_signing
+            - base_ios
         Release:
           groups:
-          - release_signing
-          - base_ios
+            - release_signing
+            - base_ios
         Release Internal:
           groups:
-          - release_signing_internal
-          - base_ios
+            - release_signing_internal
+            - base_ios
     sources:
-    - buildPhase:
-        copyFiles:
-          destination: resources
-      group: Blockchain/Cert
-      optional: true
-      path: Blockchain/Cert/blockchain.der
-    - group: Blockchain/JavaScript
-      optional: true
-      path: Submodules/My-Wallet-V3/dist/my-wallet.js
-    - excludes:
-      - Firebase
-      - Scripts
-      - Cert
-      path: Blockchain
-    - includes:
-      - BTCAddress.[hm]
-      - BTCBase58.[hm]
-      - BTCBigNumber.[hm]
-      - BTCCurvePoint.[hm]
-      - BTCData.[hm]
-      - BTCErrors.[hm]
-      - BTCKey.[hm]
-      - BTCKeychain.[hm]
-      - BTCNetwork.[hm]
-      - BTCProtocolSerialization.[hm]
-      - NSData+BTCData.[hm]
-      path: Submodules/CoreBitcoin/CoreBitcoin
+      - buildPhase:
+          copyFiles:
+            destination: resources
+        group: Blockchain/Cert
+        optional: true
+        path: Blockchain/Cert/blockchain.der
+      - group: Blockchain/JavaScript
+        optional: true
+        path: Submodules/My-Wallet-V3/dist/my-wallet.js
+      - excludes:
+        - Firebase
+        - Scripts
+        - Cert
+        path: Blockchain
+      - includes:
+        - BTCAddress.[hm]
+        - BTCBase58.[hm]
+        - BTCBigNumber.[hm]
+        - BTCCurvePoint.[hm]
+        - BTCData.[hm]
+        - BTCErrors.[hm]
+        - BTCKey.[hm]
+        - BTCKeychain.[hm]
+        - BTCNetwork.[hm]
+        - BTCProtocolSerialization.[hm]
+        - NSData+BTCData.[hm]
+        path: Submodules/CoreBitcoin/CoreBitcoin
     type: application
   BlockchainTests:
     settings:
        OTHER_LDFLAGS: -undefined dynamic_lookup
     dependencies:
-    - target: Blockchain
-    - package: Test
-      product: TestKit
+      - target: Blockchain
+      - package: Test
+        product: TestKit
+      - package: RxSwift
+        product: RxTest
+      - package: RxSwift
+        product: RxBlocking
     platform: iOS
     sources:
     - path: BlockchainTests
@@ -684,389 +554,32 @@ targets:
     - createIntermediateGroups: true
       path: Modules/Platform/Sources/PlatformUIKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/RemoteNotificationsKit
+      path: Modules/RemoteNotifications/Sources/RemoteNotificationsKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/KYCKit
+      path: Modules/FeatureKYC/Sources/FeatureKYCDomainMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/KYCUIKit
+      path: Modules/FeatureKYC/Sources/FeatureKYCUIMock
     - createIntermediateGroups: true
       path: Modules/Analytics/Sources/AnalyticsKitMock
     - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/SettingsKit
+      path: Modules/FeatureSettings/Sources/FeatureSettingsDomainMock
     - createIntermediateGroups: true
       path: Modules/WalletPayload/Sources/WalletPayloadKitMock
     type: bundle.unit-test
-  DashboardKit:
-    scheme:
-      testTargets:
-      - DashboardKitTests
-    templates:
-    - Module
-    templateAttributes:
-      featureName: DashboardFeature
-  DashboardKitTests:
-    dependencies:
-    - target: DashboardKit
-    templates:
-    - ModuleTests
-    templateAttributes:
-      featureName: DashboardFeature
-  DashboardUIKit:
-    dependencies:
-    - target: DashboardKit
-    - target: TransactionUIKit
-    scheme:
-      testTargets:
-      - DashboardUIKitTests
-    templates:
-    - Module
-    - UIModule
-    templateAttributes:
-      featureName: DashboardFeature
-  DashboardUIKitTests:
-    dependencies:
-    - target: DashboardUIKit
-    templates:
-    - ModuleTests
-    templateAttributes:
-      featureName: DashboardFeature
-  SharedPackagesKit:
-    dependencies:
-    - package: Analytics
-      product: AnalyticsKit
-    - package: FeatureAuthentication
-      product: FeatureAuthentication
-    - package: Analytics
-      product: RxAnalyticsKit
-    - package: BigInt
-    - package: CombineExt
-    - package: CommonCrypto
-      product: CommonCryptoKit
-    - package: ComposableArchitecture
-    - package: DIKit
-    - package: FeatureAccountPicker
-    - package: HDWallet
-      product: HDWalletKit
-    - package: Localization
-    - package: Lottie
-    - package: Network
-      product: NetworkKit
-    - package: Nuke
-    - package: NukeUI
-    - package: Platform
-      product: PlatformKit
-    - package: Platform
-      product: PlatformUIKit
-    - package: RIBs
-    - package: RxCombine
-    - package: RxDataSources
-    - package: RxSwift
-      product: RxCocoa
-    - package: RxSwift
-      product: RxRelay
-    - package: RxSwift
-      product: RxSwift
-    - package: Tool
-      product: ToolKit
-    - package: UIComponents
-    - package: WalletCore
-    - package: WalletPayload
-      product: WalletPayloadKit
-    platform: iOS
-    deploymentTarget:
-        iOS: '14.0'
-    scheme: {}
-    sources:
-    - createIntermediateGroups: true
-      excludes:
-      - Scripts
-      path: Modules/SharedPackages/SharedPackagesKit
-    type: framework
-  DebugUIKit:
-    templateAttributes:
-      featureName: DebugUI
-    templates:
-    - Module
-    - UIModule
-  ERC20Kit:
-    dependencies:
-    - target: EthereumKit
-    - target: TransactionKit
-    scheme:
-      testTargets:
-      - ERC20KitTests
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - Module
-  ERC20KitTests:
-    dependencies:
-    - target: ERC20Kit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/EthereumKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/ERC20Kit
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - ModuleTests
-  EthereumKit:
-    dependencies:
-    - target: TransactionKit
-    scheme:
-      testTargets:
-      - EthereumKitTests
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - Module
-  EthereumKitTests:
-    dependencies:
-    - target: EthereumKit
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/EthereumKit
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - ModuleTests
-  InterestKit:
-    dependencies:
-    - target: TransactionKit
-    scheme:
-      testTargets:
-      - InterestKitTests
-    templateAttributes:
-      featureName: InterestFeature
-    templates:
-    - Module
-  InterestKitTests:
-    dependencies:
-    - target: InterestKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: InterestFeature
-    templates:
-    - ModuleTests
-  InterestDataKit:
-    dependencies:
-    - target: InterestKit
-    scheme:
-      testTargets:
-      - InterestDataKitTests
-    templateAttributes:
-      featureName: InterestFeature
-    templates:
-      - Module
-  InterestDataKitTests:
-    dependencies:
-    - target: InterestDataKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: InterestFeature
-    templates:
-    - ModuleTests
-  InterestUIKit:
-    dependencies:
-    - target: InterestKit
-    scheme:
-      testTargets:
-      - InterestUIKitTests
-    templateAttributes:
-      featureName: InterestFeature
-    templates:
-    - Module
-    - UIModule
-  InterestUIKitTests:
-    dependencies:
-    - target: InterestUIKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformUIKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: InterestFeature
-    templates:
-    - ModuleTests
-  KYCKit:
-    scheme:
-      testTargets:
-      - KYCKitTests
-    templateAttributes:
-      featureName: KYCFeature
-    templates:
-    - Module
-  KYCKitTests:
-    dependencies:
-    - target: KYCKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: KYCFeature
-    templates:
-    - ModuleTests
-  KYCUIKit:
-    dependencies:
-    - framework: Carthage/Build/Veriff.xcframework
-    - target: KYCKit
-    scheme:
-      testTargets:
-      - KYCUIKitTests
-    templateAttributes:
-      featureName: KYCFeature
-    templates:
-    - Module
-    - UIModule
-  KYCUIKitTests:
-    dependencies:
-    - target: KYCUIKit
-    - target: SnapshotTestsHostApp # required for snapshot tests
-    settings:
-      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SnapshotTestsHostApp.app/SnapshotTestsHostApp" # required for snapshot tests
-    sources:
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/KYCKit
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformUIKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    - createIntermediateGroups: true
-      path: Modules/Analytics/Sources/AnalyticsKitMock
-    templateAttributes:
-      featureName: KYCFeature
-    templates:
-    - ModuleTests
   OnboardingDemo:
     dependencies:
-    - target: KYCKit
-    - target: KYCUIKit
-    - target: OnboardingKit
-    - target: OnboardingUIKit
-    - target: SharedPackagesKit
+      - package: FeatureOnboarding
+        product: FeatureOnboardingUI
+      - package: FeatureKYC
+      - package: Platform
+        product: PlatformKit
+      - package: Platform
+        product: PlatformUIKit
     platform: iOS
     sources:
       - createIntermediateGroups: true
-        path: Modules/OnboardingFeature/OnboardingDemo
+        path: Modules/FeatureOnboarding/OnboardingDemo
     type: application
-  OnboardingKit:
-    scheme:
-      testTargets:
-      - OnboardingKitTests
-    templateAttributes:
-      featureName: OnboardingFeature
-    templates:
-    - Module
-  OnboardingKitTests:
-    dependencies:
-    - target: OnboardingKit
-    templateAttributes:
-      featureName: OnboardingFeature
-    templates:
-    - ModuleTests
-  OnboardingUIKit:
-    dependencies:
-    - target: OnboardingKit
-    scheme:
-      testTargets:
-      - OnboardingUIKitTests
-    templateAttributes:
-      featureName: OnboardingFeature
-    templates:
-    - Module
-    - UIModule
-  OnboardingUIKitTests:
-    dependencies:
-    - target: OnboardingUIKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Analytics/Sources/AnalyticsKitMock # required for PlatformUIKit mocks to compile
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformUIKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: OnboardingFeature
-    templates:
-    - ModuleTests
-  SettingsKit:
-    scheme:
-      testTargets:
-        - SettingsKitTests
-    dependencies:
-    - target: KYCKit
-    templateAttributes:
-      featureName: SettingsFeature
-    templates:
-    - Module
-  SettingsKitTests:
-    dependencies:
-      - target: SettingsKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/SettingsKit
-    templates:
-      - ModuleTests
-    templateAttributes:
-      featureName: SettingsFeature
-  SettingsUIKit:
-    dependencies:
-      - target: KYCKit
-      - target: KYCUIKit
-      - target: SettingsKit
-    scheme:
-      testTargets:
-        - SettingsUIKitTests
-    templates:
-    - Module
-    - UIModule
-    templateAttributes:
-      featureName: SettingsFeature
-  SettingsUIKitTests:
-    dependencies:
-      - target: SettingsUIKit
-    templates:
-      - ModuleTests
-    templateAttributes:
-      featureName: SettingsFeature
   SnapshotTestsHostApp: # A target only used to host (unit) snapshot tests as they require a hosting app
     platform: iOS
     sources:
@@ -1075,35 +588,30 @@ targets:
       - path: scripts/fix-snapshot-host-app.sh 
         name: "[blockchain] Copy Swift Package Manager Generated Bundles"
     type: application
-  StellarKit:
-    dependencies:
-    - target: TransactionKit
-    - framework: Carthage/Build/stellarsdk.xcframework
-    scheme:
-      testTargets:
-      - StellarKitTests
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - Module
-  StellarKitTests:
-    dependencies:
-    - target: StellarKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/StellarKit
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: CryptoAssets
-    templates:
-    - ModuleTests
   TodayExtension:
     dependencies:
-    - sdk: NotificationCenter.framework
-    - target: SharedPackagesKit
+      - sdk: NotificationCenter.framework
+
+      - package: DIKit
+      - package: RxDataSources
+        product: RxDataSources
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+      - package: RxSwift
+        product: RxSwift
+
+      - package: Analytics
+        product: AnalyticsKit
+      - package: Localization
+        product: Localization
+      - package: Platform
+        product: PlatformKit
+      - package: Platform
+        product: PlatformUIKit
+      - package: Tool
+        product: ToolKit
     platform: iOS
     scheme: {}
     settings:
@@ -1133,110 +641,5 @@ targets:
           groups:
           - release_signing_today_extension_internal
     sources:
-    - TodayExtension
+      - TodayExtension
     type: app-extension
-  TransactionKit:
-    scheme:
-      testTargets:
-      - TransactionKitTests
-    templateAttributes:
-      featureName: TransactionFeature
-    templates:
-    - Module
-  TransactionKitTests:
-    dependencies:
-    - target: TransactionKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/TransactionKit
-    templateAttributes:
-      featureName: TransactionFeature
-    templates:
-    - ModuleTests
-  TransactionDataKit:
-    dependencies:
-    - target: TransactionKit
-    scheme:
-      testTargets:
-      - TransactionDataKitTests
-    templateAttributes:
-      featureName: TransactionFeature
-    templates:
-      - Module
-  TransactionDataKitTests:
-    dependencies:
-    - target: TransactionDataKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    templateAttributes:
-      featureName: TransactionFeature
-    templates:
-    - ModuleTests
-  TransactionUIKit:
-    scheme:
-      testTargets:
-      - TransactionUIKitTests
-    dependencies:
-    - target: KYCKit
-    - target: KYCUIKit
-    - target: TransactionKit
-    templateAttributes:
-      featureName: TransactionFeature
-    templates:
-    - Module
-    - UIModule
-  TransactionUIKitTests:
-    dependencies:
-    - target: TransactionUIKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Analytics/Sources/AnalyticsKitMock
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformKitMock
-    - createIntermediateGroups: true
-      path: Modules/Platform/Sources/PlatformUIKitMock
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/TransactionKit
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/TransactionUIKit
-    templateAttributes:
-      featureName: TransactionFeature
-    templates:
-    - ModuleTests
-  RemoteNotificationsKit:
-    scheme:
-      testTargets:
-      - RemoteNotificationsKitTests
-    templateAttributes:
-      featureName: RemoteNotifications
-    templates:
-    - Module
-  RemoteNotificationsKitTests:
-    dependencies:
-    - target: RemoteNotificationsKit
-    sources:
-    - createIntermediateGroups: true
-      path: Modules/Tool/Sources/ToolKitMock
-    - createIntermediateGroups: true
-      path: Modules/Network/Sources/NetworkKitMock
-    - createIntermediateGroups: true
-      path: TestKit/TestKit/Mocks/RemoteNotificationsKit
-    - createIntermediateGroups: true
-      path: Modules/Analytics/Sources/AnalyticsKitMock
-    templateAttributes:
-      featureName: RemoteNotifications
-    templates:
-    - ModuleTests

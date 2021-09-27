@@ -66,7 +66,7 @@ final class PaymentAccountService: PaymentAccountServiceAPI {
     ) -> Single<PaymentAccountDescribing> {
         Single
             .zip(
-                client.paymentAccount(for: currency).map(\.account),
+                client.paymentAccount(for: currency).map(\.account).asSingle(),
                 dataRepository.user.take(1).asSingle()
             )
             .map { response, user -> PaymentAccountDescribing? in

@@ -1,7 +1,9 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
+import NetworkKit
 
 public protocol CardDetailClientAPI: AnyObject {
-    func getCard(by id: String) -> Single<CardPayload>
+
+    func getCard(by id: String) -> AnyPublisher<CardPayload, NabuNetworkError>
 }

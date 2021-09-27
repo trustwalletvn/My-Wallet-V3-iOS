@@ -77,7 +77,9 @@ public final class CardListService: CardListServiceAPI {
     /// Always fetches data from API, updates relay on success.
     private func createFetchSingle() -> Single<[CardData]> {
         client.cardList
-            .map { [CardData].init(response: $0) }
+            .asObservable()
+            .asSingle()
+            .map([CardData].init)
             .do(onSuccess: { [weak self] (cards: [CardData]) in
                 self?.cardsRelay.accept(cards)
             })

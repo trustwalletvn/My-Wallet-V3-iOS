@@ -1,17 +1,17 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import ActivityUIKit
 import AnalyticsKit
-import DashboardUIKit
 import DIKit
+import FeatureActivityUI
+import FeatureDashboardUI
+import FeatureTransactionDomain
+import FeatureTransactionUI
 import NetworkKit
 import PlatformKit
 import PlatformUIKit
 import RIBs
 import RxSwift
 import ToolKit
-import TransactionKit
-import TransactionUIKit
 
 final class TabControllerManager: NSObject {
 
@@ -63,7 +63,8 @@ final class TabControllerManager: NSObject {
 
     func showDashboard() {
         if dashboardNavigationController == nil {
-            dashboardNavigationController = UINavigationController(rootViewController: DashboardViewController())
+            let builder = DashboardScreenBuilder()
+            dashboardNavigationController = UINavigationController(rootViewController: builder.build())
         }
         tabViewController.setActiveViewController(
             dashboardNavigationController,
@@ -176,7 +177,7 @@ final class TabControllerManager: NSObject {
         let asset = coincore[.coin(.bitcoin)]
         let transactionPair = Single.zip(
             BitPayInvoiceTarget.make(from: data, asset: .coin(.bitcoin)),
-            asset.defaultAccount
+            asset.defaultAccount.asObservable().asSingle()
         )
         BitPayInvoiceTarget
             .isBitPay(data)

@@ -1,8 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 
 /// Responsible for networking
 public final class PinClient: PinClientAPI {
@@ -22,7 +22,9 @@ public final class PinClient: PinClientAPI {
     ///
     /// - Parameter pinPayload: the PinPayload
     /// - Returns: a Single returning the response
-    public func create(pinPayload: PinPayload) -> Single<PinStoreResponse> {
+    public func create(
+        pinPayload: PinPayload
+    ) -> AnyPublisher<PinStoreResponse, PinStoreResponse> {
         let requestPayload = StoreRequestData(payload: pinPayload, requestType: .create)
         let data = ParameterEncoder(requestPayload.dictionary).encoded
         let request = NetworkRequest(
@@ -31,19 +33,16 @@ public final class PinClient: PinClientAPI {
             body: data,
             contentType: .formUrlEncoded
         )
-        return networkAdapter
-            .perform(
-                request: request,
-                responseType: PinStoreResponse.self,
-                errorResponseType: PinStoreResponse.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     /// Validates if the provided pin payload (i.e. pin code and pin key combination) is correct.
     ///
     /// - Parameter pinPayload: the PinPayload
     /// - Returns: an Single returning the response
-    public func validate(pinPayload: PinPayload) -> Single<PinStoreResponse> {
+    public func validate(
+        pinPayload: PinPayload
+    ) -> AnyPublisher<PinStoreResponse, PinStoreResponse> {
         let requestPayload = StoreRequestData(payload: pinPayload, requestType: .validate)
         let data = ParameterEncoder(requestPayload.dictionary).encoded
         let request = NetworkRequest(
@@ -52,12 +51,7 @@ public final class PinClient: PinClientAPI {
             body: data,
             contentType: .formUrlEncoded
         )
-        return networkAdapter
-            .perform(
-                request: request,
-                responseType: PinStoreResponse.self,
-                errorResponseType: PinStoreResponse.self
-            )
+        return networkAdapter.perform(request: request)
     }
 }
 

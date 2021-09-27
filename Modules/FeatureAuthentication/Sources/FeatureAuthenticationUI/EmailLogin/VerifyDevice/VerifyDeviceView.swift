@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import AnalyticsKit
 import ComposableArchitecture
 import FeatureAuthenticationDomain
 import Localization
@@ -126,7 +127,8 @@ struct VerifyDeviceView_Previews: PreviewProvider {
                 environment: .init(
                     mainQueue: .main,
                     deviceVerificationService: NoOpDeviceVerificationService(),
-                    errorRecorder: NoOpErrorRecorder()
+                    errorRecorder: NoOpErrorRecorder(),
+                    analyticsRecorder: NoOpAnalyticsRecorder()
                 )
             )
         )

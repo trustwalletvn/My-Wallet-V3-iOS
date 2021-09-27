@@ -8,6 +8,11 @@ extension TimeInterval {
         Calendar(identifier: .gregorian).dateInterval(of: component, for: Date())!.duration
     }
 
+    /// Syntactic sugar for legibility
+    public static func seconds(_ interval: TimeInterval) -> TimeInterval {
+        interval
+    }
+
     /// Represents minutes in seconds using the Gregorian calendar
     public static func minutes(_ minutes: UInt) -> TimeInterval {
         TimeInterval(minutes) * duration(of: .minute)

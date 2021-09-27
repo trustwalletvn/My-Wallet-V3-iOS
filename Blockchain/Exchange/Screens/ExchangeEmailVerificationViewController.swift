@@ -1,7 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import FeatureKYCUI
 import Foundation
-import KYCUIKit
 import PlatformKit
 import PlatformUIKit
 import RxCocoa

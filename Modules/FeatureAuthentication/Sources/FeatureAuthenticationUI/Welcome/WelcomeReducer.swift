@@ -12,6 +12,7 @@ public enum WelcomeAction: Equatable {
     case start
     case presentScreenFlow(WelcomeState.ScreenFlow)
     case emailLogin(EmailLoginAction)
+    case restoreWallet(SeedPhraseAction)
     case deeplinkReceived(URL)
     case requestedToDecryptWallet(String)
     /// should only be used on internal builds
@@ -29,7 +30,7 @@ public struct WelcomeState: Equatable {
         case welcomeScreen
         case createWalletScreen
         case emailLoginScreen
-        case recoverWalletScreen
+        case restoreWalletScreen
         /// this should only be used for internal builds
         case manualLoginScreen
     }
@@ -43,6 +44,7 @@ public struct WelcomeState: Equatable {
     public var modals: Modals
     public var buildVersion: String
     var emailLoginState: EmailLoginState?
+    var restoreWalletState: SeedPhraseState?
 
     var secondPasswordNoticeState: SecondPasswordNotice.State?
 
@@ -51,6 +53,7 @@ public struct WelcomeState: Equatable {
     var manualPairingEnabled: Bool
 
     public init() {
+        restoreWalletState = nil
         emailLoginState = nil
         manualCredentialsState = nil
         secondPasswordNoticeState = nil
@@ -100,12 +103,22 @@ public let welcomeReducer = Reducer.combine(
             action: /WelcomeAction.emailLogin,
             environment: {
                 EmailLoginEnvironment(
-                    sessionTokenService:
-                    $0.sessionTokenService,
-                    deviceVerificationService: $0.deviceVerificationService,
                     mainQueue: $0.mainQueue,
+                    sessionTokenService: $0.sessionTokenService,
+                    deviceVerificationService: $0.deviceVerificationService,
                     errorRecorder: $0.errorRecorder,
                     analyticsRecorder: $0.analyticsRecorder
+                )
+            }
+        ),
+    seedPhraseReducer
+        .optional()
+        .pullback(
+            state: \.restoreWalletState,
+            action: /WelcomeAction.restoreWallet,
+            environment: {
+                SeedPhraseEnvironment(
+                    mainQueue: $0.mainQueue
                 )
             }
         ),
@@ -116,8 +129,10 @@ public let welcomeReducer = Reducer.combine(
             action: /WelcomeAction.manualPairing,
             environment: {
                 CredentialsEnvironment(
+                    mainQueue: $0.mainQueue,
                     deviceVerificationService: $0.deviceVerificationService,
-                    errorRecorder: $0.errorRecorder
+                    errorRecorder: $0.errorRecorder,
+                    analyticsRecorder: $0.analyticsRecorder
                 )
             }
         ),
@@ -149,8 +164,11 @@ public let welcomeReducer = Reducer.combine(
             switch screenFlow {
             case .emailLoginScreen:
                 state.emailLoginState = .init()
-            case .welcomeScreen, .createWalletScreen, .recoverWalletScreen, .manualLoginScreen:
+            case .restoreWalletScreen:
+                state.restoreWalletState = .init()
+            case .welcomeScreen, .createWalletScreen, .manualLoginScreen:
                 state.emailLoginState = nil
+                state.restoreWalletState = nil
             }
 
             if BuildFlag.isInternal, screenFlow == .manualLoginScreen {
@@ -184,6 +202,12 @@ public let welcomeReducer = Reducer.combine(
             state.screenFlow = .welcomeScreen
             return .none
         case .manualPairing:
+            return .none
+        case .restoreWallet(.closeButtonTapped):
+            state.screenFlow = .welcomeScreen
+            state.restoreWalletState = .init()
+            return .none
+        case .restoreWallet:
             return .none
         case .informSecondPasswordDetected:
             state.screenFlow = .welcomeScreen

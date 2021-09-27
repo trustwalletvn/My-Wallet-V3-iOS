@@ -10,6 +10,7 @@ public final class CryptoFeeService<FeeType: TransactionFee & Decodable>: Crypto
 
     public var fees: Single<FeeType> {
         client.fees
+            .asSingle()
             .do(onError: { error in
                 Logger.shared.error(error)
             })

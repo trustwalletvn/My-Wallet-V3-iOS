@@ -51,6 +51,7 @@ final class OrderConfirmationService: OrderConfirmationServiceAPI {
             partner: partner,
             paymentMethodId: paymentMethodId
         )
+        .asSingle()
         .map(weak: self) { (self, response) in
             OrderDetails(recorder: self.analyticsRecorder, response: response)
         }

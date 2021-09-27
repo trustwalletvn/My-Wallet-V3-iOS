@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import SnapshotTesting
 import SwiftUI
 import UIKit
 

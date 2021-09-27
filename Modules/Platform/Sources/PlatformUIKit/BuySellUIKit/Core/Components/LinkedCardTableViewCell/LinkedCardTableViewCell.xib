@@ -17,7 +17,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="76M-fr-eeJ" customClass="LinkedCardView" customModule="PlatformUIKit">
-                        <rect key="frame" x="24" y="16" width="200" height="101"/>
+                        <rect key="frame" x="16" y="16" width="200" height="101"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="width" priority="250" constant="200" id="fqs-uT-tT1"/>
@@ -59,7 +59,7 @@
                     </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="76M-fr-eeJ" firstAttribute="leading" secondItem="MEf-m8-HjS" secondAttribute="leading" constant="24" id="0MZ-mg-z6p"/>
+                    <constraint firstItem="76M-fr-eeJ" firstAttribute="leading" secondItem="MEf-m8-HjS" secondAttribute="leading" constant="16" id="0MZ-mg-z6p"/>
                     <constraint firstAttribute="trailing" secondItem="3kS-Jy-aBk" secondAttribute="trailing" id="Cvo-2e-8tR"/>
                     <constraint firstAttribute="trailing" secondItem="uiN-NR-F9a" secondAttribute="trailing" constant="16" id="Ij4-Vc-Aq5"/>
                     <constraint firstItem="3kS-Jy-aBk" firstAttribute="leading" secondItem="MEf-m8-HjS" secondAttribute="leading" id="JW8-VZ-kWY"/>

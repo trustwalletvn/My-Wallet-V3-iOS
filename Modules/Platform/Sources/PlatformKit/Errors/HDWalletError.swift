@@ -1,5 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import ToolKit
+
 public struct HDWalletError: CodeLocationError {
 
     public var message: String

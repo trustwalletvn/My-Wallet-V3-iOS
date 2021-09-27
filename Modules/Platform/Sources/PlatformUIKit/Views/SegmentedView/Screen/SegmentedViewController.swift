@@ -22,23 +22,37 @@ public final class SegmentedViewController: BaseScreenViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        segmentedView.layout(dimension: .width, to: 196)
         segmentedView.viewModel = presenter.segmentedViewModel
-        setupNavigationBar()
         add(child: rootViewController)
         presenter.itemIndexSelected
             .compactMap { $0 }
             .bindAndCatch(to: rootViewController.itemIndexSelectedRelay)
             .disposed(by: disposeBag)
-    }
-
-    private func setupNavigationBar() {
         set(
             barStyle: presenter.barStyle,
             leadingButtonStyle: presenter.leadingButton,
             trailingButtonStyle: presenter.trailingButton
         )
-        titleViewStyle = .view(value: segmentedView)
+        setupSegmentedView()
+    }
+
+    private func setupSegmentedView() {
+        let rootView = rootViewController.view!
+        switch presenter.segmentedViewLocation {
+        case .navBar:
+            segmentedView.layout(dimension: .width, to: 196)
+            titleViewStyle = .view(value: segmentedView)
+            rootView.layoutToSuperview(axis: .horizontal)
+            rootView.layoutToSuperview(axis: .vertical)
+        case .top(let titleViewStyle):
+            self.titleViewStyle = titleViewStyle
+            view.addSubview(segmentedView)
+            rootView.layoutToSuperview(.leading, .bottom, .trailing)
+            rootView.layoutToSuperview(.top, relation: .equal, usesSafeAreaLayoutGuide: false, offset: 64)
+            segmentedView.layoutToSuperview(axis: .horizontal, offset: 24)
+            segmentedView.layout(dimension: .height, to: 36)
+            segmentedView.layout(edge: .bottom, to: .top, of: rootView)
+        }
     }
 
     override public func navigationBarLeadingButtonPressed() {

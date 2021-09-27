@@ -33,6 +33,7 @@ class TradingBalanceService: TradingBalanceServiceAPI {
         cachedValue = CachedValue(configuration: .periodic(90))
         cachedValue.setFetch(weak: self) { (self) in
             self.client.balance
+                .asSingle()
                 .map { response in
                     guard let response = response else {
                         return .absent

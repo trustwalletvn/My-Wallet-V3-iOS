@@ -1,27 +1,42 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import Combine
+import CombineExt
 import DIKit
 import RxSwift
 import ToolKit
 
+public enum CoincoreError: Error {
+    case failedToLoadAccounts(Error)
+    case failedToInitializeAsset(asset: Asset, error: AssetError)
+    case failedToGetTransactionTargets(
+        sourceAccount: BlockchainAccount,
+        action: AssetAction,
+        error: Error
+    )
+}
+
 /// Types adopting the `CoincoreAPI` should provide a way to retrieve fiat and crypto accounts
 public protocol CoincoreAPI {
+
     /// Provides access to fiat and crypto custodial and non custodial assets.
-    var allAccounts: Single<AccountGroup> { get }
+    var allAccounts: AnyPublisher<AccountGroup, CoincoreError> { get }
+
     var allAssets: [Asset] { get }
     var fiatAsset: Asset { get }
     var cryptoAssets: [CryptoAsset] { get }
 
     /// Initialize any assets prior being available
-    func initialize() -> Completable
-    func initializePublisher() -> AnyPublisher<Never, Never>
+    func initialize() -> AnyPublisher<Never, CoincoreError>
 
     /// Provides an array of `SingleAccount` instances for the specified source account and the given action.
     /// - Parameters:
     ///   - sourceAccount: A `BlockchainAccount` to be used as the source account
-    ///   - action: An `AssetAction` to determine the transaction targets
-    func getTransactionTargets(sourceAccount: BlockchainAccount, action: AssetAction) -> Single<[SingleAccount]>
+    ///   - action: An `AssetAction` to determine the transaction targets.
+    func getTransactionTargets(
+        sourceAccount: BlockchainAccount,
+        action: AssetAction
+    ) -> AnyPublisher<[SingleAccount], CoincoreError>
 
     subscript(cryptoCurrency: CryptoCurrency) -> CryptoAsset { get }
 }
@@ -30,12 +45,14 @@ final class Coincore: CoincoreAPI {
 
     // MARK: - Public Properties
 
-    var allAccounts: Single<AccountGroup> {
-        reactiveWallet.waitUntilInitializedSingle
-            .flatMap(weak: self) { (self, _) in
-                Single.zip(
-                    self.allAssets.map { asset in asset.accountGroup(filter: .all) }
-                )
+    var allAccounts: AnyPublisher<AccountGroup, CoincoreError> {
+        reactiveWallet.waitUntilInitializedSinglePublisher
+            .flatMap { [allAssets] _ -> AnyPublisher<[AccountGroup], Never> in
+                allAssets
+                    .map { asset in
+                        asset.accountGroup(filter: .all)
+                    }
+                    .zip()
             }
             .map { accountGroups -> [SingleAccount] in
                 accountGroups
@@ -47,6 +64,8 @@ final class Coincore: CoincoreAPI {
             .map { accounts -> AccountGroup in
                 AllAccountsGroup(accounts: accounts)
             }
+            .eraseToAnyPublisher()
+            .mapError()
     }
 
     // MARK: - Private Properties
@@ -73,13 +92,26 @@ final class Coincore: CoincoreAPI {
     }
 
     /// Gives a chance for all assets to initialize themselves.
-    func initialize() -> Completable {
-        var completables = cryptoAssets
-            .map { asset -> Completable in
+    func initialize() -> AnyPublisher<Never, CoincoreError> {
+        var assetInitializers = cryptoAssets
+            .map { asset -> AnyPublisher<Void, CoincoreError> in
                 asset.initialize()
+                    .catch { assetError -> AnyPublisher<Void, CoincoreError> in
+                        .failure(.failedToInitializeAsset(asset: asset, error: assetError))
+                    }
+                    .eraseToAnyPublisher()
             }
-        completables.append(fiatAsset.initialize())
-        return Completable.concat(completables)
+        assetInitializers.append(
+            fiatAsset.initialize()
+                .catch { [fiatAsset] assetError -> AnyPublisher<Void, CoincoreError> in
+                    .failure(.failedToInitializeAsset(asset: fiatAsset, error: assetError))
+                }
+                .eraseToAnyPublisher()
+        )
+        return assetInitializers.zip()
+            .mapToVoid()
+            .ignoreOutput()
+            .eraseToAnyPublisher()
     }
 
     subscript(cryptoCurrency: CryptoCurrency) -> CryptoAsset {
@@ -94,7 +126,7 @@ final class Coincore: CoincoreAPI {
     func getTransactionTargets(
         sourceAccount: BlockchainAccount,
         action: AssetAction
-    ) -> Single<[SingleAccount]> {
+    ) -> AnyPublisher<[SingleAccount], CoincoreError> {
         switch action {
         case .swap:
             guard let cryptoAccount = sourceAccount as? CryptoAccount else {
@@ -111,6 +143,7 @@ final class Coincore: CoincoreAPI {
                         )
                     }
                 }
+                .eraseToAnyPublisher()
         case .send:
             guard let cryptoAccount = sourceAccount as? CryptoAccount else {
                 fatalError("Expected CryptoAccount: \(sourceAccount)")
@@ -126,6 +159,7 @@ final class Coincore: CoincoreAPI {
                         )
                     }
                 }
+                .mapError()
         case .buy:
             unimplemented("WIP")
         case .deposit,
@@ -201,20 +235,5 @@ final class Coincore: CoincoreAPI {
         default:
             return false
         }
-    }
-}
-
-// MARK: - Combine Related Methods
-
-extension CoincoreAPI {
-    /// Gives a chance for all assets to initialize themselves.
-    /// - Note: Uses the `initialize` method and converts it to a publisher.
-    public func initializePublisher() -> AnyPublisher<Never, Never> {
-        initialize()
-            .asPublisher()
-            .catch { _ -> AnyPublisher<Never, Never> in
-                impossible()
-            }
-            .ignoreFailure()
     }
 }

@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import ComposableArchitecture
 import Localization
 import SwiftUI
 import UIComponentsKit
@@ -21,53 +22,69 @@ struct ResetAccountWarningView: View {
         static let buttonBottomPadding: CGFloat = 10
     }
 
+    private let store: Store<ResetAccountWarningState, ResetAccountWarningAction>
+    @ObservedObject private var viewStore: ViewStore<ResetAccountWarningState, ResetAccountWarningAction>
+
+    init(store: Store<ResetAccountWarningState, ResetAccountWarningAction>) {
+        self.store = store
+        viewStore = ViewStore(store)
+    }
+
     var body: some View {
-        VStack {
-            Spacer()
-            Image.CircleIcon.resetAccount
-                .frame(width: Layout.imageSideLength, height: Layout.imageSideLength)
-                .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.resetAccountImage)
+        NavigationView {
+            VStack {
+                Spacer()
+                Image.CircleIcon.resetAccount
+                    .frame(width: Layout.imageSideLength, height: Layout.imageSideLength)
+                    .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.resetAccountImage)
 
-            Text(LocalizedString.Title.resetAccount)
-                .textStyle(.title)
-                .padding(.top, Layout.titleTopPadding)
-                .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.resetAccountTitleText)
+                Text(LocalizedString.Title.resetAccount)
+                    .textStyle(.title)
+                    .padding(.top, Layout.titleTopPadding)
+                    .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.resetAccountTitleText)
 
-            Text(LocalizedString.Message.resetAccount)
-                .font(Font(weight: .medium, size: Layout.messageFontSize))
-                .foregroundColor(.textSubheading)
-                .lineSpacing(Layout.messageLineSpacing)
-                .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.resetAccountMessageText)
-            Spacer()
+                Text(LocalizedString.Message.resetAccount)
+                    .font(Font(weight: .medium, size: Layout.messageFontSize))
+                    .foregroundColor(.textSubheading)
+                    .lineSpacing(Layout.messageLineSpacing)
+                    .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.resetAccountMessageText)
+                Spacer()
 
-            PrimaryButton(title: LocalizedString.Button.continueReset) {
-                // TODO: continue reset
+                PrimaryButton(title: LocalizedString.Button.continueReset) {
+                    viewStore.send(.continueResetButtonTapped)
+                }
+                .padding(.bottom, Layout.buttonBottomPadding)
+                .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.continueToResetButton)
+
+                SecondaryButton(title: LocalizedString.Button.retryRecoveryPhrase) {
+                    viewStore.send(.retryButtonTapped)
+                }
+                .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.retryRecoveryPhraseButton)
             }
-            .padding(.bottom, Layout.buttonBottomPadding)
-            .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.continueToResetButton)
-
-            SecondaryButton(title: LocalizedString.Button.retryRecoveryPhrase) {
-                // TODO: retry
-            }
-            .accessibility(identifier: AccessibilityIdentifiers.ResetAccountWarningScreen.retryRecoveryPhraseButton)
-        }
-        .multilineTextAlignment(.center)
-        .padding(
-            EdgeInsets(
-                top: 0,
-                leading: Layout.leadingPadding,
-                bottom: Layout.bottomPadding,
-                trailing: Layout.trailingPadding
+            .multilineTextAlignment(.center)
+            .padding(
+                EdgeInsets(
+                    top: 0,
+                    leading: Layout.leadingPadding,
+                    bottom: Layout.bottomPadding,
+                    trailing: Layout.trailingPadding
+                )
             )
-        )
-        .navigationBarHidden(true)
+            .navigationBarHidden(true)
+        }
     }
 }
 
 #if DEBUG
 struct ResetAccountWarningView_Previews: PreviewProvider {
     static var previews: some View {
-        ResetAccountWarningView()
+        ResetAccountWarningView(
+            store: .init(
+                initialState: .init(),
+                reducer: resetAccountWarningReducer,
+                environment: .init()
+            )
+        )
     }
 }
 #endif

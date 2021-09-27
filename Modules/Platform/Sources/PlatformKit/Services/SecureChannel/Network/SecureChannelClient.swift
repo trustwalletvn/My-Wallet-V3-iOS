@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
 import RxSwift
@@ -8,13 +9,6 @@ import RxSwift
 final class SecureChannelClient {
 
     // MARK: - Types
-
-    enum SendSecureChannelError: Error {
-        case couldNotBuildRequestBody
-        case networkFailure
-        case emptyCredentials
-        case unknownReceiver
-    }
 
     private struct SendMessageResponse: Decodable {
         let success: Bool
@@ -58,17 +52,25 @@ extension SecureChannelClient: SecureChannelClientAPI {
         )
     }
 
-    func sendMessage(msg: SecureChannel.PairingResponse) -> Completable {
+    func sendMessage(
+        msg: SecureChannel.PairingResponse
+    ) -> AnyPublisher<Void, SendSecureChannelError> {
         guard let request = sendMessageRequest(msg: msg) else {
-            return .error(SendSecureChannelError.networkFailure)
+            return Fail(error: .networkFailure).eraseToAnyPublisher()
         }
         return networkAdapter.perform(request: request)
-            .map { (response: SendMessageResponse) -> Void in
-                guard response.success else {
-                    throw SendSecureChannelError.networkFailure
+            .mapError { _ in SendSecureChannelError.networkFailure }
+            .flatMap { (response: SendMessageResponse) -> AnyPublisher<Void, SendSecureChannelError> in
+                if !response.success {
+                    return Fail(error: SendSecureChannelError.networkFailure)
+                        .eraseToAnyPublisher()
+                } else {
+                    return Just(())
+                        .setFailureType(to: SendSecureChannelError.self)
+                        .eraseToAnyPublisher()
                 }
             }
-            .asCompletable()
+            .eraseToAnyPublisher()
     }
 
     private func getIPRequest() -> NetworkRequest? {
@@ -77,13 +79,15 @@ extension SecureChannelClient: SecureChannelClientAPI {
         )
     }
 
-    func getIp() -> Single<String> {
+    func getIp() -> AnyPublisher<String, SendSecureChannelError> {
         guard let request = getIPRequest() else {
-            return .error(SendSecureChannelError.networkFailure)
+            return Fail(error: .networkFailure).eraseToAnyPublisher()
         }
         return networkAdapter.perform(request: request)
+            .mapError { _ in SendSecureChannelError.networkFailure }
             .map { (response: GetIpResponse) -> String in
                 response.ip
             }
+            .eraseToAnyPublisher()
     }
 }

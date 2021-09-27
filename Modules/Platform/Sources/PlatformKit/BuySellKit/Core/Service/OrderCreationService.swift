@@ -50,6 +50,7 @@ final class OrderCreationService: OrderCreationServiceAPI {
                 order: data,
                 createPendingOrder: true
             )
+            .asSingle()
             .map(weak: self) { (self, response) in
                 OrderDetails(recorder: self.analyticsRecorder, response: response)
             }

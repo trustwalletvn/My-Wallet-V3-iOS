@@ -1,12 +1,16 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 @testable import PlatformKit
-import RxSwift
 
 class SimpleBuyPaymentAccountClientAPIMock: PaymentAccountClientAPI {
     var mockResponse: PaymentAccountResponse! = .mock(with: .GBP, agent: .fullMock)
 
-    func paymentAccount(for currency: FiatCurrency) -> Single<PlatformKit.PaymentAccount.Response> {
-        Single.just(mockResponse)
+    func paymentAccount(
+        for currency: FiatCurrency
+    ) -> AnyPublisher<PlatformKit.PaymentAccount.Response, NabuNetworkError> {
+        Just(mockResponse)
+            .setFailureType(to: NabuNetworkError.self)
+            .eraseToAnyPublisher()
     }
 }

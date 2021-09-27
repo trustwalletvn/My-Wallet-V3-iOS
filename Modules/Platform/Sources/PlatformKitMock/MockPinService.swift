@@ -1,7 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import Foundation
-import RxSwift
 
 @testable import PlatformKit
 
@@ -31,11 +31,19 @@ struct MockPinClient: PinClientAPI {
         self.remaining = remaining
     }
 
-    func create(pinPayload: PinPayload) -> Single<PinStoreResponse> {
-        .just(response)
+    func create(
+        pinPayload: PinPayload
+    ) -> AnyPublisher<PinStoreResponse, PinStoreResponse> {
+        Just(response)
+            .setFailureType(to: PinStoreResponse.self)
+            .eraseToAnyPublisher()
     }
 
-    func validate(pinPayload: PinPayload) -> Single<PinStoreResponse> {
-        .just(response)
+    func validate(
+        pinPayload: PinPayload
+    ) -> AnyPublisher<PinStoreResponse, PinStoreResponse> {
+        Just(response)
+            .setFailureType(to: PinStoreResponse.self)
+            .eraseToAnyPublisher()
     }
 }

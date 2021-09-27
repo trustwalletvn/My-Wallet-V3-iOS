@@ -21,7 +21,7 @@ final class NabuAuthenticator: AuthenticatorAPI {
         self.authenticationExecutorProvider = authenticationExecutorProvider
     }
 
-    // MARK: - AuthenticatorNewAPI
+    // MARK: - AuthenticatorAPI
 
     func authenticate(
         _ networkResponsePublisher: @escaping NetworkResponsePublisher

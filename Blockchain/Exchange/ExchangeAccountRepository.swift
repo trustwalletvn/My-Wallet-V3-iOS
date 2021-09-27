@@ -4,10 +4,10 @@ import BitcoinCashKit
 import BitcoinKit
 import Combine
 import DIKit
+import FeatureSettingsDomain
 import NetworkKit
 import PlatformKit
 import RxSwift
-import SettingsKit
 
 protocol ExchangeAccountRepositoryAPI {
     var hasLinkedExchangeAccount: Single<Bool> { get }
@@ -68,7 +68,12 @@ final class ExchangeAccountRepository: ExchangeAccountRepositoryAPI {
                 Single.zip(
                     cryptoAssets
                         .map { asset -> Single<SingleAccount?> in
-                            asset.defaultAccount.optional().catchErrorJustReturn(nil)
+                            asset.defaultAccount
+                                .optional()
+                                .replaceError(with: nil)
+                                .eraseToAnyPublisher()
+                                .asObservable()
+                                .asSingle()
                         }
                 )
             }

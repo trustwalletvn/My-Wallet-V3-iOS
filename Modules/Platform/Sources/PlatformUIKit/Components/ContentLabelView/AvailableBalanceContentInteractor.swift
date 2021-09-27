@@ -3,6 +3,7 @@
 import DIKit
 import PlatformKit
 import RxCocoa
+import RxCombine
 import RxSwift
 import ToolKit
 
@@ -19,6 +20,8 @@ public final class AvailableBalanceContentInteractor: ContentLabelViewInteractor
     public init(currencyType: CurrencyType, coincore: CoincoreAPI) {
 
         let balance = coincore.allAccounts
+            .asObservable()
+            .asSingle()
             .compactMap { group in
                 group.accounts.first { $0.currencyType == currencyType }
             }

@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import CommonCryptoKit
 import DIKit
 import RxSwift
@@ -177,15 +178,19 @@ final class SecureChannelService: SecureChannelAPI {
             return .empty()
         }
         return secureChannelNetwork.getIp()
-            .catchError { _ in
-                throw SecureChannelError.cantValidateIP
-            }
-            .map { ip in
-                guard details.originIP == ip else {
-                    throw SecureChannelError.ipMismatch
+            .mapError { _ in SecureChannelError.cantValidateIP }
+            .flatMap { ip -> AnyPublisher<Void, SecureChannelError> in
+                if details.originIP == ip {
+                    return Fail(error: SecureChannelError.ipMismatch).eraseToAnyPublisher()
+                } else {
+                    return Just(())
+                        .setFailureType(to: SecureChannelError.self)
+                        .eraseToAnyPublisher()
                 }
             }
-            .asCompletable()
+            .eraseToAnyPublisher()
+            .asObservable()
+            .ignoreElements()
     }
 
     private func decodePairingCode(payload: String) -> SecureChannel.PairingCode? {
@@ -286,6 +291,8 @@ final class SecureChannelService: SecureChannelAPI {
             .single
             .flatMapCompletable(weak: self) { (self, response) -> Completable in
                 self.secureChannelNetwork.sendMessage(msg: response)
+                    .asObservable()
+                    .ignoreElements()
             }
     }
 }

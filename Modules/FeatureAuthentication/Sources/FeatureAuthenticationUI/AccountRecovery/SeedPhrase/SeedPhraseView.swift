@@ -71,13 +71,26 @@ struct SeedPhraseView: View {
                     .accessibility(identifier: AccessibilityIdentifiers.SeedPhraseScreen.invalidPhraseErrorText)
             }
 
-            resetAccountCallOut
-                .padding(.top, Layout.resetAccountCallOutTopPadding)
+            if context == .troubleLoggingIn {
+                resetAccountCallOut
+                    .padding(.top, Layout.resetAccountCallOutTopPadding)
+            }
 
             Spacer()
 
-            PrimaryButton(title: LocalizedString.loginInButton) {
-                viewStore.send(.setResetPasswordScreenVisible(true))
+            PrimaryButton(
+                title: context == .troubleLoggingIn ?
+                    LocalizedString.loginInButton :
+                    LocalizedString.NavigationTitle.importWallet
+            ) {
+                switch context {
+                case .troubleLoggingIn:
+                    viewStore.send(.setResetPasswordScreenVisible(true))
+                case .importWallet:
+                    viewStore.send(.setImportWalletScreenVisible(true))
+                case .none:
+                    break
+                }
             }
             .disabled(!viewStore.seedPhraseScore.isValid)
             .accessibility(identifier: AccessibilityIdentifiers.SeedPhraseScreen.logInButton)
@@ -98,6 +111,54 @@ struct SeedPhraseView: View {
                 ),
                 label: EmptyView.init
             )
+
+            NavigationLink(
+                destination: IfLetStore(
+                    store.scope(
+                        state: \.lostFundsWarningState,
+                        action: SeedPhraseAction.lostFundsWarning
+                    ),
+                    then: { store in
+                        LostFundsWarningView(store: store)
+                    }
+                ),
+                isActive: viewStore.binding(
+                    get: \.isLostFundsWarningScreenVisible,
+                    send: SeedPhraseAction.setLostFundsWarningScreenVisible(_:)
+                ),
+                label: EmptyView.init
+            )
+
+            NavigationLink(
+                destination: IfLetStore(
+                    store.scope(
+                        state: \.importWalletState,
+                        action: SeedPhraseAction.importWallet
+                    ),
+                    then: { store in
+                        ImportWalletView(store: store)
+                    }
+                ),
+                isActive: viewStore.binding(
+                    get: \.isImportWalletScreenVisible,
+                    send: SeedPhraseAction.setImportWalletScreenVisible(_:)
+                ),
+                label: EmptyView.init
+            )
+        }
+        .sheet(
+            isPresented: viewStore.binding(
+                get: \.isResetAccountBottomSheetVisible,
+                send: .none
+            )
+        ) {
+            IfLetStore(
+                store.scope(
+                    state: \.resetAccountWarningState,
+                    action: SeedPhraseAction.resetAccountWarning
+                ),
+                then: ResetAccountWarningView.init(store:)
+            )
         }
         .navigationBarTitle(
             context == .troubleLoggingIn ?
@@ -117,9 +178,12 @@ struct SeedPhraseView: View {
     }
 
     private var instructionText: some View {
-        Text(LocalizedString.instruction)
-            .textStyle(.body)
-            .multilineTextAlignment(.leading)
+        Text(context == .troubleLoggingIn ?
+            LocalizedString.instruction :
+            LocalizedString.importWalletInstruction
+        )
+        .textStyle(.body)
+        .multilineTextAlignment(.leading)
     }
 
     private var seedPhraseTextEditor: some View {
@@ -130,9 +194,6 @@ struct SeedPhraseView: View {
                     send: { .didChangeSeedPhrase($0.lowercased()) }
                 )
             )
-            .onChange(of: viewStore.seedPhrase) { _ in
-                viewStore.send(.validateSeedPhrase)
-            }
             .disableAutocorrection(true)
             .autocapitalization(.none)
             .padding(Layout.textEditorInsets)
@@ -164,7 +225,7 @@ struct SeedPhraseView: View {
                 .accessibility(identifier: AccessibilityIdentifiers.SeedPhraseScreen.resetAccountPromptText)
 
             Button(LocalizedString.resetAccountLink) {
-                // TODO: show the reset accounts alerts
+                viewStore.send(.setResetAccountBottomSheetVisible(true))
             }
             .font(Font(weight: .medium, size: Layout.fontSize))
             .foregroundColor(Color.buttonPrimaryBackground)
@@ -187,7 +248,9 @@ struct SeedPhraseView_Previews: PreviewProvider {
             store: .init(
                 initialState: .init(),
                 reducer: seedPhraseReducer,
-                environment: .init()
+                environment: .init(
+                    mainQueue: .main
+                )
             )
         )
     }

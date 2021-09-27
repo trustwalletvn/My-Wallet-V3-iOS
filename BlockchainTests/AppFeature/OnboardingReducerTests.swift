@@ -2,10 +2,10 @@
 
 import Combine
 import ComposableArchitecture
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RxSwift
-import SettingsKit
 import XCTest
 
 @testable import Blockchain

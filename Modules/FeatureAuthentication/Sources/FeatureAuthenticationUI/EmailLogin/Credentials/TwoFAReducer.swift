@@ -17,9 +17,9 @@ public enum TwoFAAction: Equatable {
 
     case didChangeTwoFACode(String)
     case didChangeTwoFACodeAttemptsLeft(Int)
-    case incorrectTwoFACodeErrorVisibility(IncorrectTwoFAContext)
-    case resendSMSButtonVisibility(Bool)
-    case twoFACodeFieldVisibility(Bool)
+    case showIncorrectTwoFACodeError(IncorrectTwoFAContext)
+    case showResendSMSButton(Bool)
+    case showTwoFACodeField(Bool)
 }
 
 private enum Constants {
@@ -57,15 +57,15 @@ let twoFAReducer = Reducer<
         return .none
     case .didChangeTwoFACodeAttemptsLeft(let attemptsLeft):
         state.twoFACodeAttemptsLeft = attemptsLeft
-        return Effect(value: .incorrectTwoFACodeErrorVisibility(.incorrect))
-    case .incorrectTwoFACodeErrorVisibility(let context):
+        return Effect(value: .showIncorrectTwoFACodeError(.incorrect))
+    case .showIncorrectTwoFACodeError(let context):
         state.twoFACodeIncorrectContext = context
         state.isTwoFACodeIncorrect = context.hasError
         return .none
-    case .resendSMSButtonVisibility(let isVisible):
-        state.isResendSMSButtonVisible = isVisible
+    case .showResendSMSButton(let shouldShow):
+        state.isResendSMSButtonVisible = shouldShow
         return .none
-    case .twoFACodeFieldVisibility(let isVisible):
+    case .showTwoFACodeField(let isVisible):
         state.twoFACode = ""
         state.isTwoFACodeFieldVisible = isVisible
         return .none

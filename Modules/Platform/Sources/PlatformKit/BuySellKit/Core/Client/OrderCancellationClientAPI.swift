@@ -1,8 +1,10 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
 
 protocol OrderCancellationClientAPI: AnyObject {
     /// Cancels an order with a given identifier
-    func cancel(order id: String) -> Completable
+    func cancel(
+        order id: String
+    ) -> AnyPublisher<Void, NabuNetworkError>
 }

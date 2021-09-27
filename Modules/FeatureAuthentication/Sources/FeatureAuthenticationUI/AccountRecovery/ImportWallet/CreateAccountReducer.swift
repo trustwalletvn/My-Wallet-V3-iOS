@@ -7,7 +7,7 @@ import ToolKit
 
 // MARK: - Type
 
-enum CreateAccountAction: Equatable {
+public enum CreateAccountAction: Equatable {
     case didDisappear
     case didChangeEmailAddress(String)
     case didChangePassword(String)
@@ -41,7 +41,7 @@ struct CreateAccountEnvironment {
 
     init(
         mainQueue: AnySchedulerOf<DispatchQueue> = .main,
-        passwordValidator: PasswordValidatorAPI = PasswordValidator(),
+        passwordValidator: PasswordValidatorAPI = resolve(),
         externalAppOpener: ExternalAppOpener = resolve()
     ) {
         self.mainQueue = mainQueue
@@ -66,7 +66,7 @@ let createAccountReducer = Reducer<
         return .none
     case .didChangePassword(let password):
         state.password = password
-        return .none
+        return Effect(value: .validatePasswordStrength)
     case .didChangeConfirmPassword(let password):
         state.confirmPassword = password
         return .none

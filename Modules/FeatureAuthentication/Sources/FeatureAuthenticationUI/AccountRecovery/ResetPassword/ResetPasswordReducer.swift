@@ -48,8 +48,8 @@ struct ResetPasswordEnvironment {
     let externalAppOpener: ExternalAppOpener
 
     init(
-        mainQueue: AnySchedulerOf<DispatchQueue> = .main,
-        passwordValidator: PasswordValidatorAPI = PasswordValidator(),
+        mainQueue: AnySchedulerOf<DispatchQueue>,
+        passwordValidator: PasswordValidatorAPI = resolve(),
         externalAppOpener: ExternalAppOpener = resolve()
     ) {
         self.mainQueue = mainQueue
@@ -72,7 +72,7 @@ let resetPasswordReducer = Reducer<
         return .none
     case .didChangeNewPassword(let password):
         state.newPassword = password
-        return .none
+        return Effect(value: .validatePasswordStrength)
     case .didChangeConfirmNewPassword(let password):
         state.confirmNewPassword = password
         return .none

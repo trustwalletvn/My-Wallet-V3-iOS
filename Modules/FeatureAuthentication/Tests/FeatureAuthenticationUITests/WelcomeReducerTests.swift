@@ -77,15 +77,20 @@ final class WelcomeReducerTests: XCTestCase {
             .welcomeScreen,
             .createWalletScreen,
             .emailLoginScreen,
-            .recoverWalletScreen
+            .restoreWalletScreen
         ]
         screenFlows.forEach { screenFlow in
             testStore.send(.presentScreenFlow(screenFlow)) { state in
                 switch screenFlow {
                 case .emailLoginScreen:
                     state.emailLoginState = .init()
-                case .welcomeScreen, .createWalletScreen, .recoverWalletScreen, .manualLoginScreen:
+                case .restoreWalletScreen:
+                    state.restoreWalletState = .init()
+                case .createWalletScreen, .manualLoginScreen:
+                    break
+                case .welcomeScreen:
                     state.emailLoginState = nil
+                    state.restoreWalletState = nil
                 }
                 state.screenFlow = screenFlow
             }

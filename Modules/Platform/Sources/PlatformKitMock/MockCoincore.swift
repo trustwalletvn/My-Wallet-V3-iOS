@@ -6,23 +6,22 @@ import RxSwift
 
 class MockCoincore: CoincoreAPI {
 
-    var allAccounts: Single<AccountGroup> = Observable<AccountGroup>.empty().asSingle()
+    var allAccounts: AnyPublisher<AccountGroup, CoincoreError> = .empty()
     var allAssets: [Asset] = []
     var fiatAsset: Asset = MockAsset()
     var cryptoAssets: [CryptoAsset] = []
 
-    func initialize() -> Completable {
-        .just(event: .completed)
-    }
-
     var initializePublisherCalled = false
 
-    func initializePublisher() -> AnyPublisher<Never, Never> {
+    func initialize() -> AnyPublisher<Never, CoincoreError> {
         initializePublisherCalled = true
-        return initialize().asPublisher().ignoreFailure()
+        return .empty()
     }
 
-    func getTransactionTargets(sourceAccount: BlockchainAccount, action: AssetAction) -> Single<[SingleAccount]> {
+    func getTransactionTargets(
+        sourceAccount: BlockchainAccount,
+        action: AssetAction
+    ) -> AnyPublisher<[SingleAccount], CoincoreError> {
         .just([])
     }
 
@@ -34,19 +33,20 @@ class MockCoincore: CoincoreAPI {
 }
 
 class MockAsset: Asset {
-    func initialize() -> Completable {
+
+    func initialize() -> AnyPublisher<Void, AssetError> {
         .empty()
     }
 
-    func accountGroup(filter: AssetFilter) -> Single<AccountGroup> {
-        .never()
+    func accountGroup(filter: AssetFilter) -> AnyPublisher<AccountGroup, Never> {
+        .empty()
     }
 
-    func transactionTargets(account: SingleAccount) -> Single<[SingleAccount]> {
-        .never()
+    func transactionTargets(account: SingleAccount) -> AnyPublisher<[SingleAccount], Never> {
+        .empty()
     }
 
-    func parse(address: String) -> Single<ReceiveAddress?> {
-        .never()
+    func parse(address: String) -> AnyPublisher<ReceiveAddress?, Never> {
+        .empty()
     }
 }

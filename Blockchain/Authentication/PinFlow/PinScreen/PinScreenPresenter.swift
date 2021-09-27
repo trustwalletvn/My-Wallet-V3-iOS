@@ -2,13 +2,13 @@
 
 import AnalyticsKit
 import DIKit
+import FeatureSettingsDomain
 import LocalAuthentication
 import Localization
 import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
-import SettingsKit
 import ToolKit
 
 private enum PinScreenPresenterError: Error {

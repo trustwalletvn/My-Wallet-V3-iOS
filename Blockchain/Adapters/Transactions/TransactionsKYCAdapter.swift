@@ -2,8 +2,8 @@
 
 import Combine
 import DIKit
+import FeatureTransactionUI
 import PlatformKit
-import TransactionUIKit
 
 final class TransactionsKYCAdapter {
 
@@ -16,7 +16,7 @@ final class TransactionsKYCAdapter {
     }
 }
 
-extension TransactionsKYCAdapter: TransactionUIKit.KYCSDDServiceAPI {
+extension TransactionsKYCAdapter: FeatureTransactionUI.KYCSDDServiceAPI {
 
     func checkSimplifiedDueDiligenceEligibility() -> AnyPublisher<Bool, Never> {
         kycTiersService.checkSimplifiedDueDiligenceEligibility()

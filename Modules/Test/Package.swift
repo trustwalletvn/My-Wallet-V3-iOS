@@ -1,5 +1,4 @@
 // swift-tools-version:5.3
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -13,13 +12,24 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.9.0")
+        .package(
+            name: "RxSwift",
+            url: "https://github.com/ReactiveX/RxSwift.git",
+            from: "5.1.3"
+        ),
+        .package(
+            name: "SnapshotTesting",
+            url: "https://github.com/pointfreeco/swift-snapshot-testing",
+            from: "1.9.0"
+        )
     ],
     targets: [
         .target(
             name: "TestKit",
             dependencies: [
-                .product(name: "SnapshotTesting", package: "SnapshotTesting")
+                .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+                .product(name: "RxBlocking", package: "RxSwift"),
+                .product(name: "RxTest", package: "RxSwift")
             ]
         )
     ]

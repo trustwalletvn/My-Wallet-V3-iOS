@@ -14,7 +14,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/CombineCommunity/CombineExt", from: "1.2.0")
+        .package(url: "git@github.com:CombineCommunity/CombineExt.git", from: "1.2.0")
     ],
     targets: [
         .target(

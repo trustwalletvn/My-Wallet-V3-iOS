@@ -31,12 +31,12 @@ public final class SegmentedTabViewController: UITabBarController {
     // MARK: - Lifecycle
 
     override public func viewDidLoad() {
+        super.viewDidLoad()
         setViewControllers(
             items.map(\.viewController),
-            animated: true
+            animated: false
         )
         tabBar.isHidden = true
-
         itemIndexSelectedRelay
             .compactMap { $0 }
             .map(weak: self) { (self, index) -> UIViewController? in
@@ -44,8 +44,66 @@ public final class SegmentedTabViewController: UITabBarController {
             }
             .compactMap { $0 }
             .bindAndCatch(weak: self) { (self, viewController) in
-                self.selectedViewController = viewController
+                self.setSelectedViewController(viewController, animated: true)
             }
             .disposed(by: disposeBag)
+    }
+
+    private func setSelectedViewController(_ viewController: UIViewController, animated: Bool) {
+        guard animated else {
+            selectedViewController = viewController
+            return
+        }
+        guard let fromView = selectedViewController?.view,
+              let toView = viewController.view,
+              fromView != toView,
+              let controllerIndex = viewControllers?.index(of: viewController)
+        else {
+            return
+        }
+
+        let viewSize = fromView.frame
+        let scrollRight = controllerIndex > selectedIndex
+
+        // Avoid UI issues when switching tabs fast
+        guard fromView.superview?.subviews.contains(toView) == false else {
+            return
+        }
+
+        fromView.superview?.addSubview(toView)
+
+        let screenWidth = view.frame.width
+        toView.frame = CGRect(
+            x: scrollRight ? screenWidth : -screenWidth,
+            y: viewSize.origin.y,
+            width: screenWidth,
+            height: viewSize.size.height
+        )
+
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            options: [.curveEaseOut, .preferredFramesPerSecond60],
+            animations: {
+                fromView.frame = CGRect(
+                    x: scrollRight ? -screenWidth : screenWidth,
+                    y: viewSize.origin.y,
+                    width: screenWidth,
+                    height: viewSize.size.height
+                )
+                toView.frame = CGRect(
+                    x: 0,
+                    y: viewSize.origin.y,
+                    width: screenWidth,
+                    height: viewSize.size.height
+                )
+            },
+            completion: { [weak self] finished in
+                if finished {
+                    fromView.removeFromSuperview()
+                    self?.selectedIndex = controllerIndex
+                }
+            }
+        )
     }
 }

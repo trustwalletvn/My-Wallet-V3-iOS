@@ -1,9 +1,9 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
 
 protocol BeneficiariesClientAPI: AnyObject {
-    var beneficiaries: Single<[BeneficiaryResponse]> { get }
+    var beneficiaries: AnyPublisher<[BeneficiaryResponse], NabuNetworkError> { get }
 
-    func deleteBank(by id: String) -> Completable
+    func deleteBank(by id: String) -> AnyPublisher<Void, NabuNetworkError>
 }

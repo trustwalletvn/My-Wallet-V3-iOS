@@ -86,6 +86,8 @@ public final class CardUpdateService: CardUpdateServiceAPI {
                     email: payload.email,
                     billingAddress: card.billingAddress.requestPayload
                 )
+                .asObservable()
+                .asSingle()
                 .do(onError: { _ in
                     self.analyticsRecorder.record(event: CardUpdateEvent.sbAddCardFailure)
                 })
@@ -106,6 +108,8 @@ public final class CardUpdateService: CardUpdateServiceAPI {
             .map {
                 (cardId: payload.identifier, partner: $0)
             }
+            .asObservable()
+            .asSingle()
             .do(onError: { _ in
                 self.analyticsRecorder.record(event: CardUpdateEvent.sbCardActivationFailure)
             })
@@ -160,6 +164,7 @@ public final class CardUpdateService: CardUpdateServiceAPI {
                     return .none
                 }
             }
+            .asSingle()
             .do(onError: { [weak self] error in
                 self?.analyticsRecorder.record(
                     event: CardUpdateEvent.sbCardEverypayFailure(data: String(describing: error))

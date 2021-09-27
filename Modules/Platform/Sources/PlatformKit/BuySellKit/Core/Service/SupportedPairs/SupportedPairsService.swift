@@ -26,6 +26,7 @@ final class SupportedPairsService: SupportedPairsServiceAPI {
 
     func fetchPairs(for option: SupportedPairsFilterOption) -> Single<SupportedPairs> {
         client.supportedPairs(with: option)
+            .asSingle()
             .map { SupportedPairs(response: $0, filterOption: option) }
     }
 }

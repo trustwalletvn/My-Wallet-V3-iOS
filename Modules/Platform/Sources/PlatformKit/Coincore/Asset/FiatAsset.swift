@@ -1,10 +1,11 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import RxSwift
 import ToolKit
 
-class FiatAsset: Asset {
+final class FiatAsset: Asset {
 
     // MARK: - Private Properties
 
@@ -18,11 +19,11 @@ class FiatAsset: Asset {
 
     // MARK: - Asset
 
-    func initialize() -> Completable {
+    func initialize() -> AnyPublisher<Void, AssetError> {
         .empty()
     }
 
-    func accountGroup(filter: AssetFilter) -> Single<AccountGroup> {
+    func accountGroup(filter: AssetFilter) -> AnyPublisher<AccountGroup, Never> {
         switch filter {
         case .all,
              .custodial:
@@ -34,13 +35,17 @@ class FiatAsset: Asset {
         }
     }
 
-    func parse(address: String) -> Single<ReceiveAddress?> {
+    func parse(address: String) -> AnyPublisher<ReceiveAddress?, Never> {
         .just(nil)
     }
 
     // MARK: - Helpers
 
-    private var custodialGroup: Single<AccountGroup> {
+    private var allAccountsGroup: AnyPublisher<AccountGroup, Never> {
+        custodialGroup
+    }
+
+    private var custodialGroup: AnyPublisher<AccountGroup, Never> {
         let accounts = enabledCurrenciesService.allEnabledFiatCurrencies
             .map { FiatCustodialAccount(fiatCurrency: $0) }
         return .just(FiatAccountGroup(accounts: accounts))
@@ -48,6 +53,12 @@ class FiatAsset: Asset {
 
     /// We cannot transfer for fiat
     func transactionTargets(account: SingleAccount) -> Single<[SingleAccount]> {
+        .just([])
+    }
+
+    func transactionTargets(
+        account: SingleAccount
+    ) -> AnyPublisher<[SingleAccount], Never> {
         .just([])
     }
 }

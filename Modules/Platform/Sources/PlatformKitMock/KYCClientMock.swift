@@ -7,7 +7,6 @@ import RxSwift
 import ToolKit
 
 final class KYCClientMock: KYCClientAPI {
-
     struct StubbedResults {
         var fetchUser: AnyPublisher<NabuUser, NabuNetworkError> = {
             .failure(NabuNetworkError.mockError)
@@ -24,64 +23,84 @@ final class KYCClientMock: KYCClientAPI {
 
     var stubbedResults = StubbedResults()
 
-    var expectedTiers: Result<KYC.UserTiers, Error>!
+    var expectedTiers: Result<KYC.UserTiers, NabuNetworkError>!
 
-    func tiers() -> Single<KYC.UserTiers> {
-        expectedTiers.single
+    func tiers() -> AnyPublisher<KYC.UserTiers, NabuNetworkError> {
+        expectedTiers.publisher
     }
 
-    var expectedSupportedDocuments: Result<KYCSupportedDocumentsResponse, Error>!
+    var expectedSupportedDocuments: Result<KYCSupportedDocumentsResponse, NabuNetworkError>!
 
-    func supportedDocuments(for country: String) -> Single<KYCSupportedDocumentsResponse> {
-        expectedSupportedDocuments.single
+    func supportedDocuments(
+        for country: String
+    ) -> AnyPublisher<KYCSupportedDocumentsResponse, NabuNetworkError> {
+        expectedSupportedDocuments.publisher
     }
 
-    var expectedUser: Result<NabuUser, Error>!
+    var expectedUser: Result<NabuUser, NabuNetworkError>!
 
-    func user() -> Single<NabuUser> {
-        expectedUser.single
+    func user() -> AnyPublisher<NabuUser, NabuNetworkError> {
+        expectedUser.publisher
     }
 
-    var expectedListOfStates: Result<[KYCState], Error>!
+    var expectedListOfStates: Result<[KYCState], NabuNetworkError>!
 
-    func listOfStates(in country: String) -> Single<[KYCState]> {
-        expectedListOfStates.single
+    func listOfStates(
+        in country: String
+    ) -> AnyPublisher<[KYCState], NabuNetworkError> {
+        expectedListOfStates.publisher
     }
 
-    var expectedSelectCountry: Completable!
+    var expectedSelectCountry: AnyPublisher<Void, NabuNetworkError>!
 
-    func selectCountry(country: String, state: String?, notifyWhenAvailable: Bool, jwtToken: String) -> Completable {
+    func selectCountry(
+        country: String,
+        state: String?,
+        notifyWhenAvailable: Bool,
+        jwtToken: String
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         expectedSelectCountry
     }
 
-    var expectedPersonalDetails: Completable!
+    var expectedPersonalDetails: AnyPublisher<Void, NabuNetworkError>!
 
-    func updatePersonalDetails(firstName: String?, lastName: String?, birthday: Date?) -> Completable {
+    func updatePersonalDetails(
+        firstName: String?,
+        lastName: String?,
+        birthday: Date?
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         expectedPersonalDetails
     }
 
-    var expectedUpdateAddressCompletable: Completable!
+    var expectedUpdateAddressCompletable: AnyPublisher<Void, NabuNetworkError>!
 
-    func updateAddress(userAddress: UserAddress) -> Completable {
+    func updateAddress(
+        userAddress: UserAddress
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         expectedUpdateAddressCompletable
     }
 
-    var expectedCredentials: Result<VeriffCredentials, Error>!
+    var expectedCredentials: Result<VeriffCredentials, NabuNetworkError>!
 
-    func credentialsForVeriff() -> Single<VeriffCredentials> {
-        expectedCredentials.single
+    func credentialsForVeriff() -> AnyPublisher<VeriffCredentials, NabuNetworkError> {
+        expectedCredentials.publisher
     }
 
-    var expectedSubmitToVeriffForVerification: Completable!
+    var expectedSubmitToVeriffForVerification: AnyPublisher<Void, NabuNetworkError>!
 
-    func submitToVeriffForVerification(applicantId: String) -> Completable {
+    func submitToVeriffForVerification(
+        applicantId: String
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         expectedSubmitToVeriffForVerification
     }
 
-    var jwtToken: Result<String, Error>!
+    var jwtToken: Result<String, NabuNetworkError>!
 
-    func requestJWT(guid: String, sharedKey: String) -> Single<String> {
-        jwtToken.single
+    func requestJWT(
+        guid: String,
+        sharedKey: String
+    ) -> AnyPublisher<String, NabuNetworkError> {
+        jwtToken.publisher
     }
 
     func fetchUser() -> AnyPublisher<NabuUser, NabuNetworkError> {

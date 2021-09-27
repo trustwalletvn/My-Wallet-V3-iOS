@@ -4,6 +4,4 @@ binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseDynamicLinksBinar
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseMessagingBinary.json"
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseRemoteConfigBinary.json"
 binary "RecaptchaSDK.json" == 1.0.0
-binary "VeriffSDK.json" == 4.3.1
 github "SiftScience/sift-ios" "v2.0.1"
-github "Soneso/stellar-ios-mac-sdk" ~> 1.9

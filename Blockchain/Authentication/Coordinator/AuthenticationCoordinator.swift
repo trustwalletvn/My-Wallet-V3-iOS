@@ -5,17 +5,17 @@ import BitcoinKit
 import Combine
 import DIKit
 import FeatureAuthenticationDomain
-import KYCUIKit
-import OnboardingUIKit
+import FeatureKYCUI
+import FeatureOnboardingUI
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RemoteNotificationsKit
 import RxRelay
 import RxSwift
-import SettingsKit
 import ToolKit
 
-extension AuthenticationCoordinator: WalletPairingFetcherAPI {
+extension AuthenticationCoordinator {
     /// A new method for fetching wallet - is being used after manual pairing
     // TODO: Remove once done migrating JS to native
     func authenticate(using password: String) {
@@ -59,7 +59,7 @@ extension AuthenticationCoordinator: WalletPairingFetcherAPI {
 
     private let deepLinkRouter: DeepLinkRouting
 
-    private let onboardingRouter: OnboardingUIKit.OnboardingRouterAPI
+    private let onboardingRouter: FeatureOnboardingUI.OnboardingRouterAPI
     private let featureFlagsService: FeatureFlagsServiceAPI
 
     private var exchangeRepository: ExchangeAccountRepositoryAPI!
@@ -94,7 +94,7 @@ extension AuthenticationCoordinator: WalletPairingFetcherAPI {
         loadingViewPresenter: LoadingViewPresenting = resolve(),
         dataRepository: BlockchainDataRepository = BlockchainDataRepository.shared,
         deepLinkRouter: DeepLinkRouting = resolve(),
-        onboardingRouter: OnboardingUIKit.OnboardingRouterAPI = resolve(),
+        onboardingRouter: FeatureOnboardingUI.OnboardingRouterAPI = resolve(),
         featureFlagsService: FeatureFlagsServiceAPI = resolve(),
         remoteNotificationServiceContainer: RemoteNotificationServiceContaining = resolve()
     ) {
@@ -179,9 +179,10 @@ extension AuthenticationCoordinator: WalletPairingFetcherAPI {
         remoteNotificationAuthorizer.requestAuthorizationIfNeeded()
             .subscribe()
             .disposed(by: bag)
+
         coincore.initialize()
             .subscribe()
-            .disposed(by: bag)
+            .store(in: &cancellables)
 
         NotificationCenter.default.post(name: .login, object: nil)
         analyticsRecoder.record(event: AnalyticsEvents.New.Navigation.signedIn)

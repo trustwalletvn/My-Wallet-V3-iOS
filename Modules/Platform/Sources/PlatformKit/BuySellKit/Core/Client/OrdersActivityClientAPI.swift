@@ -1,9 +1,11 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
 
 protocol OrdersActivityClientAPI: AnyObject {
 
     /// Fetch order activity response
-    func activityResponse(currency: Currency) -> Single<OrdersActivityResponse>
+    func activityResponse(
+        currency: Currency
+    ) -> AnyPublisher<OrdersActivityResponse, NabuNetworkError>
 }

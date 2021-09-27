@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
 import RxSwift
@@ -21,12 +22,10 @@ final class CryptoFeeClient<FeeType: TransactionFee & Decodable> {
     private let requestBuilder: RequestBuilder
     private let networkAdapter: NetworkAdapterAPI
 
-    var fees: Single<FeeType> {
-        guard let request = requestBuilder.get(
+    var fees: AnyPublisher<FeeType, NetworkError> {
+        let request = requestBuilder.get(
             path: Endpoint.Fees.path
-        ) else {
-            return .error(RequestBuilder.Error.buildingRequest)
-        }
+        )!
         return networkAdapter.perform(request: request)
     }
 

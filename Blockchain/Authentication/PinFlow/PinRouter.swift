@@ -1,9 +1,9 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import DIKit
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
-import SettingsKit
 import ToolKit
 
 /// PIN creation / changing / authentication. Responsible for routing screens during flow.

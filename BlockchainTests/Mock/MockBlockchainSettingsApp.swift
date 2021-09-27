@@ -1,8 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import FeatureSettingsDomain
 import Foundation
 import PlatformKit
-import SettingsKit
 
 final class MockBlockchainSettingsApp: BlockchainSettingsAppAPI {
     internal init(

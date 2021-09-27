@@ -162,7 +162,6 @@ extension NavigatableView where Self: UIViewController {
 
         controller.navigationItem.rightBarButtonItem?.tintColor = navigatableView.rightCTATintColor
         controller.navigationItem.leftBarButtonItem?.tintColor = navigatableView.leftCTATintColor
-//        navigationBar.backgroundColor = navigatableView.barStyle.backgroundColor
         navigationBar.barTintColor = navigatableView.barStyle.backgroundColor
         navigationBar.titleTextAttributes = navigatableView.barStyle.titleTextAttributes
     }

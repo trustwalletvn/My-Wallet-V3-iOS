@@ -44,6 +44,7 @@ final class EligibilityService: EligibilityServiceAPI {
                                     PaymentMethodPayloadType.card.rawValue
                                 ]
                             )
+                            .asSingle()
                         }
                         .map(\.eligible)
                 }

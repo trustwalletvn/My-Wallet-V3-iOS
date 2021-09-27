@@ -207,6 +207,7 @@ final class OnboardingHostingController: UIViewController {
             })
         let dismissHandler: () -> Void = { [weak self] in
             cancellable.cancel()
+            // TODO: remove old restore wallet screen when SSO III is ready
             self?.viewStore.send(.recoverWalletScreenClosed)
         }
         let controller = RecoverFundsViewController(presenter: presenter, dismissHandler: dismissHandler)

@@ -3,6 +3,7 @@
 import DIKit
 import PlatformKit
 import RxCocoa
+import RxCombine
 import RxSwift
 
 struct ValidatedData {
@@ -68,6 +69,8 @@ final class WithdrawAmountValidationService {
         self.coincore = coincore
 
         account = coincore.allAccounts
+            .asObservable()
+            .asSingle()
             .compactMap { [fiatCurrency] group in
                 group.accounts.first(where: { $0.currencyType == fiatCurrency.currency })
             }

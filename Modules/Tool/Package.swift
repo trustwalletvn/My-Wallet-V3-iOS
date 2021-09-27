@@ -16,16 +16,40 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "git@github.com:jackpooleybc/DIKit.git", .branch("safe-property-wrappers")),
-        .package(url: "git@github.com:paulo-bc/RxCombine.git", from: "1.6.2"),
-        .package(url: "git@github.com:ReactiveX/RxSwift.git", from: "5.1.3"),
-        .package(url: "git@github.com:attaswift/BigInt.git", from: "5.2.1")
+        .package(
+            name: "DIKit",
+            url: "https://github.com/jackpooleybc/DIKit.git",
+            .branch("safe-property-wrappers")
+        ),
+        .package(
+            name: "CombineExt",
+            url: "https://github.com/CombineCommunity/CombineExt.git",
+            from: "1.3.0"
+        ),
+        .package(
+            name: "RxCombine",
+            url: "https://github.com/paulo-bc/RxCombine.git",
+            from: "1.6.2"
+        ),
+        .package(
+            name: "RxSwift",
+            url: "https://github.com/ReactiveX/RxSwift.git",
+            from: "5.1.3"
+        ),
+        .package(
+            name: "BigInt",
+            url: "https://github.com/attaswift/BigInt.git",
+            from: "5.2.1"
+        ),
+        .package(path: "../Test")
     ],
     targets: [
         .target(
             name: "ToolKit",
             dependencies: [
-                "RxSwift",
+                .product(name: "CombineExt", package: "CombineExt"),
+                .product(name: "RxCocoa", package: "RxSwift"),
+                .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRelay", package: "RxSwift"),
                 .product(name: "RxCombine", package: "RxCombine"),
                 .product(name: "DIKit", package: "DIKit"),
@@ -35,18 +59,15 @@ let package = Package(
         .target(
             name: "ToolKitMock",
             dependencies: [
-                "ToolKit"
+                .target(name: "ToolKit")
             ]
         ),
         .testTarget(
             name: "ToolKitTests",
             dependencies: [
-                "ToolKit",
-                "RxSwift",
-                .product(name: "RxRelay", package: "RxSwift"),
-                .product(name: "RxBlocking", package: "RxSwift"),
-                .product(name: "RxTest", package: "RxSwift"),
-                .product(name: "DIKit", package: "DIKit")
+                .target(name: "ToolKit"),
+                .target(name: "ToolKitMock"),
+                .product(name: "TestKit", package: "Test")
             ]
         )
     ]

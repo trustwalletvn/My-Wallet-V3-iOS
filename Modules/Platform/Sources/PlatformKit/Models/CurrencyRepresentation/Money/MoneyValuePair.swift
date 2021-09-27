@@ -45,16 +45,15 @@ public struct MoneyValuePair: Equatable {
         self.init(base: base.moneyValue, quote: quote.moneyValue)
     }
 
-    public init(fiat: FiatValue, priceInFiat: FiatValue, cryptoCurrency: CryptoCurrency, usesFiatAsBase: Bool) {
-        let fiatValue = MoneyValue(fiatValue: fiat)
-        let cryptoValue = MoneyValue(cryptoValue: fiat.convertToCryptoValue(exchangeRate: priceInFiat, cryptoCurrency: cryptoCurrency))
+    public init(fiatValue: FiatValue, exchangeRate: FiatValue, cryptoCurrency: CryptoCurrency, usesFiatAsBase: Bool) {
+        let cryptoValue = fiatValue.convertToCryptoValue(exchangeRate: exchangeRate, cryptoCurrency: cryptoCurrency)
 
         if usesFiatAsBase {
-            base = fiatValue
-            quote = cryptoValue
+            base = fiatValue.moneyValue
+            quote = cryptoValue.moneyValue
         } else {
-            base = cryptoValue
-            quote = fiatValue
+            base = cryptoValue.moneyValue
+            quote = fiatValue.moneyValue
         }
     }
 

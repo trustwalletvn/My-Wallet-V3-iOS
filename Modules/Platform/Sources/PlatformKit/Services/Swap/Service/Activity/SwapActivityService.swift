@@ -30,6 +30,7 @@ final class SwapActivityService: SwapActivityServiceAPI {
                         cryptoCurrency: nil,
                         limit: 50
                     )
+                    .asSingle()
                 }
         }
     }

@@ -1,8 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import DashboardUIKit
+import FeatureDashboardUI
+import FeatureSettingsUI
 import PlatformUIKit
-import SettingsUIKit
 
 // These protocols are added here for simplicity,
 // these are adopted both by `LoggedInHostingController` and `AppCoordinator`

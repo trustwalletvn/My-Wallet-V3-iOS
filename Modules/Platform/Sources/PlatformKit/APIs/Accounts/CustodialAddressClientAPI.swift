@@ -1,7 +1,9 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
 
 protocol CustodialPaymentAccountClientAPI {
-    func custodialPaymentAccount(for cryptoCurrency: CryptoCurrency) -> Single<PaymentAccount.Response>
+    func custodialPaymentAccount(
+        for cryptoCurrency: CryptoCurrency
+    ) -> AnyPublisher<PaymentAccount.Response, NabuNetworkError>
 }

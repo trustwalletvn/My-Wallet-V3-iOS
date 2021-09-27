@@ -5,7 +5,13 @@ import Foundation
 /// Class in charge of logging debug/info/warning/error messages to a `LogDestination`.
 @objc public class Logger: NSObject {
 
-    private var destinations = [LogDestination]()
+    public enum Verbosity {
+        case very
+        case some
+        case none
+    }
+
+    internal var destinations = [LogDestination]()
 
     private lazy var timestampFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -22,6 +28,8 @@ import Foundation
     }()
 
     @objc public class func sharedInstance() -> Logger { shared }
+
+    public var verbosity: Verbosity = .very
 
     // MARK: - Public
 
@@ -93,15 +101,15 @@ import Foundation
         function: String = #function,
         line: Int = #line
     ) -> String {
-        let timestamp = timestampFormatter.string(from: Date())
-        let logLevelTitle = "\(level)".uppercased()
-        return "\(timestamp) \(level.emoji) \(logLevelTitle) \(filename(from: file)).\(function):\(line) - \(message)"
-    }
-
-    private func filename(from file: String) -> String {
-        if let lastComponent = file.components(separatedBy: "/").last {
-            return lastComponent.components(separatedBy: ".").first ?? lastComponent
+        switch verbosity {
+        case .very:
+            let timestamp = timestampFormatter.string(from: Date())
+            let logLevelTitle = "\(level)".uppercased()
+            return "\(timestamp) \(level.emoji) \(logLevelTitle) - \(message) \(CodeLocation(function, file, line))"
+        case .some:
+            return "\(level.emoji) \(message) \(CodeLocation(function, file, line))"
+        case .none:
+            return message
         }
-        return file
     }
 }

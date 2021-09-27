@@ -3,7 +3,6 @@
 import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 
 public struct SimplifiedDueDiligenceResponse: Codable {
     let eligible: Bool
@@ -18,22 +17,47 @@ public struct SimplifiedDueDiligenceVerificationResponse: Codable {
 
 public protocol KYCClientAPI: AnyObject {
 
-    func tiers() -> Single<KYC.UserTiers>
-    func supportedDocuments(for country: String) -> Single<KYCSupportedDocumentsResponse>
-    func user() -> Single<NabuUser>
-    func listOfStates(in country: String) -> Single<[KYCState]>
+    func tiers() -> AnyPublisher<KYC.UserTiers, NabuNetworkError>
 
-    func selectCountry(country: String, state: String?, notifyWhenAvailable: Bool, jwtToken: String) -> Completable
-    func updatePersonalDetails(firstName: String?, lastName: String?, birthday: Date?) -> Completable
-    func updateAddress(userAddress: UserAddress) -> Completable
+    func supportedDocuments(
+        for country: String
+    ) -> AnyPublisher<KYCSupportedDocumentsResponse, NabuNetworkError>
 
-    func credentialsForVeriff() -> Single<VeriffCredentials>
-    func submitToVeriffForVerification(applicantId: String) -> Completable
+    func user() -> AnyPublisher<NabuUser, NabuNetworkError>
+
+    func listOfStates(
+        in country: String
+    ) -> AnyPublisher<[KYCState], NabuNetworkError>
+
+    func selectCountry(
+        country: String,
+        state: String?,
+        notifyWhenAvailable: Bool,
+        jwtToken: String
+    ) -> AnyPublisher<Void, NabuNetworkError>
+
+    func updatePersonalDetails(
+        firstName: String?,
+        lastName: String?,
+        birthday: Date?
+    ) -> AnyPublisher<Void, NabuNetworkError>
+
+    func updateAddress(
+        userAddress: UserAddress
+    ) -> AnyPublisher<Void, NabuNetworkError>
+
+    func credentialsForVeriff() -> AnyPublisher<VeriffCredentials, NabuNetworkError>
+
+    func submitToVeriffForVerification(
+        applicantId: String
+    ) -> AnyPublisher<Void, NabuNetworkError>
 
     // MARK: Combine Interface
 
     func fetchUser() -> AnyPublisher<NabuUser, NabuNetworkError>
+
     func checkSimplifiedDueDiligenceEligibility() -> AnyPublisher<SimplifiedDueDiligenceResponse, NabuNetworkError>
+
     func checkSimplifiedDueDiligenceVerification() -> AnyPublisher<SimplifiedDueDiligenceVerificationResponse, NabuNetworkError>
 }
 
@@ -87,61 +111,53 @@ public final class KYCClient: KYCClientAPI {
         self.requestBuilder = requestBuilder
     }
 
-    public func tiers() -> Single<KYC.UserTiers> {
+    public func tiers() -> AnyPublisher<KYC.UserTiers, NabuNetworkError> {
         let request = requestBuilder.get(
             path: Path.tiers,
             authenticated: true
         )!
-        return networkAdapter.perform(
-            request: request,
-            errorResponseType: NabuNetworkError.self
-        )
+        return networkAdapter.perform(request: request)
     }
 
-    public func supportedDocuments(for country: String) -> Single<KYCSupportedDocumentsResponse> {
+    public func supportedDocuments(
+        for country: String
+    ) -> AnyPublisher<KYCSupportedDocumentsResponse, NabuNetworkError> {
         let request = requestBuilder.get(
             path: Path.supportedDocuments(for: country),
             authenticated: true
         )!
-        return networkAdapter.perform(
-            request: request,
-            errorResponseType: NabuNetworkError.self
-        )
+        return networkAdapter.perform(request: request)
     }
 
-    public func credentialsForVeriff() -> Single<VeriffCredentials> {
+    public func credentialsForVeriff() -> AnyPublisher<VeriffCredentials, NabuNetworkError> {
         let request = requestBuilder.get(
             path: Path.credentiasForVeriff,
             authenticated: true
         )!
-        return networkAdapter.perform(
-            request: request,
-            errorResponseType: NabuNetworkError.self
-        )
+        return networkAdapter.perform(request: request)
     }
 
-    public func user() -> Single<NabuUser> {
+    public func user() -> AnyPublisher<NabuUser, NabuNetworkError> {
         fetchUser()
-            .asObservable()
-            .take(1)
-            .asSingle()
     }
 
-    public func listOfStates(in country: String) -> Single<[KYCState]> {
+    public func listOfStates(
+        in country: String
+    ) -> AnyPublisher<[KYCState], NabuNetworkError> {
         let request = requestBuilder.get(
             path: Path.listOfStates(in: country)
         )!
         return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+            .perform(request: request)
             .map { (states: [KYCState]) in
                 states.sorted { $0.name.uppercased() < $1.name.uppercased() }
             }
+            .eraseToAnyPublisher()
     }
 
-    public func submitToVeriffForVerification(applicantId: String) -> Completable {
+    public func submitToVeriffForVerification(
+        applicantId: String
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         struct Payload: Encodable {
 
             private enum CodingKeys: String, CodingKey {
@@ -165,11 +181,7 @@ public final class KYCClient: KYCClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     public func selectCountry(
@@ -177,7 +189,7 @@ public final class KYCClient: KYCClientAPI {
         state: String?,
         notifyWhenAvailable: Bool,
         jwtToken: String
-    ) -> Completable {
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         struct Payload: Encodable {
             let jwt: String
             let countryCode: String
@@ -204,14 +216,14 @@ public final class KYCClient: KYCClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    public func updatePersonalDetails(firstName: String?, lastName: String?, birthday: Date?) -> Completable {
+    public func updatePersonalDetails(
+        firstName: String?,
+        lastName: String?,
+        birthday: Date?
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         let payload = KYCUpdatePersonalDetailsRequest(
             firstName: firstName,
             lastName: lastName,
@@ -226,25 +238,19 @@ public final class KYCClient: KYCClientAPI {
             body: try? encoder.encode(payload),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    public func updateAddress(userAddress: UserAddress) -> Completable {
+    public func updateAddress(
+        userAddress: UserAddress
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         let payload = KYCUpdateAddressRequest(address: userAddress)
         let request = requestBuilder.put(
             path: Path.updateAddress,
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: Combine Interface

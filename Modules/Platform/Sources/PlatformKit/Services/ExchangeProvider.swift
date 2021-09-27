@@ -1,5 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import DIKit
+import Foundation
+
 /// A provider for exchange rates as per supported crypto.
 public protocol ExchangeProviding: AnyObject {
 
@@ -30,23 +33,27 @@ public final class ExchangeProvider: ExchangeProviding {
 
     // MARK: - Services
 
-    private var services: [CurrencyType: PairExchangeServiceAPI] = [:]
+    private let services: [CurrencyType: PairExchangeServiceAPI]
 
     // MARK: - Setup
 
     public init(
-        fiats: [FiatCurrency: PairExchangeServiceAPI],
-        cryptos: [CryptoCurrency: PairExchangeServiceAPI]
+        enabledCurrenciesService: EnabledCurrenciesServiceAPI = resolve(),
+        fiatCurrencyService: FiatCurrencyServiceAPI = resolve()
     ) {
-        for (currency, service) in fiats {
-            services[.fiat(currency)] = service
-        }
-        for (currency, service) in cryptos {
-            services[.crypto(currency)] = service
-        }
+        services = enabledCurrenciesService
+            .allEnabledCurrencies
+            .reduce(into: [CurrencyType: PairExchangeServiceAPI]()) { result, currencyType in
+                result[currencyType] = PairExchangeService(
+                    currency: currencyType,
+                    fiatCurrencyService: fiatCurrencyService
+                )
+            }
     }
 
     public func refresh() {
-        services.values.forEach { $0.fetchTriggerRelay.accept(()) }
+        services.values.forEach { service in
+            service.fetchTriggerRelay.accept(())
+        }
     }
 }

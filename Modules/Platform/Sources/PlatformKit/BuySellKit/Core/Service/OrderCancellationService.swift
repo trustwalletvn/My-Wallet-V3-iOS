@@ -31,6 +31,8 @@ final class OrderCancellationService: OrderCancellationServiceAPI {
     func cancel(order id: String) -> Completable {
         // Cancel the order
         client.cancel(order: id)
+            .asObservable()
+            .ignoreElements()
             // Fetch the orders anew
             .andThen(orderDetailsService.fetchOrders())
             .asCompletable()

@@ -75,9 +75,9 @@ public final class HistoricalFiatPriceService: HistoricalFiatPriceServiceAPI {
                 let fiatCurrency = tuple.0
                 let window = tuple.1
                 let prices = self.priceService.priceSeries(
-                    within: window,
                     of: self.cryptoCurrency,
-                    in: fiatCurrency
+                    in: fiatCurrency,
+                    within: window
                 )
                 .asObservable()
                 return Observable.zip(prices, Observable.just(fiatCurrency.code), Observable.just(window))

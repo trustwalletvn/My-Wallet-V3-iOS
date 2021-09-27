@@ -2,6 +2,7 @@
 
 import RxCocoa
 import RxSwift
+import ToolKit
 import UIKit
 
 /// The view model coupled with `SegmentedViewModel`.
@@ -28,8 +29,7 @@ public struct SegmentedViewModel {
             borderColor: UIColor = .clear,
             dividerColor: UIColor? = nil,
             contentColor: UIColor? = nil,
-            selectedContentColor: UIColor? = nil,
-            imageName: String? = nil
+            selectedContentColor: UIColor? = nil
         ) {
             self.font = font
             self.selectedFont = selectedFont
@@ -77,13 +77,9 @@ public struct SegmentedViewModel {
 
     /// The theme of the view
     public var theme: Theme {
+        @available(*, unavailable)
         get {
-            Theme(
-                font: .main(.medium, 14),
-                selectedFont: .main(.medium, 14),
-                backgroundColor: backgroundColorRelay.value,
-                contentColor: contentColorRelay.value
-            )
+            unimplemented()
         }
         set {
             selectedFontRelay.accept(newValue.selectedFont)
@@ -201,11 +197,11 @@ public struct SegmentedViewModel {
             .filter { $0 >= 0 }
             .map { items[$0] }
             .compactMap(\.action)
-            .bind {
+            .bind { action in
                 let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
                 feedbackGenerator.prepare()
                 feedbackGenerator.impactOccurred()
-                $0()
+                action()
             }
             .disposed(by: disposeBag)
     }
@@ -230,9 +226,8 @@ extension SegmentedViewModel {
     /// Returns a primary segmented control
     public static func primary(
         items: [Item],
-        isMomentary: Bool,
-        defaultSelectedSegmentIndex: Int = 1,
-        background: UIColor = .primaryButton,
+        isMomentary: Bool = false,
+        defaultSelectedSegmentIndex: Int = 0,
         cornerRadius: CGFloat = 8,
         accessibilityId: String = Accessibility.Identifier.General.primarySegmentedControl
     ) -> SegmentedViewModel {
@@ -246,45 +241,17 @@ extension SegmentedViewModel {
         viewModel.theme = Theme(
             font: .main(.semibold, 16),
             selectedFont: .main(.semibold, 16),
-            backgroundColor: background,
-            borderColor: .clear,
-            dividerColor: .white,
-            contentColor: .white
-        )
-        return viewModel
-    }
-
-    /// Returns a white segmented control
-    public static func plain(
-        items: [Item],
-        isMomentary: Bool,
-        defaultSelectedSegmentIndex: Int = 1,
-        background: UIColor = .white,
-        cornerRadius: CGFloat = 8,
-        accessibilityId: String = Accessibility.Identifier.General.primarySegmentedControl
-    ) -> SegmentedViewModel {
-        var viewModel = SegmentedViewModel(
-            isMomentary: isMomentary,
-            cornerRadius: cornerRadius,
-            defaultSelectedSegmentIndex: defaultSelectedSegmentIndex,
-            accessibility: .id(accessibilityId),
-            items: items
-        )
-        viewModel.theme = Theme(
-            font: .main(.semibold, 16),
-            selectedFont: .main(.semibold, 16),
-            backgroundColor: background,
-            borderColor: .lightBorder,
-            dividerColor: .lightBorder,
-            contentColor: .primaryButton
+            backgroundColor: .background,
+            contentColor: .descriptionText,
+            selectedContentColor: .primaryButton
         )
         return viewModel
     }
 
     public static func `default`(
         items: [Item],
-        isMomentary: Bool,
-        defaultSelectedSegmentIndex: Int = 1,
+        isMomentary: Bool = false,
+        defaultSelectedSegmentIndex: Int = 0,
         cornerRadius: CGFloat = 8,
         accessibilityId: String = Accessibility.Identifier.General.primarySegmentedControl
     ) -> SegmentedViewModel {
@@ -298,9 +265,9 @@ extension SegmentedViewModel {
         viewModel.theme = Theme(
             font: .main(.medium, 14),
             selectedFont: .main(.semibold, 14),
-            backgroundColor: nil,
-            contentColor: #colorLiteral(red: 0.596, green: 0.631, blue: 0.698, alpha: 1),
-            selectedContentColor: .black
+            backgroundColor: .background,
+            contentColor: .mutedText,
+            selectedContentColor: .titleText
         )
         return viewModel
     }

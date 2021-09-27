@@ -40,7 +40,7 @@ public enum OrderDetailsState: String, CaseIterable {
         case .failed:
             return LocalizedString.failed
         case .finished:
-            return LocalizedString.finished
+            return LocalizedString.completed
         case .pendingConfirmation:
             return LocalizedString.pending
         }

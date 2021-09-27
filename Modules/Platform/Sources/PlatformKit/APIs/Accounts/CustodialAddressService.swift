@@ -21,5 +21,6 @@ final class CustodialAddressService: CustodialAddressServiceAPI {
         client.custodialPaymentAccount(for: cryptoCurrency)
             .map(\.account)
             .map(\.address)
+            .asSingle()
     }
 }

@@ -23,7 +23,7 @@ extension AnyPublisher {
     }
 }
 
-extension AnyPublisher {
+extension Publisher {
 
     public var resultPublisher: AnyPublisher<Result<Output, Failure>, Never> {
         flatMap { value -> AnyPublisher<Result<Output, Failure>, Failure> in
@@ -36,7 +36,7 @@ extension AnyPublisher {
     }
 }
 
-extension AnyPublisher where Failure == Never {
+extension Publisher where Failure == Never {
 
     public func mapError<E: Error>(to type: E.Type) -> AnyPublisher<Output, E> {
         mapError()
@@ -47,7 +47,7 @@ extension AnyPublisher where Failure == Never {
     }
 }
 
-extension AnyPublisher {
+extension Publisher {
 
     public func eraseError() -> AnyPublisher<Output, Error> {
         mapError { $0 }.eraseToAnyPublisher()
@@ -61,19 +61,77 @@ extension AnyPublisher {
     }
 }
 
-extension AnyPublisher {
+extension Publisher {
+
+    public func optional() -> AnyPublisher<Output?, Failure> {
+        map { element -> Output? in
+            element
+        }
+        .eraseToAnyPublisher()
+    }
 
     public func mapToVoid() -> AnyPublisher<Void, Failure> {
         replaceOutput(with: ())
     }
 }
 
-extension AnyPublisher {
+extension Publisher {
 
     public func replaceOutput<O>(with output: O) -> AnyPublisher<O, Failure> {
         map { _ -> O in
             output
         }
         .eraseToAnyPublisher()
+    }
+}
+
+extension Publisher {
+
+    public func crashOnError() -> AnyPublisher<Output, Failure> {
+        self.catch { error -> AnyPublisher<Output, Failure> in
+            fatalError(error.localizedDescription)
+        }
+        .eraseToAnyPublisher()
+    }
+
+    public func crashOnError() -> AnyPublisher<Output, Never> {
+        self.catch { error -> AnyPublisher<Output, Never> in
+            fatalError(error.localizedDescription)
+        }
+        .eraseToAnyPublisher()
+    }
+}
+
+extension Publisher {
+
+    public func recordErrors(on recorder: ErrorRecording?) -> AnyPublisher<Output, Failure> {
+        handleEvents(
+            receiveCompletion: { completion in
+                guard case .failure(let error) = completion else {
+                    return
+                }
+                recorder?.error(error)
+            }
+        )
+        .eraseToAnyPublisher()
+    }
+
+    public func recordErrors(on recorder: ErrorRecording?, enabled: Bool) -> AnyPublisher<Output, Failure> {
+        guard enabled else {
+            return eraseToAnyPublisher()
+        }
+        return recordErrors(on: recorder)
+    }
+}
+
+extension Publisher {
+
+    /// Subscribes to a `Publisher` ignoring all published events
+    ///
+    /// This method creates the subscriber and immediately requests an unlimited number of values, prior to returning the subscriber.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end assignment of the received value. Deallocation of the result will tear down the subscription stream.
+    public func subscribe() -> AnyCancellable {
+        sink(receiveCompletion: { _ in }, receiveValue: { _ in })
     }
 }

@@ -13,8 +13,8 @@ extension LocalizationConstants {
         )
 
         public static let myInterestWallet = NSLocalizedString(
-            "Interest Account",
-            comment: "Used for naming interest accounts."
+            "Rewards Account",
+            comment: "Used for naming rewards accounts."
         )
 
         public static let myTradingAccount = NSLocalizedString(

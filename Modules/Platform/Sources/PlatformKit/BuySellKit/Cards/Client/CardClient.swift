@@ -1,8 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 
 typealias CardClientAPI = CardListClientAPI &
     CardChargeClientAPI &
@@ -44,62 +44,46 @@ final class CardClient: CardClientAPI {
 
     /// Streams a list of available cards
     /// - Returns: A Single with `CardPayload` array
-    var cardList: Single<[CardPayload]> {
+    var cardList: AnyPublisher<[CardPayload], NabuNetworkError> {
         let path = Path.card
         let request = requestBuilder.get(
             path: path,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - CardDetailClientAPI
 
-    func getCard(by id: String) -> Single<CardPayload> {
+    func getCard(by id: String) -> AnyPublisher<CardPayload, NabuNetworkError> {
         let path = Path.card + [id]
         let request = requestBuilder.get(
             path: path,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - CardDeletionClientAPI
 
-    func deleteCard(by id: String) -> Completable {
+    func deleteCard(by id: String) -> AnyPublisher<Void, NabuNetworkError> {
         let path = Path.card + [id]
         let request = requestBuilder.delete(
             path: path,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - CardChargeClientAPI
 
-    func chargeCard(by id: String) -> Completable {
+    func chargeCard(by id: String) -> AnyPublisher<Void, NabuNetworkError> {
         let path = Path.card + [id, "charge"]
         let request = requestBuilder.post(
             path: path,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - CardAdditionClientAPI
@@ -108,7 +92,7 @@ final class CardClient: CardClientAPI {
         for currency: String,
         email: String,
         billingAddress: CardPayload.BillingAddress
-    ) -> Single<CardPayload> {
+    ) -> AnyPublisher<CardPayload, NabuNetworkError> {
         struct RequestPayload: Encodable {
             let currency: String
             let email: String
@@ -127,11 +111,7 @@ final class CardClient: CardClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - CardActivationClientAPI
@@ -144,8 +124,10 @@ final class CardClient: CardClientAPI {
     ///   - url: Everypay only - URL to return to after card verified
     ///   - token: Session token
     /// - Returns: The card details
-    func activateCard(by id: String, url: String) -> Single<ActivateCardResponse.Partner> {
-
+    func activateCard(
+        by id: String,
+        url: String
+    ) -> AnyPublisher<ActivateCardResponse.Partner, NabuNetworkError> {
         struct Attributes: Encodable {
             struct EveryPay: Encodable {
                 let customerUrl: String
@@ -157,6 +139,7 @@ final class CardClient: CardClientAPI {
                 self.everypay = everypay
             }
         }
+
         let path = Path.activateCard(with: id)
         let payload = Attributes(everypay: .init(customerUrl: url))
 
@@ -165,13 +148,10 @@ final class CardClient: CardClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
             .map { (response: ActivateCardResponse) in
                 response.partner
             }
+            .eraseToAnyPublisher()
     }
 }

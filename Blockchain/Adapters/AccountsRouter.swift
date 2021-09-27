@@ -3,9 +3,9 @@
 //  Copyright © 2021 Blockchain Luxembourg S.A. All rights reserved.
 //
 
-import DashboardUIKit
 import DIKit
-import InterestUIKit
+import FeatureDashboardUI
+import FeatureInterestUI
 import PlatformKit
 import PlatformUIKit
 import RxSwift
@@ -19,7 +19,7 @@ final class AccountsRouter: AccountsRouting {
 
     init(
         routing: CurrencyRouting & TabSwapping,
-        backupRouter: DashboardUIKit.BackupRouterAPI = resolve()
+        backupRouter: FeatureDashboardUI.BackupRouterAPI = resolve()
     ) {
         nonCustodialActionRouterAPI = NonCustodialActionRouter(routing: routing)
         custodyActionRouterAPI = CustodyActionRouter(backupRouterAPI: backupRouter, tabSwapping: routing)

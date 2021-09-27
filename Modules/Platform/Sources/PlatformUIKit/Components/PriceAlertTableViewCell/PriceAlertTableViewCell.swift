@@ -8,7 +8,7 @@ import PlatformKit
 /// the button is not visible.
 public final class PriceAlertTableViewCell: UITableViewCell {
 
-    private typealias LocalizationId = LocalizationConstants.DashboardDetails
+    private typealias LocalizationId = LocalizationConstants.Dashboard.AssetDetails
 
     public var currency: CryptoCurrency! {
         didSet {

@@ -1,10 +1,10 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import Combine
-import OnboardingUIKit
+import FeatureOnboardingUI
 import UIKit
 
-extension TransactionsAdapter: OnboardingUIKit.BuyCryptoRouterAPI {
+extension TransactionsAdapter: FeatureOnboardingUI.BuyCryptoRouterAPI {
 
     func presentBuyFlow(from presenter: UIViewController) -> AnyPublisher<OnboardingResult, Never> {
         presentTransactionFlow(to: .buy(nil), from: presenter)

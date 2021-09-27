@@ -45,7 +45,7 @@ struct EmailLoginView: View {
                     action: {
                         viewStore.send(.sendDeviceVerificationEmail)
                     },
-                    loading: viewStore.binding(get: \.isLoading, send: { _ in .none })
+                    loading: viewStore.binding(get: \.isLoading, send: .none)
                 )
                 .disabled(!viewStore.isEmailValid)
                 .accessibility(identifier: AccessibilityIdentifiers.EmailLoginScreen.continueButton)
@@ -138,10 +138,9 @@ struct EmailLoginView_Previews: PreviewProvider {
                 initialState: .init(),
                 reducer: emailLoginReducer,
                 environment: .init(
-                    sessionTokenService:
-                    NoOpSessionTokenService(),
-                    deviceVerificationService: NoOpDeviceVerificationService(),
                     mainQueue: .main,
+                    sessionTokenService: NoOpSessionTokenService(),
+                    deviceVerificationService: NoOpDeviceVerificationService(),
                     errorRecorder: NoOpErrorRecoder(),
                     analyticsRecorder: NoOpAnalyticsRecorder()
                 )

@@ -2,8 +2,8 @@
 
 import Combine
 import ComposableArchitecture
-import DebugUIKit
 import DIKit
+import FeatureDebugUI
 import PlatformKit
 import ToolKit
 

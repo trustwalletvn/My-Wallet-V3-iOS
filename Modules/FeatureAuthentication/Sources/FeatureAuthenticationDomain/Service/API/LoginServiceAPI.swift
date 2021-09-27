@@ -5,8 +5,7 @@ import Foundation
 import NetworkKit
 
 /// A potential login service error
-public enum LoginServiceError: LocalizedError {
-
+public enum LoginServiceError: LocalizedError, Equatable {
     /// A 2FA required in order to complete the login
     case twoFactorOTPRequired(WalletAuthenticatorType)
 

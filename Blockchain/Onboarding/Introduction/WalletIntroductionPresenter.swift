@@ -2,13 +2,13 @@
 
 import AnalyticsKit
 import DIKit
+import FeatureSettingsDomain
 import Foundation
 import NetworkKit
 import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
-import SettingsKit
 import ToolKit
 
 // A `Presentation` event that is built from a `WalletIntroductionEventType`

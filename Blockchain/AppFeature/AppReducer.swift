@@ -2,7 +2,7 @@
 
 import ComposableArchitecture
 import DIKit
-import SettingsKit
+import FeatureSettingsDomain
 import ToolKit
 
 enum AppCancellations {

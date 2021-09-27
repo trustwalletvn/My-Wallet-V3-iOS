@@ -48,11 +48,11 @@ public final class AmountTranslationPresenter: AmountViewPresenting {
         }
 
         public let strings: Strings
-        public let events: Events
+        public let events: Events?
         public let accessibilityIdentifiers: AccessibilityIdentifiers
 
         public init(
-            events: Events,
+            events: Events?,
             strings: Strings,
             accessibilityIdentifiers: AccessibilityIdentifiers
         ) {
@@ -188,7 +188,9 @@ public final class AmountTranslationPresenter: AmountViewPresenting {
                 .throttle(.seconds(1))
                 .emit(onNext: { [maxValue, weak self] in
                     guard let self = self else { return }
-                    self.analyticsRecorder.record(event: self.displayBundle.events.maxTappedAnalyticsEvent)
+                    if let event = self.displayBundle.events?.maxTappedAnalyticsEvent {
+                        self.analyticsRecorder.record(event: event)
+                    }
                     self.interactor.set(amount: maxValue)
                 })
                 .disposed(by: disposeBag)
@@ -210,7 +212,9 @@ public final class AmountTranslationPresenter: AmountViewPresenting {
                 .throttle(.seconds(1))
                 .emit(onNext: { [minValue, weak self] in
                     guard let self = self else { return }
-                    self.analyticsRecorder.record(event: self.displayBundle.events.minTappedAnalyticsEvent)
+                    if let event = self.displayBundle.events?.minTappedAnalyticsEvent {
+                        self.analyticsRecorder.record(event: event)
+                    }
                     self.interactor.set(minAmount: minValue)
                 })
                 .disposed(by: disposeBag)

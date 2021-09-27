@@ -4,9 +4,9 @@ import Combine
 import ComposableArchitecture
 import FeatureAuthenticationDomain
 import FeatureAuthenticationUI
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
-import SettingsKit
 import ToolKit
 
 public enum Onboarding {
@@ -23,6 +23,7 @@ public enum Onboarding {
         case informSecondPasswordDetected
         case forgetWallet
         case createAccountScreenClosed
+        // TODO: remove old restore wallet screen when SSO III is ready
         case recoverWalletScreenClosed
     }
 
@@ -119,6 +120,7 @@ let onBoardingReducer = Reducer<Onboarding.State, Onboarding.Action, Onboarding.
             state.showLegacyCreateWalletScreen = false
             state.walletCreationContext = nil
             return .none
+        // TODO: remove old restore wallet screen when SSO III is ready
         case .recoverWalletScreenClosed:
             state.showLegacyRecoverWalletScreen = false
             state.walletCreationContext = nil
@@ -133,7 +135,8 @@ let onBoardingReducer = Reducer<Onboarding.State, Onboarding.Action, Onboarding.
             state.showLegacyCreateWalletScreen = true
             state.walletCreationContext = .new
             return .none
-        case .welcomeScreen(.presentScreenFlow(.recoverWalletScreen)):
+        // TODO: remove old restore wallet screen when SSO III is ready
+        case .welcomeScreen(.presentScreenFlow(.restoreWalletScreen)):
             state.showLegacyRecoverWalletScreen = true
             state.walletCreationContext = .recovery
             return .none

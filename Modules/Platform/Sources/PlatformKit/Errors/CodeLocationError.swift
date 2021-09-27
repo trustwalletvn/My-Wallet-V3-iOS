@@ -1,5 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import ToolKit
+
 public protocol CodeLocationError: Error, CustomStringConvertible {
     var message: String { get set }
     var location: CodeLocation { get set }
@@ -20,24 +22,5 @@ extension CodeLocationError {
 
     public var description: String {
         "\(message) ← \(location)"
-    }
-}
-
-public struct CodeLocation: CustomStringConvertible {
-
-    let function: String
-    let file: String
-    let line: Int
-
-    public init(
-        _ function: String = #function,
-        _ file: String = #file,
-        _ line: Int = #line
-    ) {
-        (self.function, self.file, self.line) = (function, file, line)
-    }
-
-    public var description: String {
-        "\(function)\t\(file)\t\(line)"
     }
 }

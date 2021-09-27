@@ -96,6 +96,7 @@ final class SettingsService: SettingsServiceAPI {
                     by: credentials.guid,
                     sharedKey: credentials.sharedKey
                 )
+                .asSingle()
             }
             .map { WalletSettings(response: $0) }
             .do(onSuccess: { [weak self] settings in
@@ -187,6 +188,8 @@ extension SettingsService: FiatCurrencySettingsServiceAPI {
                     guid: payload.guid,
                     sharedKey: payload.sharedKey
                 )
+                .asObservable()
+                .ignoreElements()
             }
             .flatMapSingle(weak: self) { (self) in
                 self.fetch(force: true)
@@ -237,6 +240,8 @@ extension SettingsService: EmailSettingsServiceAPI {
                     guid: payload.guid,
                     sharedKey: payload.sharedKey
                 )
+                .asObservable()
+                .ignoreElements()
             }
     }
 
@@ -266,6 +271,8 @@ extension SettingsService: LastTransactionSettingsUpdateServiceAPI {
                     guid: payload.guid,
                     sharedKey: payload.sharedKey
                 )
+                .asObservable()
+                .ignoreElements()
             }
             .flatMapSingle(weak: self) { (self) in
                 self.fetch(force: true)
@@ -285,6 +292,8 @@ extension SettingsService: EmailNotificationSettingsServiceAPI {
                     guid: payload.guid,
                     sharedKey: payload.sharedKey
                 )
+                .asObservable()
+                .ignoreElements()
             }
             .flatMapSingle(weak: self) { (self) in
                 self.fetch(force: true)
@@ -305,6 +314,8 @@ extension SettingsService: UpdateMobileSettingsServiceAPI {
                     guid: payload.guid,
                     sharedKey: payload.sharedKey
                 )
+                .asObservable()
+                .ignoreElements()
             }
             .flatMapSingle(weak: self) { (self) in
                 self.fetch(force: true)
@@ -324,6 +335,8 @@ extension SettingsService: VerifyMobileSettingsServiceAPI {
                     guid: payload.guid,
                     sharedKey: payload.sharedKey
                 )
+                .asObservable()
+                .ignoreElements()
             }
             .flatMapSingle(weak: self) { (self) in
                 self.fetch(force: true)
@@ -343,6 +356,8 @@ extension SettingsService: SMSTwoFactorSettingsServiceAPI {
                     guid: payload.guid,
                     sharedKey: payload.sharedKey
                 )
+                .asObservable()
+                .ignoreElements()
             }
             .flatMapSingle(weak: self) { (self) in
                 self.fetch(force: true)

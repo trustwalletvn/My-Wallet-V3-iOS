@@ -15,7 +15,7 @@ final class AccountGroupBalanceCellPresenter {
     var description: Driver<LabelContent> {
         Driver.just(
             LabelContent(
-                text: LocalizationConstants.Dashboard.Balance.totalBalance,
+                text: LocalizationConstants.Dashboard.Portfolio.totalBalance,
                 font: .main(.medium, 14.0),
                 color: .descriptionText,
                 alignment: .left,

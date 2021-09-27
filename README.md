@@ -18,6 +18,30 @@ If the submodules are not fetched, run:
 
     $ git submodule update --recursive --force
 
+### If you don't have read access to My-Wallet-V3-Private:
+
+Open .gitmodules and modify My-Wallet-V3 entry url to the public repo:
+
+`.gitmodules` from:
+```
+[submodule "Submodules/My-Wallet-V3"]
+    path = Submodules/My-Wallet-V3
+    url = git@github.com:blockchain/My-Wallet-V3-Private.git
+    ignore = dirty
+```
+to:
+```
+[submodule "Submodules/My-Wallet-V3"]
+    path = Submodules/My-Wallet-V3
+    url = git@github.com:blockchain/My-Wallet-V3.git
+    ignore = dirty
+```
+
+Then run:
+
+    $ git submodule sync
+    $ git submodule update --init
+
 ## Install `homebrew`
 
 https://brew.sh/
@@ -119,10 +143,10 @@ WALLET_SERVER = blockchain.info
 Clone `wallet-ios-credentials` repository and copy it's `Firebase` directory into `Blockchain` directory, it contains a `GoogleService-Info.plist` for each environment.
 
 ```
-Firease/Dev/GoogleService-Info.plist
-Firease/Prod/GoogleService-Info.plist
-Firease/Staging/GoogleService-Info.plist
-Firease/Alpha/GoogleService-Info.plist
+Firebase/Dev/GoogleService-Info.plist
+Firebase/Prod/GoogleService-Info.plist
+Firebase/Staging/GoogleService-Info.plist
+Firebase/Alpha/GoogleService-Info.plist
 ```
 
 ## Add environment variables for scripts

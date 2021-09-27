@@ -57,11 +57,14 @@ public struct WelcomeView: View {
         .sheet(
             isPresented: .constant(
                 viewStore.screenFlow == .emailLoginScreen
+                    || viewStore.screenFlow == .restoreWalletScreen
                     || viewStore.screenFlow == .manualLoginScreen
                     || viewStore.modals == .secondPasswordNoticeScreen
             ),
             onDismiss: {
-                if viewStore.modals == .secondPasswordNoticeScreen {
+                if viewStore.screenFlow == .emailLoginScreen {
+                    viewStore.send(.presentScreenFlow(.welcomeScreen))
+                } else if viewStore.modals == .secondPasswordNoticeScreen {
                     viewStore.send(.modalDismissed(.secondPasswordNoticeScreen))
                 }
             },
@@ -73,6 +76,23 @@ public struct WelcomeView: View {
                             action: WelcomeAction.emailLogin
                         ),
                         then: EmailLoginView.init(store:)
+                    )
+                } else if viewStore.screenFlow == .restoreWalletScreen {
+                    IfLetStore(
+                        store.scope(
+                            state: \.restoreWalletState,
+                            action: WelcomeAction.restoreWallet
+                        ),
+                        then: { store in
+                            NavigationView {
+                                SeedPhraseView(context: .importWallet, store: store)
+                                    .trailingNavigationButton(.close) {
+                                        viewStore.send(.restoreWallet(.closeButtonTapped))
+                                    }
+                                    .whiteNavigationBarStyle()
+                                    .hideBackButtonTitle()
+                            }
+                        }
                     )
                 } else if viewStore.screenFlow == .manualLoginScreen {
                     IfLetStore(
@@ -179,7 +199,7 @@ public struct WelcomeView: View {
     private var supplementarySection: some View {
         HStack {
             Button(LocalizedString.Button.restoreWallet) {
-                viewStore.send(.presentScreenFlow(.recoverWalletScreen))
+                viewStore.send(.presentScreenFlow(.restoreWalletScreen))
             }
             .font(Font(weight: .semibold, size: Layout.supplmentaryTextFontSize))
             .foregroundColor(.buttonLinkText)

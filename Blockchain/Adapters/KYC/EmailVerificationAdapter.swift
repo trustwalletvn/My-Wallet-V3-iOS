@@ -1,7 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import Combine
-import KYCKit
+import FeatureKYCDomain
 import PlatformKit // sadly, Settings service is stored here
 import ToolKit
 
@@ -57,6 +57,6 @@ final class EmailVerificationAdapter {
     }
 }
 
-// MARK: - KYCKit.EmailVerificationAPI
+// MARK: - FeatureKYCDomain.EmailVerificationAPI
 
-extension EmailVerificationAdapter: KYCKit.EmailVerificationAPI {}
+extension EmailVerificationAdapter: FeatureKYCDomain.EmailVerificationAPI {}

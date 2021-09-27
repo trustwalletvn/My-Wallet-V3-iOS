@@ -2,16 +2,16 @@
 
 import AnalyticsKit
 import Combine
-import DashboardUIKit
 import DIKit
-import InterestKit
-import InterestUIKit
-import KYCUIKit
+import FeatureDashboardUI
+import FeatureInterestDomain
+import FeatureInterestUI
+import FeatureKYCUI
+import FeatureSettingsDomain
+import FeatureSettingsUI
 import PlatformKit
 import PlatformUIKit
 import RxSwift
-import SettingsKit
-import SettingsUIKit
 import ToolKit
 import WalletPayloadKit
 
@@ -57,8 +57,7 @@ import WalletPayloadKit
     @Inject var airdropRouter: AirdropRouterAPI
     private var settingsRouterAPI: SettingsRouterAPI?
     private var buyRouter: PlatformUIKit.RouterAPI!
-    private var sellRouter: PlatformUIKit.SellRouter!
-    private var backupRouter: DashboardUIKit.BackupRouterAPI?
+    private var backupRouter: FeatureDashboardUI.BackupRouterAPI?
 
     // MARK: - UIViewController Properties
 
@@ -369,7 +368,7 @@ extension AppCoordinator: SideMenuViewControllerDelegate {
     }
 
     func startBackupFlow() {
-        let router: DashboardUIKit.BackupRouterAPI = resolve()
+        let router: FeatureDashboardUI.BackupRouterAPI = resolve()
         backupRouter = router
         router.start()
     }
@@ -486,17 +485,10 @@ extension AppCoordinator: SideMenuViewControllerDelegate {
     }
 
     /// Starts Sell Crypto flow
-    @objc func handleSellCrypto() {
-        let accountSelectionService = AccountSelectionService()
-        let interactor = SellRouterInteractor(
-            accountSelectionService: accountSelectionService
-        )
-        let builder = PlatformUIKit.SellBuilder(
-            accountSelectionService: accountSelectionService,
-            routerInteractor: interactor
-        )
-        sellRouter = PlatformUIKit.SellRouter(builder: builder)
-        sellRouter.load()
+    func handleSellCrypto(account: CryptoAccount? = nil) {
+        transactionsAdapter.presentTransactionFlow(to: .sell(account), from: topMostViewController) { result in
+            Logger.shared.info("[AppCoordinator] Sell Flow completed with result '\(result)'")
+        }
     }
 
     func startSimpleBuyAtLogin() {

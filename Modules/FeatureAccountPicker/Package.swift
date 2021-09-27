@@ -18,15 +18,24 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.24.0"),
-        .package(name: "SnapshotTesting", url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.9.0"),
-        .package(path: "../UIComponents")
+        .package(
+            name: "swift-composable-architecture",
+            url: "https://github.com/pointfreeco/swift-composable-architecture",
+            from: "0.24.0"
+        ),
+        .package(
+            name: "SnapshotTesting",
+            url: "https://github.com/pointfreeco/swift-snapshot-testing",
+            from: "1.9.0"
+        ),
+        .package(path: "../UIComponents"),
+        .package(path: "../Test")
     ],
     targets: [
         .target(
             name: "FeatureAccountPickerData",
             dependencies: [
-                "FeatureAccountPickerDomain"
+                .target(name: "FeatureAccountPickerDomain")
             ],
             path: "Data"
         ),
@@ -40,8 +49,8 @@ let package = Package(
         .target(
             name: "FeatureAccountPickerUI",
             dependencies: [
-                "FeatureAccountPickerDomain",
-                "UIComponents",
+                .target(name: "FeatureAccountPickerDomain"),
+                .product(name: "UIComponents", package: "UIComponents"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
             path: "UI"
@@ -49,10 +58,11 @@ let package = Package(
         .testTarget(
             name: "FeatureAccountPickerTests",
             dependencies: [
-                "FeatureAccountPickerData",
-                "FeatureAccountPickerDomain",
-                "FeatureAccountPickerUI",
-                "SnapshotTesting",
+                .target(name: "FeatureAccountPickerData"),
+                .target(name: "FeatureAccountPickerDomain"),
+                .target(name: "FeatureAccountPickerUI"),
+                .product(name: "SnapshotTesting", package: "SnapshotTesting"),
+                .product(name: "TestKit", package: "Test"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
             path: "Tests"

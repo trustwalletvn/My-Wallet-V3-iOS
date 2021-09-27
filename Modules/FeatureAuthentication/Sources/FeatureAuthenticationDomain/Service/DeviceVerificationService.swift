@@ -44,7 +44,11 @@ public final class DeviceVerificationService: DeviceVerificationServiceAPI {
                     return .failure(.missingSessionToken)
                 }
                 return deviceVerificationRepository
-                    .sendDeviceVerificationEmail(sessionToken: sessionToken, to: emailAddress, captcha: captcha)
+                    .sendDeviceVerificationEmail(
+                        sessionToken: sessionToken,
+                        to: emailAddress,
+                        captcha: captcha
+                    )
             }
             .eraseToAnyPublisher()
     }

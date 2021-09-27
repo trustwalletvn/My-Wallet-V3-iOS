@@ -1,6 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import DIKit
+import RxCombine
 import RxRelay
 import RxSwift
 import ToolKit
@@ -74,6 +75,8 @@ final class CardActivationService: CardActivationServiceAPI {
     func waitForActivation(of cardId: String) -> Single<PollResult<CardActivationState>> {
         pollService.setFetch(weak: self) { (self) in
             self.client.getCard(by: cardId)
+                .asObservable()
+                .asSingle()
                 .map { payload in
                     guard payload.state != .pending else {
                         return .pending

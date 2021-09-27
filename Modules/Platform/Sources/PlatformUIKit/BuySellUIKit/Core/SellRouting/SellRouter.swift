@@ -8,7 +8,7 @@ import RxSwift
 import SafariServices
 import ToolKit
 
-public final class SellRouter: RIBs.Router<SellRouterInteractor> {
+public final class LegacySellRouter: RIBs.Router<SellRouterInteractor> {
 
     // MARK: - Injected
 

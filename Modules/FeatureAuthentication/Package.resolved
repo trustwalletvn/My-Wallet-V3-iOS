@@ -3,7 +3,7 @@
     "pins": [
       {
         "package": "BigInt",
-        "repositoryURL": "git@github.com:attaswift/BigInt.git",
+        "repositoryURL": "https://github.com/attaswift/BigInt.git",
         "state": {
           "branch": null,
           "revision": "889a1ecacd73ccc189c5cb29288048f186c44ed9",
@@ -39,7 +39,7 @@
       },
       {
         "package": "DIKit",
-        "repositoryURL": "git@github.com:jackpooleybc/DIKit.git",
+        "repositoryURL": "https://github.com/jackpooleybc/DIKit.git",
         "state": {
           "branch": "safe-property-wrappers",
           "revision": "1d20369ab59d123b4d0bf85dffbe045f4f405ec1",
@@ -48,7 +48,7 @@
       },
       {
         "package": "RxCombine",
-        "repositoryURL": "git@github.com:paulo-bc/RxCombine.git",
+        "repositoryURL": "https://github.com/paulo-bc/RxCombine.git",
         "state": {
           "branch": null,
           "revision": "0762454fba26dcf315aaa7ac5ed5fbdecd50fef2",
@@ -57,7 +57,7 @@
       },
       {
         "package": "RxSwift",
-        "repositoryURL": "git@github.com:ReactiveX/RxSwift.git",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
           "branch": null,
           "revision": "cec68169a048a079f461ba203fe85636548d7a89",
@@ -111,10 +111,10 @@
       },
       {
         "package": "WalletCore",
-        "repositoryURL": "git@github.com:oliveratkinson-bc/wallet-core.git",
+        "repositoryURL": "https://github.com/oliveratkinson-bc/wallet-core.git",
         "state": {
           "branch": null,
-          "revision": "44bf856ce6cea5d804c2182804e8659dc59fc82a",
+          "revision": "3d42f6995032828a3e1a0a372fb9873cdd357f03",
           "version": null
         }
       },
@@ -129,7 +129,7 @@
       },
       {
         "package": "Zxcvbn",
-        "repositoryURL": "git@github.com:oliveratkinson-bc/zxcvbn-ios.git",
+        "repositoryURL": "https://github.com/oliveratkinson-bc/zxcvbn-ios.git",
         "state": {
           "branch": "swift-package-manager",
           "revision": "bb9e884fdfa75d4cc2cddc2419f6a4818e164361",

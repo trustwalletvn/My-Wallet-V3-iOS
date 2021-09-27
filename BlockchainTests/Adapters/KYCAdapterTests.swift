@@ -2,8 +2,8 @@
 
 @testable import Blockchain
 import Combine
-import KYCUIKit
-import OnboardingUIKit
+import FeatureKYCUI
+import FeatureOnboardingUI
 import PlatformKit
 import PlatformUIKit
 import XCTest
@@ -29,14 +29,14 @@ final class KYCAdapterTests: XCTestCase {
 
     func test_redirectsToRouter_for_emailVerification() {
         // WHEN: the adapter is asked to present email verification
-        let _: AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> = adapter.presentEmailVerificationIfNeeded(from: UIViewController())
+        let _: AnyPublisher<FeatureKYCUI.FlowResult, FeatureKYCUI.RouterError> = adapter.presentEmailVerificationIfNeeded(from: UIViewController())
         // THEN: it should defer to the KYC Module's router to do it
         XCTAssertEqual(mockRouter.recordedInvocations.presentEmailVerificationIfNeeded.count, 1)
     }
 
     func test_redirectsToRouter_for_kyc() {
         // WHEN: the adapter is asked to present the kyc flow
-        let _: AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> = adapter.presentKYCIfNeeded(
+        let _: AnyPublisher<FeatureKYCUI.FlowResult, FeatureKYCUI.RouterError> = adapter.presentKYCIfNeeded(
             from: UIViewController(),
             requiredTier: .tier2
         )
@@ -46,7 +46,7 @@ final class KYCAdapterTests: XCTestCase {
 
     func test_redirectsToRouter_for_emailVerificationAndKYC() {
         // WHEN: the adapter is asked to present both email verification and the KYC flow
-        let _: AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> = adapter.presentEmailVerificationAndKYCIfNeeded(
+        let _: AnyPublisher<FeatureKYCUI.FlowResult, FeatureKYCUI.RouterError> = adapter.presentEmailVerificationAndKYCIfNeeded(
             from: UIViewController(),
             requiredTier: .tier2
         )
@@ -128,7 +128,7 @@ final class KYCAdapterTests: XCTestCase {
         XCTAssertEqual(error, .kycStepFailed)
     }
 
-    // MARK: - OnboardingUIKit.EmailVerificationRouterAPI
+    // MARK: - FeatureOnboardingUI.EmailVerificationRouterAPI
 
     func test_maps_emailVerification_error_to_complete_for_onboarding() {
         // GIVEN: Email Verification fails

@@ -86,7 +86,7 @@ final class PinInteractor: PinInteracting {
         maintenanceService.serverUnderMaintenanceMessage
             .flatMap(weak: self) { (self, message) -> Single<PinStoreResponse> in
                 if let message = message { throw PinError.serverMaintenance(message: message) }
-                return self.pinClient.create(pinPayload: payload)
+                return self.pinClient.create(pinPayload: payload).asSingle()
             }
             .flatMapCompletable(weak: self) { (self, response) in
                 self.handleCreatePinResponse(response: response, payload: payload)
@@ -107,7 +107,7 @@ final class PinInteractor: PinInteracting {
         maintenanceService.serverUnderMaintenanceMessage
             .flatMap(weak: self) { (self, message) -> Single<PinStoreResponse> in
                 if let message = message { throw PinError.serverMaintenance(message: message) }
-                return self.pinClient.validate(pinPayload: payload)
+                return self.pinClient.validate(pinPayload: payload).asSingle()
             }
             .do(
                 onSuccess: { [weak self] response in

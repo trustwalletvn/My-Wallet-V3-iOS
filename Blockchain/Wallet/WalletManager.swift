@@ -2,11 +2,11 @@
 
 import BitcoinKit
 import DIKit
+import FeatureSettingsDomain
 import JavaScriptCore
 import PlatformKit
 import RxCocoa
 import RxSwift
-import SettingsKit
 import ToolKit
 import WalletPayloadKit
 

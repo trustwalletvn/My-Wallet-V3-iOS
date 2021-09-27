@@ -15,7 +15,7 @@ public final class SegmentedView: UISegmentedControl {
 
     // MARK: - Dependencies
 
-    public var viewModel: SegmentedViewModel! {
+    public var viewModel: SegmentedViewModel? {
         willSet {
             disposeBag = DisposeBag()
         }
@@ -29,7 +29,7 @@ public final class SegmentedView: UISegmentedControl {
 
             // Bind backgroundColor
             viewModel.backgroundColor
-                .drive(rx.backgroundImageFillColor)
+                .drive(rx.backgroundColor)
                 .disposed(by: disposeBag)
 
             // Set the divider color
@@ -119,5 +119,6 @@ public final class SegmentedView: UISegmentedControl {
 
     private func setup() {
         layer.borderWidth = 1
+        selectedSegmentTintColor = .white
     }
 }

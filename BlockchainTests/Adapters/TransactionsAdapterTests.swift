@@ -2,9 +2,9 @@
 
 @testable import Blockchain
 import Combine
-import OnboardingUIKit
+import FeatureOnboardingUI
+import FeatureTransactionUI
 import ToolKit
-import TransactionUIKit
 import XCTest
 
 final class TransactionsAdapterTests: XCTestCase {
@@ -24,7 +24,7 @@ final class TransactionsAdapterTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    // MARK: - OnboardingUIKit.BuyCryptoRouterAPI
+    // MARK: - FeatureOnboardingUI.BuyCryptoRouterAPI
 
     func test_routesTo_buyFlow_for_onboarding() throws {
         // WHEN: The adapter is asked to present the buy flow
@@ -71,7 +71,7 @@ final class TransactionsAdapterTests: XCTestCase {
     }
 }
 
-final class MockTransactionsRouter: TransactionUIKit.TransactionsRouterAPI {
+final class MockTransactionsRouter: FeatureTransactionUI.TransactionsRouterAPI {
 
     struct RecordedInvocations {
         var presentTransactionFlow: [(action: TransactionFlowAction, presenter: UIViewController)] = []

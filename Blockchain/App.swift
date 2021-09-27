@@ -1,12 +1,13 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import ComposableArchitecture
-import DebugUIKit
 import DIKit
+import ERC20DataKit
+import FeatureDebugUI
+import FeatureInterestData
+import FeatureSettingsDomain
 import Firebase
-import InterestDataKit
 import PlatformKit
-import SettingsKit
 import ToolKit
 import UIKit
 
@@ -79,25 +80,27 @@ func defineDependencies() {
         DependencyContainer.platformUIKit
         DependencyContainer.ethereumKit
         DependencyContainer.erc20Kit
+        DependencyContainer.erc20DataKit
         DependencyContainer.bitcoinChainKit
         DependencyContainer.bitcoinKit
         DependencyContainer.bitcoinCashKit
         DependencyContainer.stellarKit
-        DependencyContainer.transactionKit
-        DependencyContainer.transactionDataKit
-        DependencyContainer.transactionUIKit
+        DependencyContainer.featureTransactionData
+        DependencyContainer.featureTransactionDomain
+        DependencyContainer.featureTransactionUI
         DependencyContainer.buySellKit
-        DependencyContainer.activityKit
-        DependencyContainer.activityUIKit
-        DependencyContainer.kycKit
-        DependencyContainer.kycUIKit
+        DependencyContainer.featureActivityDomain
+        DependencyContainer.featureActivityUI
+        DependencyContainer.featureKYCDomain
+        DependencyContainer.featureKYCUI
         DependencyContainer.blockchain
-        DependencyContainer.settingsKit
-        DependencyContainer.settingsUIKit
+        DependencyContainer.featureSettingsDomain
+        DependencyContainer.featureSettingsUI
         DependencyContainer.remoteNotificationsKit
+        DependencyContainer.featureAuthenticationDomain
         DependencyContainer.featureAuthenticationData
         #if INTERNAL_BUILD
-        DependencyContainer.debugUIKit
+        DependencyContainer.featureDebugUI
         #endif
     })
 }

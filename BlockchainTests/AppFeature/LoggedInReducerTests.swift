@@ -4,10 +4,10 @@ import AnalyticsKit
 import Combine
 import ComposableArchitecture
 import DIKit
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RxSwift
-import SettingsKit
 import WalletPayloadKit
 import XCTest
 

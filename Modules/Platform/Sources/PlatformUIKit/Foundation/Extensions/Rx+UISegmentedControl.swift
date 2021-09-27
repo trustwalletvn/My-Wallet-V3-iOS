@@ -6,11 +6,14 @@ import RxRelay
 import RxSwift
 
 extension Reactive where Base: UISegmentedControl {
-    public var backgroundImageFillColor: Binder<UIColor?> {
+    /// Background color of unselected items.
+    public var backgroundColor: Binder<UIColor?> {
         Binder(base) { segmentedControl, fillColor in
-            guard let color = fillColor else { return }
-            guard let backgroundImage = UIImage.image(color: color, size: segmentedControl.frame.size) else { return }
-            segmentedControl.setBackgroundImage(backgroundImage, for: .normal, barMetrics: .default)
+            segmentedControl.setBackgroundColor(
+                fillColor,
+                for: .selected,
+                barMetrics: .default
+            )
         }
     }
 
@@ -28,9 +31,12 @@ extension Reactive where Base: UISegmentedControl {
 
     public var dividerColor: Binder<UIColor?> {
         Binder(base) { segmentedControl, dividerColor in
-            guard let color = dividerColor else { return }
-            let image = UIImage.image(color: color, size: .init(width: 0.5, height: 1.0))
-            segmentedControl.setDividerImage(image, forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+            segmentedControl.setDividerColor(
+                dividerColor,
+                forLeftSegmentState: .normal,
+                rightSegmentState: .normal,
+                barMetrics: .default
+            )
         }
     }
 }

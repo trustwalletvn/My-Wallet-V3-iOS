@@ -4,7 +4,6 @@ import Combine
 import DIKit
 import Foundation
 import NetworkKit
-import RxSwift
 import ToolKit
 
 // TODO: Currently does not support crypto -> crypto / fiat to crypto.
@@ -16,23 +15,8 @@ public protocol PriceClientAPI {
     /// - parameter quoteCurrencyCode: The currency code in which the price will be represented.
     /// - parameter start: The Unix Time timestamp of required moment.
     /// - parameter scale: The required time scale.
-    /// - returns:A `RxSwift.Single` streaming an array of `PriceQuoteAtTimeResponse` on success, or a `NetworkError` on failure.
-    func priceSeries(of baseCurrencyCode: String, in quoteCurrencyCode: String, start: String, scale: String) -> Single<[PriceQuoteAtTimeResponse]>
-
-    /// Fetches the price of the given `Currency` in the specific timestamp
-    /// - parameter baseCurrencyCode: The currency code of which price will be fetched.
-    /// - parameter quoteCurrencyCode: The currency code in which the price will be represented.
-    /// - parameter timestamp: The Unix Time timestamp of required moment. A nil value gets the current price.
-    /// - returns:A `RxSwift.Single` streaming a `PriceQuoteAtTimeResponse` on success, or a `NetworkError` on failure.
-    func price(for baseCurrencyCode: String, in quoteCurrencyCode: String, at timestamp: UInt64?) -> Single<PriceQuoteAtTimeResponse>
-
-    /// Fetches the prices of the given `Currency` from the specified timestamp
-    /// - parameter baseCurrencyCode: The currency code of which price will be fetched.
-    /// - parameter quoteCurrencyCode: The currency code in which the price will be represented.
-    /// - parameter start: The Unix Time timestamp of required moment.
-    /// - parameter scale: The required time scale.
     /// - returns:A `Combine.Publisher` streaming an array of `PriceQuoteAtTimeResponse` on success, or a `NetworkError` on failure.
-    func priceSeriesPublisher(
+    func priceSeries(
         of baseCurrencyCode: String,
         in quoteCurrencyCode: String,
         start: String,
@@ -44,8 +28,8 @@ public protocol PriceClientAPI {
     /// - parameter quoteCurrencyCode: The currency code in which the price will be represented.
     /// - parameter timestamp: The Unix Time timestamp of required moment. A nil value gets the current price.
     /// - returns:A `Combine.Publisher` streaming a `PriceQuoteAtTimeResponse` on success, or a `NetworkError` on failure.
-    func pricePublisher(
-        for baseCurrencyCode: String,
+    func price(
+        of baseCurrencyCode: String,
         in quoteCurrencyCode: String,
         at timestamp: UInt64?
     ) -> AnyPublisher<PriceQuoteAtTimeResponse, NetworkError>
@@ -110,32 +94,7 @@ final class PriceClient: PriceClientAPI {
         singlePriceInFlightRequestsCache = Cache()
     }
 
-    // MARK: - APIClientAPI
-
     func priceSeries(
-        of baseCurrencyCode: String,
-        in quoteCurrencyCode: String,
-        start: String,
-        scale: String
-    ) -> Single<[PriceQuoteAtTimeResponse]> {
-        priceSeriesPublisher(of: baseCurrencyCode, in: quoteCurrencyCode, start: start, scale: scale)
-            .asObservable()
-            .asSingle()
-    }
-
-    func price(
-        for baseCurrencyCode: String,
-        in quoteCurrencyCode: String,
-        at timestamp: UInt64?
-    ) -> Single<PriceQuoteAtTimeResponse> {
-        pricePublisher(for: baseCurrencyCode, in: quoteCurrencyCode, at: timestamp)
-            .asObservable()
-            .asSingle()
-    }
-
-    // MARK: Combine API
-
-    func priceSeriesPublisher(
         of baseCurrencyCode: String,
         in quoteCurrencyCode: String,
         start: String,
@@ -154,8 +113,8 @@ final class PriceClient: PriceClientAPI {
         return networkAdapter.perform(request: request)
     }
 
-    func pricePublisher(
-        for baseCurrencyCode: String,
+    func price(
+        of baseCurrencyCode: String,
         in quoteCurrencyCode: String,
         at timestamp: UInt64?
     ) -> AnyPublisher<PriceQuoteAtTimeResponse, NetworkError> {

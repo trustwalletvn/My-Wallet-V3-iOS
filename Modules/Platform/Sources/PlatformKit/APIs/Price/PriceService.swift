@@ -1,16 +1,20 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import Foundation
 import NetworkKit
-import RxSwift
 import ToolKit
 
 public protocol PriceServiceAPI {
-    func moneyValuePair(base fiatValue: FiatValue, cryptoCurrency: CryptoCurrency, usesFiatAsBase: Bool) -> Single<MoneyValuePair>
-    func price(for baseCurrency: Currency, in quoteCurrency: Currency) -> Single<PriceQuoteAtTime>
-    func price(for baseCurrency: Currency, in quoteCurrency: Currency, at date: Date?) -> Single<PriceQuoteAtTime>
-    func priceSeries(within window: PriceWindow, of baseCurrency: CryptoCurrency, in quoteCurrency: FiatCurrency) -> Single<HistoricalPriceSeries>
+    func moneyValuePair(fiatValue: FiatValue, cryptoCurrency: CryptoCurrency, usesFiatAsBase: Bool) -> AnyPublisher<MoneyValuePair, NetworkError>
+    func price(of baseCurrency: Currency, in quoteCurrency: Currency) -> AnyPublisher<PriceQuoteAtTime, NetworkError>
+    func price(of baseCurrency: Currency, in quoteCurrency: Currency, at date: Date?) -> AnyPublisher<PriceQuoteAtTime, NetworkError>
+    func priceSeries(
+        of baseCurrency: CryptoCurrency,
+        in quoteCurrency: FiatCurrency,
+        within window: PriceWindow
+    ) -> AnyPublisher<HistoricalPriceSeries, NetworkError>
 }
 
 public class PriceService: PriceServiceAPI {
@@ -27,31 +31,36 @@ public class PriceService: PriceServiceAPI {
         self.client = client
     }
 
-    public func moneyValuePair(base fiatValue: FiatValue, cryptoCurrency: CryptoCurrency, usesFiatAsBase: Bool) -> Single<MoneyValuePair> {
-        price(for: cryptoCurrency, in: fiatValue.currency)
+    public func moneyValuePair(
+        fiatValue: FiatValue,
+        cryptoCurrency: CryptoCurrency,
+        usesFiatAsBase: Bool
+    ) -> AnyPublisher<MoneyValuePair, NetworkError> {
+        price(of: cryptoCurrency, in: fiatValue.currency)
             .map(\.moneyValue)
             .map { $0.fiatValue ?? .zero(currency: fiatValue.currencyType) }
             .map { MoneyValuePair(
-                fiat: fiatValue,
-                priceInFiat: $0,
+                fiatValue: fiatValue,
+                exchangeRate: $0,
                 cryptoCurrency: cryptoCurrency,
                 usesFiatAsBase: usesFiatAsBase
             )
             }
+            .eraseToAnyPublisher()
     }
 
     public func price(
-        for baseCurrency: Currency,
+        of baseCurrency: Currency,
         in quoteCurrency: Currency
-    ) -> Single<PriceQuoteAtTime> {
-        price(for: baseCurrency, in: quoteCurrency, at: nil)
+    ) -> AnyPublisher<PriceQuoteAtTime, NetworkError> {
+        price(of: baseCurrency, in: quoteCurrency, at: nil)
     }
 
     public func price(
-        for baseCurrency: Currency,
+        of baseCurrency: Currency,
         in quoteCurrency: Currency,
         at date: Date? = nil
-    ) -> Single<PriceQuoteAtTime> {
+    ) -> AnyPublisher<PriceQuoteAtTime, NetworkError> {
         guard baseCurrency.code != quoteCurrency.code else {
             return .just(
                 PriceQuoteAtTime(
@@ -61,7 +70,7 @@ public class PriceService: PriceServiceAPI {
             )
         }
         if baseCurrency.isFiatCurrency, quoteCurrency.isFiatCurrency {
-            return price(for: FiatCurrency(code: baseCurrency.code)!, in: FiatCurrency(code: quoteCurrency.code)!, at: date)
+            return price(of: FiatCurrency(code: baseCurrency.code)!, in: FiatCurrency(code: quoteCurrency.code)!, at: date)
         }
 
         var timestamp: UInt64?
@@ -69,27 +78,28 @@ public class PriceService: PriceServiceAPI {
             timestamp = UInt64(date.timeIntervalSince1970)
         }
         return client
-            .price(for: baseCurrency.code, in: quoteCurrency.code, at: timestamp)
-            .map { try PriceQuoteAtTime(response: $0, currency: quoteCurrency) }
+            .price(of: baseCurrency.code, in: quoteCurrency.code, at: timestamp)
+            .compactMap { try? PriceQuoteAtTime(response: $0, currency: quoteCurrency) }
+            .eraseToAnyPublisher()
     }
 
     private func price(
-        for baseCurrency: FiatCurrency,
+        of baseCurrency: FiatCurrency,
         in quoteCurrency: FiatCurrency,
         at date: Date? = nil
-    ) -> Single<PriceQuoteAtTime> {
+    ) -> AnyPublisher<PriceQuoteAtTime, NetworkError> {
         var timestamp: UInt64?
         if let date = date {
             timestamp = UInt64(date.timeIntervalSince1970)
         }
         let conversionCurrency = CryptoCurrency.coin(.bitcoin)
         let basePrice = client
-            .price(for: conversionCurrency.code, in: baseCurrency.code, at: timestamp)
+            .price(of: conversionCurrency.code, in: baseCurrency.code, at: timestamp)
         let quotePrice = client
-            .price(for: conversionCurrency.code, in: quoteCurrency.code, at: timestamp)
+            .price(of: conversionCurrency.code, in: quoteCurrency.code, at: timestamp)
 
-        return Single
-            .zip(basePrice, quotePrice)
+        return basePrice
+            .zip(quotePrice)
             .map { basePrice, quotePrice in
                 let price = basePrice.price != 0 ? quotePrice.price / basePrice.price : 0
                 return PriceQuoteAtTime(
@@ -97,13 +107,14 @@ public class PriceService: PriceServiceAPI {
                     moneyValue: MoneyValue.create(major: "\(price)", currency: quoteCurrency.currency)!
                 )
             }
+            .eraseToAnyPublisher()
     }
 
     public func priceSeries(
-        within window: PriceWindow,
         of baseCurrency: CryptoCurrency,
-        in quoteCurrency: FiatCurrency
-    ) -> Single<HistoricalPriceSeries> {
+        in quoteCurrency: FiatCurrency,
+        within window: PriceWindow
+    ) -> AnyPublisher<HistoricalPriceSeries, NetworkError> {
         let start: TimeInterval = window.timeIntervalSince1970(
             cryptoCurrency: baseCurrency,
             calendar: .current,
@@ -117,5 +128,6 @@ public class PriceService: PriceServiceAPI {
                 scale: String(window.scale)
             )
             .map { HistoricalPriceSeries(currency: baseCurrency, prices: $0) }
+            .eraseToAnyPublisher()
     }
 }

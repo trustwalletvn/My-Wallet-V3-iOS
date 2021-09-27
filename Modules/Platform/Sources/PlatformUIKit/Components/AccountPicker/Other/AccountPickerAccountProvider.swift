@@ -39,6 +39,8 @@ public final class AccountPickerAccountProvider: AccountPickerAccountProviding {
 
     public var accounts: Observable<[BlockchainAccount]> {
         coincore.allAccounts
+            .asObservable()
+            .asSingle()
             .map { [singleAccountsOnly] allAccountsGroup -> [BlockchainAccount] in
                 if singleAccountsOnly {
                     return allAccountsGroup.accounts

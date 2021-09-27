@@ -3,11 +3,11 @@
 import BitcoinChainKit
 import Combine
 import DIKit
+import FeatureSettingsDomain
 import FirebaseDynamicLinks
 import Foundation
 import Localization
 import PlatformKit
-import SettingsKit
 import ToolKit
 
 // MARK: - Protocols

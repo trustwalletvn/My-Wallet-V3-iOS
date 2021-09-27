@@ -1,7 +1,19 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+/// A mock error.
 public enum MockError: Error {
+
+    /// Unknown error.
     case unknown
+
+    // MARK: - Internal Properties
+
+    var description: String {
+        switch self {
+        case .unknown:
+            return "unknown"
+        }
+    }
 }
 
 public struct TestError: Error {

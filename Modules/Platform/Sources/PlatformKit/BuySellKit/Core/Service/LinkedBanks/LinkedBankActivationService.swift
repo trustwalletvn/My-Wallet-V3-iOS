@@ -39,7 +39,11 @@ public protocol LinkedBankActivationServiceAPI {
     var cancel: Completable { get }
 
     /// Poll for activation
-    func waitForActivation(of bankId: String, paymentAccountId: String, accountId: String) -> Single<PollResult<BankActivationState>>
+    func waitForActivation(
+        of bankId: String,
+        paymentAccountId: String,
+        accountId: String
+    ) -> Single<PollResult<BankActivationState>>
 }
 
 final class LinkedBankActivationService: LinkedBankActivationServiceAPI {
@@ -62,15 +66,24 @@ final class LinkedBankActivationService: LinkedBankActivationServiceAPI {
         pollService = PollService(matcher: { !$0.isPending })
     }
 
-    func waitForActivation(of bankId: String, paymentAccountId: String, accountId: String) -> Single<PollResult<BankActivationState>> {
+    func waitForActivation(
+        of bankId: String,
+        paymentAccountId: String,
+        accountId: String
+    ) -> Single<PollResult<BankActivationState>> {
         pollService.setFetch(weak: self) { (self) -> Single<BankActivationState> in
-            self.client.updateBankLinkage(for: bankId, providerAccountId: paymentAccountId, accountId: accountId)
-                .map { payload in
-                    guard payload.state != .pending else {
-                        return .pending
-                    }
-                    return BankActivationState(payload)
+            self.client.updateBankLinkage(
+                for: bankId,
+                providerAccountId: paymentAccountId,
+                accountId: accountId
+            )
+            .map { payload in
+                guard payload.state != .pending else {
+                    return .pending
                 }
+                return BankActivationState(payload)
+            }
+            .asSingle()
         }
         return pollService.poll(timeoutAfter: 60)
     }

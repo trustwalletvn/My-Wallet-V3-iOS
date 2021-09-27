@@ -22,6 +22,7 @@ final class OrdersActivityService: OrdersActivityServiceAPI {
     func activity(fiatCurrency: FiatCurrency) -> Single<[CustodialActivityEvent.Fiat]> {
         guard let response = cache.value(forKey: fiatCurrency.currency) else {
             return client.activityResponse(currency: fiatCurrency)
+                .asSingle()
                 .do(onSuccess: { [cache] response in
                     cache.set(response, forKey: fiatCurrency.currency)
                 })
@@ -35,6 +36,7 @@ final class OrdersActivityService: OrdersActivityServiceAPI {
     func activity(cryptoCurrency: CryptoCurrency) -> Single<[CustodialActivityEvent.Crypto]> {
         guard let response = cache.value(forKey: cryptoCurrency.currency) else {
             return client.activityResponse(currency: cryptoCurrency)
+                .asSingle()
                 .do(onSuccess: { [cache] response in
                     cache.set(response, forKey: cryptoCurrency.currency)
                 })

@@ -1,33 +1,63 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import RxSwift
 import ToolKit
 
 final class CustodialCryptoAsset: CryptoAsset {
 
-    var defaultAccount: Single<SingleAccount> {
-        .error(CryptoAssetError.noDefaultAccount)
+    var defaultAccount: AnyPublisher<SingleAccount, CryptoAssetError> {
+        .failure(.noDefaultAccount)
     }
 
     let asset: CryptoCurrency
-    let kycTiersService: KYCTiersServiceAPI
+
+    var canTransactToCustodial: AnyPublisher<Bool, Never> { .just(true) }
+
+    // MARK: - Private properties
+
+    private lazy var cryptoAssetRepository: CryptoAssetRepositoryAPI = {
+        CryptoAssetRepository(
+            asset: asset,
+            errorRecorder: errorRecorder,
+            kycTiersService: kycTiersService,
+            defaultAccountProvider: { [defaultAccount] in
+                defaultAccount
+            },
+            exchangeAccountsProvider: exchangeAccountProvider,
+            addressFactory: addressFactory
+        )
+    }()
+
+    private let kycTiersService: KYCTiersServiceAPI
+    private let errorRecorder: ErrorRecording
     private let exchangeAccountProvider: ExchangeAccountsProviderAPI
     private let addressFactory: PlainCryptoReceiveAddressFactory
+
+    // MARK: - Setup
 
     init(
         asset: CryptoCurrency,
         exchangeAccountProvider: ExchangeAccountsProviderAPI = resolve(),
         kycTiersService: KYCTiersServiceAPI = resolve(),
+        errorRecorder: ErrorRecording = resolve(),
         addressFactory: PlainCryptoReceiveAddressFactory = .init()
     ) {
         self.asset = asset
         self.kycTiersService = kycTiersService
         self.exchangeAccountProvider = exchangeAccountProvider
+        self.errorRecorder = errorRecorder
         self.addressFactory = addressFactory
     }
 
-    func accountGroup(filter: AssetFilter) -> Single<AccountGroup> {
+    // MARK: - Asset
+
+    func initialize() -> AnyPublisher<Void, AssetError> {
+        .empty()
+    }
+
+    func accountGroup(filter: AssetFilter) -> AnyPublisher<AccountGroup, Never> {
         switch filter {
         case .all:
             return allAccountsGroup
@@ -42,53 +72,54 @@ final class CustodialCryptoAsset: CryptoAsset {
         }
     }
 
-    private var allAccountsGroup: Single<AccountGroup> {
-        Single
-            .zip([
-                custodialGroup,
-                interestGroup,
-                exchangeGroup,
-                nonCustodialGroup
-            ])
-            .flatMapAllAccountGroup()
-    }
-
-    private var exchangeGroup: Single<AccountGroup> {
-        guard asset.assetModel.products.contains(.mercuryDeposits) else {
-            return .just(CryptoAccountCustodialGroup(asset: asset))
-        }
-        return exchangeAccountProvider
-            .account(for: asset)
-            .map { [asset] account in
-                CryptoAccountCustodialGroup(asset: asset, account: account)
-            }
-            .catchErrorJustReturn(CryptoAccountCustodialGroup(asset: asset))
-    }
-
-    private var custodialGroup: Single<AccountGroup> {
-        .just(CryptoAccountCustodialGroup(asset: asset, account: CryptoTradingAccount(asset: asset)))
-    }
-
-    private var nonCustodialGroup: Single<AccountGroup> {
-        .just(CryptoAccountNonCustodialGroup(asset: asset, accounts: []))
-    }
-
-    private var interestGroup: Single<AccountGroup> {
-        guard asset.assetModel.products.contains(.interestBalance) else {
-            return .just(CryptoAccountCustodialGroup(asset: asset))
-        }
-        return .just(CryptoAccountCustodialGroup(asset: asset, account: CryptoInterestAccount(asset: asset)))
-    }
-
-    func parse(address: String) -> Single<ReceiveAddress?> {
-        let result = try? addressFactory
+    func parse(address: String) -> AnyPublisher<ReceiveAddress?, Never> {
+        addressFactory
             .makeExternalAssetAddress(
                 asset: asset,
                 address: address,
                 label: address,
                 onTxCompleted: { _ in Completable.empty() }
             )
-            .get()
-        return .just(result)
+            .publisher
+            .map { address -> ReceiveAddress? in
+                address
+            }
+            .catch { _ -> AnyPublisher<ReceiveAddress?, Never> in
+                .just(nil)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    private var allAccountsGroup: AnyPublisher<AccountGroup, Never> {
+        [
+            nonCustodialGroup,
+            custodialGroup,
+            interestGroup,
+            exchangeGroup
+        ]
+        .zip()
+        .eraseToAnyPublisher()
+        .flatMapAllAccountGroup()
+    }
+
+    private var exchangeGroup: AnyPublisher<AccountGroup, Never> {
+        cryptoAssetRepository.exchangeGroup
+    }
+
+    private var custodialGroup: AnyPublisher<AccountGroup, Never> {
+        cryptoAssetRepository.custodialGroup
+    }
+
+    private var nonCustodialGroup: AnyPublisher<AccountGroup, Never> {
+        .just(
+            CryptoAccountNonCustodialGroup(
+                asset: asset,
+                accounts: []
+            )
+        )
+    }
+
+    private var interestGroup: AnyPublisher<AccountGroup, Never> {
+        cryptoAssetRepository.interestGroup
     }
 }

@@ -8,11 +8,11 @@ import RxSwift
 
 public final class AssetLineChartTableViewCellPresenter: AssetLineChartTableViewCellPresenting {
 
-    // MARK: - AssetLineChartTableViewCellPresenting
+    // MARK: - Types
 
-    var priceWindowPresenter: MultiActionViewPresenting {
-        DefaultActionViewPresenter(using: priceWindowItems)
-    }
+    private typealias LocalizedString = LocalizationConstants.Dashboard.AssetDetails
+
+    // MARK: - AssetLineChartTableViewCellPresenting
 
     let presenterContainer: AssetLineChartPresenterContainer
 
@@ -21,6 +21,13 @@ public final class AssetLineChartTableViewCellPresenter: AssetLineChartTableView
     var window: Signal<PriceWindow> {
         windowRelay.asSignal()
     }
+
+    private(set) lazy var priceWindowPresenter: MultiActionViewPresenting = MultiActionViewPresenter(
+        segmentedViewModel: .default(
+            items: priceWindowItems,
+            defaultSelectedSegmentIndex: 1
+        )
+    )
 
     public var isScrollEnabled: Driver<Bool> {
         scrollingEnabledRelay.asDriver()
@@ -38,7 +45,7 @@ public final class AssetLineChartTableViewCellPresenter: AssetLineChartTableView
 
     public init(
         cryptoCurrency: CryptoCurrency,
-        fiatCurrency: FiatCurrency,
+        fiatCurrencyService: FiatCurrencyServiceAPI,
         historicalFiatPriceService: HistoricalFiatPriceServiceAPI
     ) {
         self.cryptoCurrency = cryptoCurrency
@@ -60,7 +67,7 @@ public final class AssetLineChartTableViewCellPresenter: AssetLineChartTableView
 
         interactor = AssetLineChartTableViewCellInteractor(
             cryptoCurrency: cryptoCurrency,
-            fiatCurrency: fiatCurrency,
+            fiatCurrencyService: fiatCurrencyService,
             historicalFiatPriceService: historicalFiatPriceService,
             lineChartView: lineChartView
         )
@@ -101,35 +108,35 @@ public final class AssetLineChartTableViewCellPresenter: AssetLineChartTableView
     private lazy var priceWindowItems: [SegmentedViewModel.Item] = {
         [
             .text(
-                LocalizationConstants.DashboardDetails.day,
+                LocalizedString.day,
                 action: { [weak self] in
                     guard let self = self else { return }
                     self.windowRelay.accept(.day(.fifteenMinutes))
                 }
             ),
             .text(
-                LocalizationConstants.DashboardDetails.week,
+                LocalizedString.week,
                 action: { [weak self] in
                     guard let self = self else { return }
                     self.windowRelay.accept(.week(.oneHour))
                 }
             ),
             .text(
-                LocalizationConstants.DashboardDetails.month,
+                LocalizedString.month,
                 action: { [weak self] in
                     guard let self = self else { return }
                     self.windowRelay.accept(.month(.twoHours))
                 }
             ),
             .text(
-                LocalizationConstants.DashboardDetails.year,
+                LocalizedString.year,
                 action: { [weak self] in
                     guard let self = self else { return }
                     self.windowRelay.accept(.year(.oneDay))
                 }
             ),
             .text(
-                LocalizationConstants.DashboardDetails.all,
+                LocalizedString.all,
                 action: { [weak self] in
                     guard let self = self else { return }
                     self.windowRelay.accept(.all(.fiveDays))

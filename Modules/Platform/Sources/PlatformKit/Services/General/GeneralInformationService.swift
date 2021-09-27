@@ -33,6 +33,7 @@ final class GeneralInformationService: GeneralInformationServiceAPI {
         countriesCachedValue
             .setFetch(weak: self) { (self) in
                 self.client.countries
+                    .asSingle()
                     .map {
                         $0.sorted(by: { $0.name.lowercased() < $1.name.lowercased() })
                     }

@@ -2,9 +2,9 @@
 
 import Combine
 import DIKit
-import KYCKit
-import KYCUIKit
-import OnboardingUIKit
+import FeatureKYCDomain
+import FeatureKYCUI
+import FeatureOnboardingUI
 import PlatformKit
 import PlatformUIKit
 import RxSwift
@@ -14,13 +14,13 @@ final class KYCAdapter {
 
     // MARK: - Properties
 
-    private let router: KYCUIKit.Routing
+    private let router: FeatureKYCUI.Routing
 
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
 
-    init(router: KYCUIKit.Routing = resolve()) {
+    init(router: FeatureKYCUI.Routing = resolve()) {
         self.router = router
     }
 
@@ -29,7 +29,7 @@ final class KYCAdapter {
     func presentEmailVerificationAndKYCIfNeeded(
         from presenter: UIViewController,
         requiredTier: KYC.Tier
-    ) -> AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> {
+    ) -> AnyPublisher<FeatureKYCUI.FlowResult, FeatureKYCUI.RouterError> {
         router
             .presentEmailVerificationAndKYCIfNeeded(
                 from: presenter,
@@ -40,7 +40,7 @@ final class KYCAdapter {
 
     func presentEmailVerificationIfNeeded(
         from presenter: UIViewController
-    ) -> AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> {
+    ) -> AnyPublisher<FeatureKYCUI.FlowResult, FeatureKYCUI.RouterError> {
         router
             .presentEmailVerificationIfNeeded(from: presenter)
             .eraseToAnyPublisher()
@@ -49,7 +49,7 @@ final class KYCAdapter {
     func presentKYCIfNeeded(
         from presenter: UIViewController,
         requiredTier: KYC.Tier
-    ) -> AnyPublisher<KYCUIKit.FlowResult, KYCUIKit.RouterError> {
+    ) -> AnyPublisher<FeatureKYCUI.FlowResult, FeatureKYCUI.RouterError> {
         router
             .presentKYCIfNeeded(from: presenter, requiredTier: requiredTier)
             .eraseToAnyPublisher()
@@ -60,7 +60,7 @@ final class KYCAdapter {
 
 extension KYCRouterError {
 
-    init(_ error: KYCUIKit.RouterError) {
+    init(_ error: FeatureKYCUI.RouterError) {
         switch error {
         case .emailVerificationFailed:
             self = .emailVerificationFailed
@@ -74,7 +74,7 @@ extension KYCRouterError {
 
 extension KYCRoutingResult {
 
-    init(_ result: KYCUIKit.FlowResult) {
+    init(_ result: FeatureKYCUI.FlowResult) {
         switch result {
         case .abandoned:
             self = .abandoned
@@ -116,11 +116,11 @@ extension KYCAdapter: PlatformUIKit.KYCRouting {
     }
 }
 
-// MARK: - OnboardingUIKit.EmailVerificationRouterAPI
+// MARK: - FeatureOnboardingUI.EmailVerificationRouterAPI
 
 extension OnboardingResult {
 
-    init(_ result: KYCUIKit.FlowResult) {
+    init(_ result: FeatureKYCUI.FlowResult) {
         switch result {
         case .abandoned:
             self = .abandoned
@@ -130,7 +130,7 @@ extension OnboardingResult {
     }
 }
 
-extension KYCAdapter: OnboardingUIKit.EmailVerificationRouterAPI {
+extension KYCAdapter: FeatureOnboardingUI.EmailVerificationRouterAPI {
 
     func presentEmailVerification(from presenter: UIViewController) -> AnyPublisher<OnboardingResult, Never> {
         router.presentEmailVerificationIfNeeded(from: presenter)

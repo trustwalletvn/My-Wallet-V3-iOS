@@ -1,6 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import DIKit
+import RxCombine
 import RxSwift
 import ToolKit
 
@@ -32,6 +33,8 @@ final class CardDeletionService: PaymentMethodDeletionServiceAPI {
     func delete(by data: PaymentMethodRemovalData) -> Completable {
         client
             .deleteCard(by: data.id)
+            .asObservable()
+            .ignoreElements()
             .andThen(cardListService.fetchCards())
             .do(onSuccess: { [weak self] _ in
                 self?.paymentMethodTypesService.clearPreferredPaymentIfNeeded(by: data.id)

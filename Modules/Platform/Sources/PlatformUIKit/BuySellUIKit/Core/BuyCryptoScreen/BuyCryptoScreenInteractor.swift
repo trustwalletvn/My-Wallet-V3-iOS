@@ -203,10 +203,11 @@ final class BuyCryptoScreenInteractor: EnterAmountScreenInteractor {
                              .tooLow(min: let fiatValue):
                             return self.priceService
                                 .moneyValuePair(
-                                    base: fiatValue,
+                                    fiatValue: fiatValue,
                                     cryptoCurrency: currency,
                                     usesFiatAsBase: activeInput == .fiat
                                 )
+                                .asSingle()
                                 .map { pair -> AmountInteractorState in
                                     switch state {
                                     case .tooHigh:

@@ -195,15 +195,15 @@ extension LocalizationConstants {
         }
 
         public enum InterestIdentityVerification {
-            public static let title = NSLocalizedString("Earn 9.0% Interest", comment: "Earn 4.5% Interest")
+            public static let title = NSLocalizedString("Earn 9.0% Rewards", comment: "Earn 4.5% Rewards")
             public enum Description {
                 public static let kycd = NSLocalizedString(
-                    "Start earning up to 9.0% interest on your crypto.",
-                    comment: "Start earning up to 9.0% interest on your crypto."
+                    "Start earning up to 9.0% rewards on your crypto.",
+                    comment: "Start earning up to 9.0% rewards on your crypto."
                 )
                 public static let notKYCd = NSLocalizedString(
-                    "Verify your identity and start earning up to 9.0% interest on your crypto.",
-                    comment: "Verify your identity and start earning up to 9.0% interest on your crypto."
+                    "Verify your identity and start earning up to 9.0% rewards on your crypto.",
+                    comment: "Verify your identity and start earning up to 9.0% rewards on your crypto."
                 )
             }
 

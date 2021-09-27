@@ -100,6 +100,7 @@ public final class BadgeImageView: UIView {
     private func setup() {
         containerView = UIView()
         imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
         addSubview(containerView)
         containerView.addSubview(imageView)
         containerView.layoutToSuperview(.leading, .trailing, .top, .bottom)

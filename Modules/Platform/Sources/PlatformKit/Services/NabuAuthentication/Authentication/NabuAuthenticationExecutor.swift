@@ -40,11 +40,12 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
     }
 
     private let store: NabuTokenStore
-    private let userCreationClient: UserCreationClientAPI
+    private let userCreationClient: NabuUserCreationClientAPI
     private let credentialsRepository: CredentialsRepository
     private let deviceInfo: DeviceInfo
     private let jwtService: JWTServiceAPI
-    private let authenticationClient: NabuAuthenticationClientAPI
+    private let sessionTokenClient: NabuSessionTokenClientAPI
+    private let resetUserClient: NabuResetUserClientAPI
     private let settingsService: SettingsServiceAPI
     private let siftService: SiftServiceAPI
     private let queue: DispatchQueue
@@ -52,17 +53,18 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
     private let fetchTokensPublisher: Atomic<AnyPublisher<Token, NabuAuthenticationExecutorError>?> = Atomic(nil)
 
     init(
-        userCreationClient: UserCreationClientAPI = resolve(),
+        userCreationClient: NabuUserCreationClientAPI = resolve(),
         store: NabuTokenStore = resolve(),
         settingsService: SettingsServiceAPI = resolve(),
         siftService: SiftServiceAPI = resolve(),
         jwtService: JWTServiceAPI = resolve(),
-        authenticationClient: NabuAuthenticationClientAPI = resolve(),
+        sessionTokenClient: NabuSessionTokenClientAPI = resolve(),
+        resetUserClient: NabuResetUserClientAPI = resolve(),
         credentialsRepository: NabuAuthenticationExecutor.CredentialsRepository = resolve(),
         deviceInfo: DeviceInfo = resolve(),
         queue: DispatchQueue =
             DispatchQueue(
-                label: "com.blockchain.NabuAuthenticationExecutorNew",
+                label: "com.blockchain.NabuAuthenticationExecutor",
                 qos: .background
             )
     ) {
@@ -72,7 +74,8 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
         self.siftService = siftService
         self.credentialsRepository = credentialsRepository
         self.jwtService = jwtService
-        self.authenticationClient = authenticationClient
+        self.sessionTokenClient = sessionTokenClient
+        self.resetUserClient = resetUserClient
         self.deviceInfo = deviceInfo
         self.queue = queue
     }
@@ -90,7 +93,6 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
                             offlineToken: payload.offlineToken,
                             publisherProvider: networkResponsePublisher
                         )
-                        .eraseToAnyPublisher()
                     }
                     .eraseToAnyPublisher()
             }
@@ -100,8 +102,13 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
     // MARK: - Private methods
 
     private func getToken() -> AnyPublisher<Token, NabuAuthenticationExecutorError> {
-        Publishers.Zip(store.sessionTokenDataPublisher.mapError(), retrieveOfflineTokenResponse())
-            .map { sessionToken, offlineToken -> (sessionToken: NabuSessionTokenResponse?, offlineToken: NabuOfflineTokenResponse) in
+        Publishers
+            .Zip(
+                store.sessionTokenDataPublisher.mapError(),
+                retrieveOfflineTokenResponse()
+            )
+            .map { sessionToken, offlineToken
+                -> (sessionToken: NabuSessionTokenResponse?, offlineToken: NabuOfflineTokenResponse) in
                 (sessionToken: sessionToken, offlineToken: offlineToken)
             }
             // swiftlint:disable:next line_length
@@ -128,9 +135,8 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
         }
 
         // Case B: We are not currently performing a token fetch, create a new fetch publisher
-        let publisher = createFetchTokensPublisher()
+        let publisher = createFetchTokens()
             .handleEvents(receiveCompletion: { _ in
-
                 // We are done fetching the token, reset state
                 self.fetchTokensPublisher.mutate { $0 = nil }
             })
@@ -141,7 +147,7 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
         return publisher
     }
 
-    private func createFetchTokensPublisher() -> AnyPublisher<Token, NabuAuthenticationExecutorError> {
+    private func createFetchTokens() -> AnyPublisher<Token, NabuAuthenticationExecutorError> {
         createUserIfNeeded()
             .flatMap { offlineToken -> AnyPublisher<Token, NabuAuthenticationExecutorError> in
                 currentToken(offlineToken: offlineToken)
@@ -163,7 +169,8 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
                 }
                 return store.sessionTokenDataPublisher
                     .mapError()
-                    .flatMap { sessionToken -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> in
+                    .flatMap { sessionToken
+                        -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> in
                         guard let sessionToken = sessionToken else {
                             return .failure(.missingCredentials(MissingCredentialsError.sessionToken))
                         }
@@ -204,12 +211,13 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
         offlineToken: NabuOfflineTokenResponse
     ) -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> {
         getSessionToken(offlineTokenResponse: offlineToken)
-            .flatMap { sessionTokenResponse -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> in
+            .flatMap { sessionTokenResponse
+                -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> in
                 store.store(sessionTokenResponse)
                     .mapError()
             }
             .catch { error -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> in
-                recoverOrReturnError(error: error, offlineToken: offlineToken)
+                resetOrReturnError(error: error, offlineToken: offlineToken)
             }
             .eraseToAnyPublisher()
     }
@@ -251,8 +259,8 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
 
         return Publishers.Zip(email, guid)
             .flatMap { email, guid -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> in
-                authenticationClient
-                    .sessionTokenPublisher(
+                sessionTokenClient
+                    .sessionToken(
                         for: guid,
                         userToken: offlineTokenResponse.token,
                         userIdentifier: offlineTokenResponse.userId,
@@ -270,7 +278,7 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
             .eraseToAnyPublisher()
     }
 
-    private func recoverOrReturnError(
+    private func resetOrReturnError(
         error: NabuAuthenticationExecutorError,
         offlineToken: NabuOfflineTokenResponse
     ) -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> {
@@ -284,7 +292,7 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
                 guard userRestored else {
                     return .failure(error)
                 }
-                return recoverUserAndContinue(offlineToken: offlineToken)
+                return resetUserAndContinue(offlineToken: offlineToken)
             }
             .eraseToAnyPublisher()
     }
@@ -300,12 +308,13 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
             .eraseToAnyPublisher()
     }
 
-    private func recoverUserAndContinue(
+    private func resetUserAndContinue(
         offlineToken: NabuOfflineTokenResponse
     ) -> AnyPublisher<NabuSessionTokenResponse, NabuAuthenticationExecutorError> {
         jwtToken()
             .flatMap { jwtToken -> AnyPublisher<Void, NabuAuthenticationExecutorError> in
-                authenticationClient.recoverUserPublisher(offlineToken: offlineToken, jwt: jwtToken)
+                resetUserClient
+                    .resetUser(offlineToken: offlineToken, jwt: jwtToken)
                     .mapError(NabuAuthenticationExecutorError.failedToRecoverUser)
                     .eraseToAnyPublisher()
             }
@@ -332,7 +341,8 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
                     .mapError(NabuAuthenticationExecutorError.failedToCreateUser)
                     .eraseToAnyPublisher()
             }
-            .flatMap { offlineTokenResponse -> AnyPublisher<NabuOfflineTokenResponse, NabuAuthenticationExecutorError> in
+            .flatMap { offlineTokenResponse
+                -> AnyPublisher<NabuOfflineTokenResponse, NabuAuthenticationExecutorError> in
                 credentialsRepository
                     .setPublisher(offlineTokenResponse: offlineTokenResponse)
                     .replaceOutput(with: offlineTokenResponse)
@@ -350,7 +360,9 @@ struct NabuAuthenticationExecutor: NabuAuthenticationExecutorAPI {
             .eraseToAnyPublisher()
     }
 
-    private func retrieveOfflineTokenResponse() -> AnyPublisher<NabuOfflineTokenResponse, NabuAuthenticationExecutorError> {
+    private func retrieveOfflineTokenResponse()
+        -> AnyPublisher<NabuOfflineTokenResponse, NabuAuthenticationExecutorError>
+    {
         credentialsRepository.offlineTokenResponsePublisher
             .mapError(NabuAuthenticationExecutorError.missingCredentials)
             .eraseToAnyPublisher()

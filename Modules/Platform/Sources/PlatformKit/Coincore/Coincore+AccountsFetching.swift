@@ -1,6 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import Combine
+import RxCombine
 import RxSwift
 import ToolKit
 
@@ -155,7 +156,9 @@ extension Publisher where Output == AccountGroup, Failure == Error {
             )
     }
 
-    fileprivate func mapToCryptoAccounts(supporting action: AssetAction) -> AnyPublisher<[CryptoAccount], Failure> {
+    fileprivate func mapToCryptoAccounts(
+        supporting action: AssetAction
+    ) -> AnyPublisher<[CryptoAccount], Failure> {
         flatMapFilter(action: action)
             .map { accounts in
                 accounts
@@ -170,9 +173,11 @@ extension Publisher where Output == AccountGroup, Failure == Error {
 
 extension CoincoreAPI {
 
-    public func cryptoAccounts(supporting action: AssetAction) -> AnyPublisher<[CryptoAccount], Error> {
+    public func cryptoAccounts(
+        supporting action: AssetAction
+    ) -> AnyPublisher<[CryptoAccount], Error> {
         allAccounts
-            .asPublisher()
+            .eraseError()
             .mapToCryptoAccounts(supporting: action)
     }
 
@@ -183,7 +188,7 @@ extension CoincoreAPI {
     ) -> AnyPublisher<[CryptoAccount], Error> {
         let asset = self[cryptoCurrency]
         return asset.accountGroup(filter: filter)
-            .asPublisher()
+            .eraseError()
             .mapToCryptoAccounts(supporting: action)
     }
 

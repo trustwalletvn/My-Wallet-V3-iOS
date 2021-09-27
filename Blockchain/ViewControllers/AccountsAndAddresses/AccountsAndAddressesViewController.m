@@ -8,7 +8,7 @@
 #import "UIView+ChangeFrameAttribute.h"
 #import "NSNumberFormatter+Currencies.h"
 
-@import SettingsKit;
+@import FeatureSettingsDomain;
 
 #define CELL_HEIGHT_DEFAULT 44.0f
 

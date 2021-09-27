@@ -52,6 +52,7 @@ final class OrdersService: OrdersServiceAPI {
         self.client = client
         ordersCachedValue.setFetch { [client, analyticsRecorder] in
             client.orderDetails(pendingOnly: false)
+                .asSingle()
                 .map { orders in
                     orders.compactMap {
                         OrderDetails(recorder: analyticsRecorder, response: $0)
@@ -69,6 +70,7 @@ final class OrdersService: OrdersServiceAPI {
             .map { [analyticsRecorder] response in
                 OrderDetails(recorder: analyticsRecorder, response: response)
             }
+            .asSingle()
             .onNil(error: ServiceError.mappingError)
     }
 }

@@ -435,51 +435,6 @@ public enum LocalizationConstants {
         )
     }
 
-    public enum Dashboard {
-        public enum Balance {
-            public static let totalBalance = NSLocalizedString(
-                "Total Balance",
-                comment: "Dashboard: total balance component - title"
-            )
-            public static let notice = NSLocalizedString(
-                "You have a pending {swap/buy/sell} order that may impact your total balance.",
-                comment: "Dashboard: balance notice"
-            )
-            public static let lockboxNotice = NSLocalizedString(
-                "The Total Balance shown on this device does not include your linked Lockbox.",
-                comment: "Dashboard: lockbox notice"
-            )
-        }
-
-        public static let chartsError = NSLocalizedString(
-            "An error occurred while retrieving the latest chart data. Please try again later.",
-            comment: "The error message for when the method fetchChartDataForAsset fails."
-        )
-        public static let bitcoinPrice = NSLocalizedString(
-            "Bitcoin Price",
-            comment: "The title of the Bitcoin price chart on the dashboard."
-        )
-        public static let etherPrice = NSLocalizedString(
-            "Ether Price",
-            comment: "The title of the Ethereum price chart on the dashboard."
-        )
-        public static let bitcoinCashPrice = NSLocalizedString(
-            "Bitcoin Cash Price",
-            comment: "The title of the Bitcoin Cash price chart on the dashboard."
-        )
-        public static let stellarPrice = NSLocalizedString(
-            "Stellar Price",
-            comment: "The title of the Stellar price chart on the dashboard."
-        )
-        public static let seeCharts = NSLocalizedString(
-            "See Charts",
-            comment: "The title of the action button in the price preview views."
-        )
-        public static let activity = NSLocalizedString("Activity", comment: "Activity tab item")
-        public static let send = NSLocalizedString("Send", comment: "Send tab item")
-        public static let request = NSLocalizedString("Request", comment: "request tab item")
-    }
-
     public enum VersionUpdate {
         public static let versionPrefix = NSLocalizedString(
             "v",
@@ -573,6 +528,14 @@ public enum LocalizationConstants {
         public static let title = NSLocalizedString(
             "Home",
             comment: "Dashboard screen: title label"
+        )
+        public static let portfolio = NSLocalizedString(
+            "Portfolio",
+            comment: "Dashboard screen: Portfolio tab"
+        )
+        public static let prices = NSLocalizedString(
+            "Prices",
+            comment: "Dashboard screen: Prices tab"
         )
     }
 
@@ -687,7 +650,7 @@ public enum LocalizationConstants {
             "Sell Crypto",
             comment: "Item displayed on the side menu of the app for when the user wants to sell crypto."
         )
-        public static let earnInterest = NSLocalizedString("Earn Interest", comment: "Earn Interest")
+        public static let earnInterest = NSLocalizedString("Earn Rewards", comment: "Earn Rewards")
         public static let addresses = NSLocalizedString(
             "Addresses",
             comment: "Item displayed on the side menu of the app for when the user wants to view their crypto addresses."
@@ -984,7 +947,7 @@ public enum LocalizationConstants {
             public enum Deposit {
                 public static let title = NSLocalizedString("Deposit", comment: "Deposit")
                 public enum Crypto {
-                    public static let description = NSLocalizedString("Add %@ to your Interest Account", comment: "Add %@ to your Interest Account")
+                    public static let description = NSLocalizedString("Add %@ to your Rewards Account", comment: "Add %@ to your Rewards Account")
                 }
 
                 public enum Fiat {
@@ -1003,8 +966,8 @@ public enum LocalizationConstants {
             }
 
             public enum Interest {
-                public static let title = NSLocalizedString("Interest Summary", comment: "Interest Summary")
-                public static let description = NSLocalizedString("View your accrued %@ Interest", comment: "View your accrued %@ Interest")
+                public static let title = NSLocalizedString("Rewards Summary", comment: "Rewards Summary")
+                public static let description = NSLocalizedString("View your accrued %@ Rewards", comment: "View your accrued %@ Rewards")
             }
 
             public enum Activity {

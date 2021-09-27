@@ -27,12 +27,15 @@ final class AssetLineChartTableViewCellInteractor: AssetLineChartTableViewCellIn
 
     init(
         cryptoCurrency: CryptoCurrency,
-        fiatCurrency: FiatCurrency,
+        fiatCurrencyService: FiatCurrencyServiceAPI,
         historicalFiatPriceService: HistoricalFiatPriceServiceAPI,
         lineChartView: LineChartView
     ) {
         self.historicalFiatPriceService = historicalFiatPriceService
-        lineChartInteractor = AssetLineChartInteractor(cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency)
+        lineChartInteractor = AssetLineChartInteractor(
+            cryptoCurrency: cryptoCurrency,
+            fiatCurrencyService: fiatCurrencyService
+        )
         lineChartUserInteractor = AssetLineChartUserInteractor(chartView: lineChartView)
         assetPriceViewInteractor = InstantAssetPriceViewInteractor(
             historicalPriceProvider: historicalFiatPriceService,

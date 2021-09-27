@@ -55,11 +55,11 @@ struct VerifyDeviceEnvironment {
     let analyticsRecorder: AnalyticsEventRecorderAPI
 
     init(
-        mainQueue: AnySchedulerOf<DispatchQueue> = .main,
+        mainQueue: AnySchedulerOf<DispatchQueue>,
         deviceVerificationService: DeviceVerificationServiceAPI,
-        errorRecorder: ErrorRecording = resolve(),
+        errorRecorder: ErrorRecording,
         externalAppOpener: ExternalAppOpener = resolve(),
-        analyticsRecorder: AnalyticsEventRecorderAPI = resolve()
+        analyticsRecorder: AnalyticsEventRecorderAPI
     ) {
         self.mainQueue = mainQueue
         self.deviceVerificationService = deviceVerificationService
@@ -79,7 +79,9 @@ let verifyDeviceReducer = Reducer.combine(
                 CredentialsEnvironment(
                     mainQueue: $0.mainQueue,
                     deviceVerificationService: $0.deviceVerificationService,
-                    errorRecorder: $0.errorRecorder
+                    errorRecorder: $0.errorRecorder,
+                    externalAppOpener: $0.externalAppOpener,
+                    analyticsRecorder: $0.analyticsRecorder
                 )
             }
         ),

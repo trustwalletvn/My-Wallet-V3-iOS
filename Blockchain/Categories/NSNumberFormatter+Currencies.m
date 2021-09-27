@@ -3,7 +3,7 @@
 #import "NSNumberFormatter+Currencies.h"
 #import "Blockchain-Swift.h"
 
-@import SettingsKit;
+@import FeatureSettingsDomain;
 
 @implementation NSNumberFormatter (Currencies)
 

@@ -11,7 +11,7 @@ extension NSMutableAttributedString {
             Logger.shared.error("could not create URL from string: \(urlString)")
             return
         }
-        let range = NSRange(location: 0, length: string.count)
+        let range = NSRange(location: 0, length: (string as NSString).length)
         addAttribute(NSAttributedString.Key.link, value: url, range: range)
     }
 
@@ -19,7 +19,7 @@ extension NSMutableAttributedString {
     public func add(lineSpacing: CGFloat) {
         let style = NSMutableParagraphStyle()
         style.lineSpacing = lineSpacing
-        let range = NSRange(location: 0, length: string.count)
+        let range = NSRange(location: 0, length: (string as NSString).length)
         addAttribute(.paragraphStyle, value: style, range: range)
     }
 
@@ -27,7 +27,7 @@ extension NSMutableAttributedString {
     public func add(alignment: NSTextAlignment) {
         let style = NSMutableParagraphStyle()
         style.alignment = alignment
-        let range = NSRange(location: 0, length: string.count)
+        let range = NSRange(location: 0, length: (string as NSString).length)
         addAttribute(.paragraphStyle, value: style, range: range)
     }
 }

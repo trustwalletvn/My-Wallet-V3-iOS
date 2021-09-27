@@ -5,10 +5,10 @@ import Combine
 import ComposableArchitecture
 import DIKit
 import FeatureAuthenticationUI
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RemoteNotificationsKit
-import SettingsKit
 import ToolKit
 import UIKit
 import WalletPayloadKit
@@ -276,6 +276,22 @@ let mainAppReducerCore = Reducer<CoreAppState, CoreAppAction, CoreAppEnvironment
             state.onboarding?.displayAlert = .walletAuthentication(error)
             return .cancel(id: WalletCancelations.AuthenticationId())
         }
+        if state.onboarding?.welcomeState?.screenFlow == .manualLoginScreen {
+            return .merge(
+                .cancel(id: WalletCancelations.AuthenticationId()),
+                Effect(
+                    value: CoreAppAction.onboarding(
+                        .welcomeScreen(
+                            .manualPairing(
+                                .password(
+                                    .showIncorrectPasswordError(true)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        }
         return .merge(
             .cancel(id: WalletCancelations.AuthenticationId()),
             Effect(
@@ -285,7 +301,7 @@ let mainAppReducerCore = Reducer<CoreAppState, CoreAppAction, CoreAppEnvironment
                             .verifyDevice(
                                 .credentials(
                                     .password(
-                                        .incorrectPasswordErrorVisibility(true)
+                                        .showIncorrectPasswordError(true)
                                     )
                                 )
                             )
@@ -395,9 +411,11 @@ let mainAppReducerCore = Reducer<CoreAppState, CoreAppAction, CoreAppEnvironment
     case .onboarding(.welcomeScreen(.presentScreenFlow(.createWalletScreen))):
         // send `authenticate` action so that we can listen for wallet creation
         return Effect(value: .authenticate)
-    case .onboarding(.welcomeScreen(.presentScreenFlow(.recoverWalletScreen))):
+    // TODO: remove old restore wallet screen when SSO III is ready
+    case .onboarding(.welcomeScreen(.presentScreenFlow(.restoreWalletScreen))):
         // send `authenticate` action so that we can listen for wallet creation or recovery
         return Effect(value: .authenticate)
+    // TODO: remove old restore wallet screen when SSO III is ready
     case .onboarding(.createAccountScreenClosed),
          .onboarding(.recoverWalletScreenClosed):
         // cancel any authentication publishers in case the create wallet is closed

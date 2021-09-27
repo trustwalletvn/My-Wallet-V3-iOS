@@ -78,7 +78,10 @@ public struct NetworkRequest {
 
     let requestId = UUID()
 
-    private(set) var shouldDebug: Bool = false
+    private(set) var isDebugging = (
+        request: ProcessInfo.processInfo.environment["BLOCKCHAIN_DEBUG_NETWORK_REQUEST"] == "TRUE",
+        response: ProcessInfo.processInfo.environment["BLOCKCHAIN_DEBUG_NETWORK_RESPONSE"] == "TRUE"
+    )
 
     private var defaultHeaders: HTTPHeaders {
         [HttpHeaderField.requestId: requestId.uuidString]
@@ -116,7 +119,7 @@ public struct NetworkRequest {
     /// Used by the handler to print debug detailed information about the request and response
     public func debug() -> Self {
         var request = self
-        request.shouldDebug = true
+        request.isDebugging = (request: true, response: true)
         return request
     }
 

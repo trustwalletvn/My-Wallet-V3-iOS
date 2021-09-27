@@ -1,11 +1,11 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 
 public protocol GeneralInformationClientAPI: AnyObject {
-    var countries: Single<[CountryData]> { get }
+    var countries: AnyPublisher<[CountryData], NabuNetworkError> { get }
 }
 
 final class GeneralInformationClient: GeneralInformationClientAPI {
@@ -19,14 +19,13 @@ final class GeneralInformationClient: GeneralInformationClientAPI {
     // MARK: - Properties
 
     /// Requests a session token for the wallet, if not available already
-    var countries: Single<[CountryData]> {
+    var countries: AnyPublisher<[CountryData], NabuNetworkError> {
         let request = requestBuilder.get(
             path: Path.countries
         )!
         return networkAdapter.perform(
             request: request,
-            responseType: [CountryData].self,
-            errorResponseType: NabuNetworkError.self
+            responseType: [CountryData].self
         )
     }
 

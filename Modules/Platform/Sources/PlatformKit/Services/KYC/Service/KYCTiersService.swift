@@ -1,4 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
+
+import AnalyticsKit
 import Combine
 import DIKit
 import NetworkKit
@@ -69,6 +71,7 @@ final class KYCTiersService: KYCTiersServiceAPI {
 
     private let client: KYCClientAPI
     private let featureFlagsService: FeatureFlagsServiceAPI
+    private let analyticsRecorder: AnalyticsEventRecorderAPI
     private let cachedTiers = CachedValue<KYC.UserTiers>(configuration: .onSubscription())
     private let semaphore = DispatchSemaphore(value: 1)
     private let scheduler = SerialDispatchQueueScheduler(qos: .default)
@@ -77,12 +80,14 @@ final class KYCTiersService: KYCTiersServiceAPI {
 
     init(
         client: KYCClientAPI = resolve(),
-        featureFlagsService: FeatureFlagsServiceAPI = resolve()
+        featureFlagsService: FeatureFlagsServiceAPI = resolve(),
+        analyticsRecorder: AnalyticsEventRecorderAPI = resolve()
     ) {
         self.client = client
         self.featureFlagsService = featureFlagsService
+        self.analyticsRecorder = analyticsRecorder
         cachedTiers.setFetch(weak: self) { (self) in
-            self.client.tiers()
+            self.client.tiers().asSingle()
         }
     }
 
@@ -135,6 +140,11 @@ final class KYCTiersService: KYCTiersServiceAPI {
                     .replaceError(with: false)
                     .eraseToAnyPublisher()
             }
+            .handleEvents(receiveOutput: { [analyticsRecorder] isSDDEligible in
+                if isSDDEligible {
+                    analyticsRecorder.record(event: SDDAnalytics.userIsSddEligible)
+                }
+            })
             .eraseToAnyPublisher()
     }
 
@@ -144,39 +154,34 @@ final class KYCTiersService: KYCTiersServiceAPI {
             .eraseToAnyPublisher()
     }
 
-    func checkSimplifiedDueDiligenceVerification(for tier: KYC.Tier, pollUntilComplete: Bool) -> AnyPublisher<Bool, Never> {
+    func checkSimplifiedDueDiligenceVerification(
+        for tier: KYC.Tier,
+        pollUntilComplete: Bool
+    ) -> AnyPublisher<Bool, Never> {
         guard tier != .tier2 else {
             // Tier 2 (Gold) verified users should be treated as SDD verified
             return .just(true)
         }
 
-        let timeout = Date(timeIntervalSinceNow: .minutes(2))
-        func pollingPublisher() -> AnyPublisher<SimplifiedDueDiligenceVerificationResponse, NabuNetworkError> {
-            // Poll the API every 5 seconds until `taskComplete` is `true` or an error is returned from the upstream until timeout.
-            // This should only take a couple of seconds in reality.
-            client.checkSimplifiedDueDiligenceVerification()
-                .flatMap { [pollingPublisher] result -> AnyPublisher<SimplifiedDueDiligenceVerificationResponse, NabuNetworkError> in
-                    let shouldRetry = pollUntilComplete && !result.taskComplete && Date() < timeout
-                    guard shouldRetry else {
-                        return .just(result)
-                    }
-                    return pollingPublisher()
-                        .delay(for: 5, scheduler: DispatchQueue.global(qos: .userInitiated))
-                        .eraseToAnyPublisher()
-                }
-                .eraseToAnyPublisher()
-        }
-
         return featureFlagsService.isEnabled(.remote(.sddEnabled))
-            .flatMap { [pollingPublisher] sddEnabled -> AnyPublisher<Bool, Never> in
+            .flatMap { [client] sddEnabled -> AnyPublisher<Bool, Never> in
                 guard sddEnabled else {
                     return .just(false)
                 }
-                return pollingPublisher()
+                return client
+                    .checkSimplifiedDueDiligenceVerification()
+                    .startPolling(until: { response in
+                        response.taskComplete || !pollUntilComplete
+                    })
                     .replaceError(with: SimplifiedDueDiligenceVerificationResponse(verified: false, taskComplete: true))
                     .map(\.verified)
                     .eraseToAnyPublisher()
             }
+            .handleEvents(receiveOutput: { [analyticsRecorder] isSDDEligible in
+                if isSDDEligible {
+                    analyticsRecorder.record(event: SDDAnalytics.userIsSddEligible)
+                }
+            })
             .eraseToAnyPublisher()
     }
 
@@ -197,5 +202,20 @@ final class KYCTiersService: KYCTiersServiceAPI {
                     .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
+    }
+}
+
+/// Temporary legacy SDD analytics events definition. To be removed after dropping Firebase analytics.
+enum SDDAnalytics: AnalyticsEvent {
+    var type: AnalyticsEventType { .firebase }
+
+    case userIsSddEligible
+
+    var name: String {
+        "user_is_sdd_eligible"
+    }
+
+    var params: [String: Any]? {
+        nil
     }
 }

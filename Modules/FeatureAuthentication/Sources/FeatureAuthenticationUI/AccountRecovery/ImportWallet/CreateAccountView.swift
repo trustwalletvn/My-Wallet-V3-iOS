@@ -175,9 +175,6 @@ struct CreateAccountView: View {
                 PasswordEyeSymbolButton(isPasswordVisible: $isPasswordVisible)
             }
         )
-        .onChange(of: viewStore.password) { _ in
-            viewStore.send(.validatePasswordStrength)
-        }
     }
 
     private var passwordInstruction: some View {

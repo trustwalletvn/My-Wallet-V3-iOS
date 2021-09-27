@@ -3,11 +3,11 @@
 import BitcoinChainKit
 import BitcoinKit
 import DIKit
+import FeatureTransactionDomain
 import JavaScriptCore
 import PlatformKit
 import RxSwift
 import ToolKit
-import TransactionKit
 
 final class BitcoinWallet: NSObject {
 

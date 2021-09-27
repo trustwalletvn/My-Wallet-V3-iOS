@@ -75,6 +75,7 @@ public final class PortfolioProvider: PortfolioProviding {
         }
         return cryptoAsset
             .accountGroup(filter: .all)
+            .asObservable()
             .flatMap(\.balance)
             .map(\.amount)
             .catchErrorJustReturn(.zero)

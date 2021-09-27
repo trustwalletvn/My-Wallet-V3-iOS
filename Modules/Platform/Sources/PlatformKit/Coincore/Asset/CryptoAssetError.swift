@@ -5,4 +5,5 @@ import Foundation
 public enum CryptoAssetError: Error {
     case noDefaultAccount
     case addressParseFailure
+    case failedToLoadDefaultAccount(Error)
 }

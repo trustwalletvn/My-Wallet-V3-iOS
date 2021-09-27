@@ -82,6 +82,7 @@ extension Path {
 private func testableReferences(in modules: Path) throws -> [XCScheme.TestableReference] {
     try modules.children()
         .reduce(into: []) { result, path in
+
             guard try path.containsSwiftPackage() else {
                 return
             }

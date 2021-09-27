@@ -1,7 +1,7 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 /// An error thrown for missing credentials
-public enum MissingCredentialsError: Error {
+public enum MissingCredentialsError: Error, Equatable {
 
     /// Cannot send request because of missing GUID
     case guid

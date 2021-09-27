@@ -1,21 +1,19 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 
 protocol ExchangeAccountsProviderClientAPI {
-    func exchangeAddress(with currency: CryptoCurrency) -> Single<CryptoExchangeAddressResponse>
+
+    func exchangeAddress(
+        with currency: CryptoCurrency
+    ) -> AnyPublisher<CryptoExchangeAddressResponse, NabuNetworkError>
 }
 
 protocol ExchangeAccountsClientAPI: ExchangeAccountsProviderClientAPI {}
 
 final class ExchangeAccountsClient: ExchangeAccountsClientAPI {
-
-    enum ExchangeAccountsClientError {
-        /// Two factor authentication required
-        case twoFactorRequired
-    }
 
     private enum Path {
         static let exchangeAddress = ["payments", "accounts", "linked"]
@@ -38,17 +36,15 @@ final class ExchangeAccountsClient: ExchangeAccountsClientAPI {
 
     // MARK: - ExchangeAccountsClientAPI
 
-    func exchangeAddress(with currency: CryptoCurrency) -> Single<CryptoExchangeAddressResponse> {
+    func exchangeAddress(
+        with currency: CryptoCurrency
+    ) -> AnyPublisher<CryptoExchangeAddressResponse, NabuNetworkError> {
         let model = CryptoExchangeAddressRequest(currency: currency)
         let request = requestBuilder.put(
             path: Path.exchangeAddress,
             body: try? JSONEncoder().encode(model),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 }

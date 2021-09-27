@@ -51,6 +51,8 @@ public final class FiatBalanceCollectionViewInteractor {
                 }
                 return self.coincore.fiatAsset
                     .accountGroup(filter: .all)
+                    .asObservable()
+                    .asSingle()
                     .map(\.accounts)
             }
     }

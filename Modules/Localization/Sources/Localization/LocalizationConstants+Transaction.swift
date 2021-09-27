@@ -37,6 +37,8 @@ extension LocalizationConstants {
             }
         }
 
+        public enum Sell {}
+
         public enum Withdraw {
             public enum Completion {
                 public enum Pending {}
@@ -350,6 +352,34 @@ extension LocalizationConstants.Transaction.Buy {
     )
     public static let selectDestinationTitle = NSLocalizedString(
         "Select a Crypto Currency",
+        comment: "Title of screen to select the Crypto Currency to Buy"
+    )
+}
+
+extension LocalizationConstants.Transaction.Sell {
+
+    public static let title = NSLocalizedString(
+        "Sell",
+        comment: "Sell screen title prefix"
+    )
+    public static let headerTitlePrefix = NSLocalizedString(
+        "From:",
+        comment: "Sell screen header title prefix"
+    )
+    public static let headerSubtitlePrefix = NSLocalizedString(
+        "To:",
+        comment: "Sell screen header subtitle prefix"
+    )
+    public static let selectSourceTitle = NSLocalizedString(
+        "Sell",
+        comment: "Title of screen to select a wallet to Sell from"
+    )
+    public static let selectSourceSubtitle = NSLocalizedString(
+        "Select a wallet to sell from.",
+        comment: "Subtitle of screen to select a wallet to Sell from"
+    )
+    public static let selectDestinationTitle = NSLocalizedString(
+        "Select a wallet to sell to.",
         comment: "Title of screen to select the Crypto Currency to Buy"
     )
 }

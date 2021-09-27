@@ -2,13 +2,9 @@
 
 import Foundation
 @testable import PlatformUIKit
-// import RxBlocking
+import RxBlocking
 import RxSwift
 import XCTest
-
-#if canImport(RxBlocking)
-#error("Uncomment tests.")
-#endif
 
 /// Testing `DigitPadViewModel`'s functionality
 class DigitPadViewModelTests: XCTestCase {
@@ -29,32 +25,32 @@ class DigitPadViewModelTests: XCTestCase {
     }
 
     // Testing of observing input length
-//    func testValueLengthObserving() throws {
-//        for input in legalLengthTestInputs {
-//            let viewModel = DigitPadViewModel(padType: .pin(maxCount: 4))
-//            viewModel.reset(to: input)
-//            let result = try viewModel.valueLengthObservable.toBlocking().first()
-//            let expected = input.count
-//            XCTAssertEqual(result, expected)
-//        }
-//    }
+    func testValueLengthObserving() throws {
+        for input in legalLengthTestInputs {
+            let viewModel = DigitPadViewModel(padType: .pin(maxCount: 4))
+            viewModel.reset(to: input)
+            let result = try viewModel.valueLengthObservable.toBlocking().first()
+            let expected = input.count
+            XCTAssertEqual(result, expected)
+        }
+    }
 
     /// Tests accumulation inputs
-//    func testAccumulatedInput() throws {
-//        for input in legalLengthTestInputs {
-//            let viewModel = DigitPadViewModel(padType: .pin(maxCount: 4))
-//            let digitViewModels = viewModel.digitButtonViewModelArray
-//            let blockingValueObservable = viewModel.valueObservable.toBlocking()
-//            for char in input {
-//                let numericValue = Int(String(char))!
-//                digitViewModels[numericValue].tap()
-//                let result = try blockingValueObservable.first()?.last
-//                XCTAssertEqual(char, result)
-//            }
-//            let result = try blockingValueObservable.first()
-//            XCTAssertEqual(input, result)
-//        }
-//    }
+    func testAccumulatedInput() throws {
+        for input in legalLengthTestInputs {
+            let viewModel = DigitPadViewModel(padType: .pin(maxCount: 4))
+            let digitViewModels = viewModel.digitButtonViewModelArray
+            let blockingValueObservable = viewModel.valueObservable.toBlocking()
+            for char in input {
+                let numericValue = Int(String(char))!
+                digitViewModels[numericValue].tap()
+                let result = try blockingValueObservable.first()?.last
+                XCTAssertEqual(char, result)
+            }
+            let result = try blockingValueObservable.first()
+            XCTAssertEqual(input, result)
+        }
+    }
 
     /// Tests that tapping backspace deletes one digit.
     /// Also tests that tapping backspace when the input is already empty does nothing

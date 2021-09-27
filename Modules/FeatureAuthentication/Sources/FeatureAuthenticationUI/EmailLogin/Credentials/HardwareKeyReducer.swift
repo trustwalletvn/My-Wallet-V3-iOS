@@ -7,8 +7,8 @@ import ComposableArchitecture
 public enum HardwareKeyAction: Equatable {
     case didChangeHardwareKeyCode(String)
     case didChangeFocusedState(Bool)
-    case hardwareKeyCodeFieldVisibility(Bool)
-    case incorrectHardwareKeyCodeErrorVisibility(Bool)
+    case showHardwareKeyCodeField(Bool)
+    case showIncorrectHardwareKeyCodeError(Bool)
 }
 
 // MARK: - Properties
@@ -33,12 +33,12 @@ let hardwareKeyReducer = Reducer<
     case .didChangeFocusedState(let isFocused):
         state.isFocused = isFocused
         return .none
-    case .hardwareKeyCodeFieldVisibility(let isVisible):
+    case .showHardwareKeyCodeField(let shouldShow):
         state.hardwareKeyCode = ""
-        state.isHardwareKeyCodeFieldVisible = isVisible
+        state.isHardwareKeyCodeFieldVisible = shouldShow
         return .none
-    case .incorrectHardwareKeyCodeErrorVisibility(let isVisible):
-        state.isHardwareKeyCodeIncorrect = isVisible
+    case .showIncorrectHardwareKeyCodeError(let shouldShow):
+        state.isHardwareKeyCodeIncorrect = shouldShow
         return .none
     }
 }

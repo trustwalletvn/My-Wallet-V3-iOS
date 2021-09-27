@@ -25,6 +25,8 @@ public final class AssetPieChartInteractor: AssetPieChartInteracting {
             .flatMapLatest { [coincore] fiatCurrency -> Observable<AssetPieChart.State.Interaction> in
                 let cryptoStreams: [Observable<MoneyValuePair>] = coincore.cryptoAssets.map { asset in
                     asset.accountGroup(filter: .all)
+                        .asObservable()
+                        .asSingle()
                         .flatMap { accountGroup -> Single<MoneyValuePair> in
                             accountGroup.balancePair(fiatCurrency: fiatCurrency)
                         }
@@ -32,6 +34,7 @@ public final class AssetPieChartInteractor: AssetPieChartInteracting {
                 }
                 let fiatStream: Observable<MoneyValuePair> = coincore.fiatAsset
                     .accountGroup(filter: .all)
+                    .asObservable()
                     .flatMap { accountGroup -> Single<MoneyValuePair> in
                         accountGroup.fiatBalance(fiatCurrency: fiatCurrency)
                             .map { MoneyValuePair(base: $0, quote: $0) }

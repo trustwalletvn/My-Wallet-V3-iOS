@@ -41,14 +41,14 @@ public final class EmailVerificationService: EmailVerificationServiceAPI {
     public func verifyEmail() -> Completable {
         start()
             .flatMapCompletable(weak: self) { (self, _) -> Completable in
-                self.syncService.sync()
+                self.syncService.sync().asSingle().asCompletable()
             }
     }
 
     public func requestVerificationEmail(to email: String, context: FlowContext?) -> Completable {
         settingsService
             .update(email: email, context: context)
-            .andThen(syncService.sync())
+            .andThen(syncService.sync().asSingle().asCompletable())
     }
 
     /// Start polling by triggering the wallet settings fetch

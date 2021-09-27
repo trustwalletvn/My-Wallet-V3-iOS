@@ -3,11 +3,11 @@
 import AnalyticsKit
 import Combine
 import DIKit
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RxCocoa
 import RxSwift
-import SettingsKit
 import ToolKit
 
 /// Presenter for the side menu of the app. This presenter

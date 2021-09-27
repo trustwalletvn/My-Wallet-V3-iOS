@@ -121,4 +121,8 @@ public final class CryptoExchangeAccount: ExchangeAccount {
         self.exchangeAccountProvider = exchangeAccountProvider
         self.cryptoReceiveAddressFactory = cryptoReceiveAddressFactory
     }
+
+    static func from(response: CryptoExchangeAddressResponse) -> Self {
+        Self(response: response)
+    }
 }

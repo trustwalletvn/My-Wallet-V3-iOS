@@ -5,7 +5,7 @@ import Foundation
 import NetworkKit
 
 /// A potential SMS service error
-public enum SMSServiceError: LocalizedError {
+public enum SMSServiceError: LocalizedError, Equatable {
 
     /// missing credentials
     case missingCredentials(MissingCredentialsError)

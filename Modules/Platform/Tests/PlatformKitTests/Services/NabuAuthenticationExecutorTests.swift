@@ -16,8 +16,9 @@ import XCTest
 class NabuAuthenticationExecutorTests: XCTestCase {
 
     private var cancellables: Set<AnyCancellable>!
-    private var userCreationClient: UserCreationClientMock!
-    private var authenticationClient: NabuAuthenticationClientMock!
+    private var userCreationClient: NabuUserCreationClientMock!
+    private var sessionTokenClient: NabuSessionTokenClientMock!
+    private var resetUserClient: NabuResetUserClientMock!
     private var store: NabuTokenStore!
     private var settingsService: SettingsServiceMock!
     private var siftService: SiftServiceMock!
@@ -30,8 +31,9 @@ class NabuAuthenticationExecutorTests: XCTestCase {
         try super.setUpWithError()
 
         cancellables = Set<AnyCancellable>([])
-        userCreationClient = UserCreationClientMock()
-        authenticationClient = NabuAuthenticationClientMock()
+        sessionTokenClient = NabuSessionTokenClientMock()
+        userCreationClient = NabuUserCreationClientMock()
+        resetUserClient = NabuResetUserClientMock()
         store = NabuTokenStore()
         settingsService = SettingsServiceMock()
         siftService = SiftServiceMock()
@@ -48,7 +50,8 @@ class NabuAuthenticationExecutorTests: XCTestCase {
             settingsService: settingsService,
             siftService: siftService,
             jwtService: jwtService,
-            authenticationClient: authenticationClient,
+            sessionTokenClient: sessionTokenClient,
+            resetUserClient: resetUserClient,
             credentialsRepository: walletRepository,
             deviceInfo: deviceInfo
         )
@@ -56,8 +59,9 @@ class NabuAuthenticationExecutorTests: XCTestCase {
 
     override func tearDownWithError() throws {
         cancellables = nil
+        sessionTokenClient = nil
         userCreationClient = nil
-        authenticationClient = nil
+        resetUserClient = nil
         store = nil
         settingsService = nil
         siftService = nil
@@ -116,7 +120,7 @@ class NabuAuthenticationExecutorTests: XCTestCase {
             }, receiveValue: { _ in })
             .store(in: &cancellables)
 
-        authenticationClient.expectedSessionTokenResult = .success(
+        sessionTokenClient.expectedResult = .success(
             NabuSessionTokenResponse(
                 identifier: "identifier",
                 userId: "user-id",
@@ -249,7 +253,7 @@ class NabuAuthenticationExecutorTests: XCTestCase {
             )
         )
 
-        authenticationClient.expectedSessionTokenResult = .success(
+        sessionTokenClient.expectedResult = .success(
             NabuSessionTokenResponse(
                 identifier: "identifier",
                 userId: "user-id",
@@ -403,7 +407,7 @@ class NabuAuthenticationExecutorTests: XCTestCase {
             )
         )
 
-        authenticationClient.expectedSessionTokenResult = .success(newSessionTokenResponse)
+        sessionTokenClient.expectedResult = .success(newSessionTokenResponse)
 
         wait(for: [expiredAuthTokenStoredExpectation], timeout: 5, enforceOrder: true)
 

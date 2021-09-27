@@ -62,21 +62,20 @@ final class NetworkCommunicator: NetworkCommunicatorAPI {
     private func execute(
         request: NetworkRequest
     ) -> AnyPublisher<ServerResponse, NetworkError> {
-        if request.shouldDebug {
-            Logger.shared.debug("[NetworkKit] Performing request: \(request)")
+        session.erasedDataTaskPublisher(
+            for: request.peek("🌎", \.urlRequest.cURLCommand, if: \.isDebugging.request).urlRequest
+        )
+        .mapError(NetworkError.urlError)
+        .flatMap { elements -> AnyPublisher<ServerResponse, NetworkError> in
+            request.responseHandler.handle(elements: elements, for: request)
         }
-        return session.erasedDataTaskPublisher(for: request.urlRequest)
-            .mapError(NetworkError.urlError)
-            .flatMap { elements -> AnyPublisher<ServerResponse, NetworkError> in
-                request.responseHandler.handle(elements: elements, for: request)
+        .eraseToAnyPublisher()
+        .recordErrors(on: eventRecorder, request: request) { request, error -> AnalyticsEvent? in
+            error.analyticsEvent(for: request) { serverErrorResponse in
+                request.decoder.decodeFailureToString(errorResponse: serverErrorResponse)
             }
-            .eraseToAnyPublisher()
-            .recordErrors(on: eventRecorder, request: request) { request, error -> AnalyticsEvent? in
-                error.analyticsEvent(for: request) { serverErrorResponse in
-                    request.decoder.decodeFailureToString(errorResponse: serverErrorResponse)
-                }
-            }
-            .eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
     }
 }
 

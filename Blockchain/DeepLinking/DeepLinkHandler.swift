@@ -1,11 +1,11 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import DIKit
+import FeatureKYCDomain
+import FeatureSettingsDomain
 import FirebaseAnalytics
-import KYCKit
 import PlatformKit
 import PlatformUIKit
-import SettingsKit
 import ToolKit
 
 final class DeepLinkHandler: DeepLinkHandling {

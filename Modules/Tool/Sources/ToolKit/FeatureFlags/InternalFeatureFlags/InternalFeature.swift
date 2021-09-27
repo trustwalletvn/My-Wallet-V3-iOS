@@ -14,22 +14,23 @@ public enum InternalFeature: String, CaseIterable {
     /// Uses the Transactions Flow implementation of Buy when enabled
     case useTransactionsFlowToBuyCrypto
 
+    /// Uses the Transactions Flow implementation of Sell when enabled
+    case useTransactionsFlowToSellCrypto
+
     /// Enable interest withdraw and deposit
     case interestWithdrawAndDeposit
-
-    /// Enable non-custodial sell
-    case nonCustodialSell
 
     /// Disable the guid login at welcome screen, useful for demo purposes
     /// - Note: Old manual guid login screen is used only for internal builds
     case disableGUIDLogin
 
+    /// Enable split dashboard screen.
+    case splitDashboard
+
     /// Enables the feature for alpha release overriding internal config.
     var isAlphaReady: Bool {
         switch self {
         case .interestWithdrawAndDeposit:
-            return false
-        case .nonCustodialSell:
             return false
         case .secureChannel:
             return false
@@ -37,8 +38,12 @@ public enum InternalFeature: String, CaseIterable {
             return false
         case .useTransactionsFlowToBuyCrypto:
             return false
+        case .useTransactionsFlowToSellCrypto:
+            return false
         case .disableGUIDLogin:
             return false
+        case .splitDashboard:
+            return true
         }
     }
 }
@@ -52,18 +57,20 @@ extension InternalFeature {
     /// The title displayed at the Debug menu.
     public var displayTitle: String {
         switch self {
-        case .nonCustodialSell:
-            return "Non-Custodial Sell"
         case .interestWithdrawAndDeposit:
-            return "Interest - Deposit and Withdraw"
+            return "Rewards - Deposit and Withdraw"
         case .secureChannel:
             return "Secure Channel"
         case .requestConsoleLogging:
             return "Enable Network Request Console Logs"
         case .useTransactionsFlowToBuyCrypto:
-            return "Uses Transactions Flow to Buy Crypto"
+            return "Buy: Uses Transactions Flow to Buy Crypto"
+        case .useTransactionsFlowToSellCrypto:
+            return "Sell: Uses Transactions Flow to Sell Crypto"
         case .disableGUIDLogin:
             return "Disable manual (guid) login option"
+        case .splitDashboard:
+            return "Split Dashboard Screen"
         }
     }
 }

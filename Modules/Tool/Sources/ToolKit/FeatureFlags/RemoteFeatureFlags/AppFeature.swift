@@ -44,9 +44,6 @@ public enum AppFeature: Int, CaseIterable {
 
     /// Enable interest withdraw and deposit
     case interestWithdrawAndDeposit
-
-    /// Enable non-custodial sell
-    case nonCustodialSell
 }
 
 extension AppFeature {
@@ -55,8 +52,6 @@ extension AppFeature {
         switch self {
         case .interestWithdrawAndDeposit:
             return "ios_interest_deposit_withdraw"
-        case .nonCustodialSell:
-            return "ios_non_custodial_sell"
         case .announcements:
             return "announcements"
         case .announcementAsset:
@@ -86,8 +81,6 @@ extension AppFeature {
         case .announcementAsset:
             return false
         case .interestWithdrawAndDeposit:
-            return false
-        case .nonCustodialSell:
             return false
         case .announcements:
             return false

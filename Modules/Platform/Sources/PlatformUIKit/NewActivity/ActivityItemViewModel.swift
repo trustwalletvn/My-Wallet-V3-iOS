@@ -42,7 +42,9 @@ public final class ActivityItemViewModel: IdentifiableType, Hashable {
         switch event {
         case .buySell(let orderDetails):
             let prefix = orderDetails.isBuy ? LocalizationStrings.buy : LocalizationStrings.sell
-            let postfix = orderDetails.isBuy ? orderDetails.outputValue.currencyType.name : orderDetails.inputValue.currencyType.name
+            let postfix = orderDetails.isBuy
+                ? orderDetails.outputValue.currencyType.name
+                : orderDetails.inputValue.currencyType.name
             text = "\(prefix) \(postfix)"
         case .swap(let event):
             let pair = event.pair

@@ -1,6 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
 
 protocol EligibilityClientAPI: AnyObject {
 
@@ -8,5 +8,5 @@ protocol EligibilityClientAPI: AnyObject {
     func isEligible(
         for currency: String,
         methods: [String]
-    ) -> Single<EligibilityResponse>
+    ) -> AnyPublisher<EligibilityResponse, NabuNetworkError>
 }

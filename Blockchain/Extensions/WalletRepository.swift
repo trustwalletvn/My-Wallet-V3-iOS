@@ -109,7 +109,10 @@ final class WalletRepository: NSObject, WalletRepositoryAPI, WalletCredentialsPr
                     promise(.failure(.notInitialized))
                     return
                 }
-                guard let jsValue = jsContextProvider.jsContext.evaluateScriptCheckIsOnMainQueue(JSSetter.offlineToken) else {
+                guard let jsValue = jsContextProvider
+                    .jsContext
+                    .evaluateScriptCheckIsOnMainQueue(JSSetter.offlineToken)
+                else {
                     promise(.success(nil))
                     return
                 }
@@ -605,7 +608,8 @@ extension WalletRepository {
             }
             .eraseToAnyPublisher()
             .replaceError(with: MissingCredentialsError.offlineToken)
-            .flatMap { userId, offlineToken -> AnyPublisher<(userId: String, offlineToken: String), MissingCredentialsError> in
+            .flatMap { userId, offlineToken
+                -> AnyPublisher<(userId: String, offlineToken: String), MissingCredentialsError> in
                 guard let userId = userId else {
                     return .failure(.userId)
                 }

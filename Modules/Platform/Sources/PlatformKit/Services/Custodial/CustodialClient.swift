@@ -1,14 +1,16 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 import ToolKit
 
 public protocol TradingBalanceClientAPI: AnyObject {
-    var balance: Single<CustodialBalanceResponse?> { get }
+    var balance: AnyPublisher<CustodialBalanceResponse?, NabuNetworkError> { get }
 
-    func balance(for currencyType: CurrencyType) -> Single<CustodialBalanceResponse?>
+    func balance(
+        for currencyType: CurrencyType
+    ) -> AnyPublisher<CustodialBalanceResponse?, NabuNetworkError>
 }
 
 final class CustodialClient: TradingBalanceClientAPI,
@@ -26,7 +28,7 @@ final class CustodialClient: TradingBalanceClientAPI,
 
     // MARK: - Properties
 
-    var balance: Single<CustodialBalanceResponse?> {
+    var balance: AnyPublisher<CustodialBalanceResponse?, NabuNetworkError> {
         let path = Path.custodialBalance
         let request = requestBuilder.get(
             path: path,
@@ -35,8 +37,7 @@ final class CustodialClient: TradingBalanceClientAPI,
         return networkAdapter
             .performOptional(
                 request: request,
-                responseType: CustodialBalanceResponse.self,
-                errorResponseType: NabuNetworkError.self
+                responseType: CustodialBalanceResponse.self
             )
     }
 
@@ -55,28 +56,30 @@ final class CustodialClient: TradingBalanceClientAPI,
 
     // MARK: - CustodialPendingDepositClientAPI
 
-    func createPendingDeposit(body: CreatePendingDepositRequestBody) -> Completable {
+    func createPendingDeposit(
+        body: CreatePendingDepositRequestBody
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         let request = requestBuilder.post(
             path: Path.withdrawal,
             body: try? body.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - TradingBalanceClientAPI
 
-    func balance(for currencyType: CurrencyType) -> Single<CustodialBalanceResponse?> {
+    func balance(
+        for currencyType: CurrencyType
+    ) -> AnyPublisher<CustodialBalanceResponse?, NabuNetworkError> {
         balance
     }
 
     // MARK: - CustodialPaymentAccountClientAPI
 
-    func custodialPaymentAccount(for cryptoCurrency: CryptoCurrency) -> Single<PaymentAccount.Response> {
+    func custodialPaymentAccount(
+        for cryptoCurrency: CryptoCurrency
+    ) -> AnyPublisher<PaymentAccount.Response, NabuNetworkError> {
         struct Payload: Encodable {
             let currency: String
         }
@@ -87,10 +90,6 @@ final class CustodialClient: TradingBalanceClientAPI,
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 }

@@ -16,9 +16,21 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "git@github.com:jackpooleybc/DIKit.git", .branch("safe-property-wrappers")),
-        .package(url: "git@github.com:paulo-bc/RxCombine.git", from: "1.6.2"),
-        .package(url: "git@github.com:ReactiveX/RxSwift.git", from: "5.1.3"),
+        .package(
+            name: "DIKit",
+            url: "https://github.com/jackpooleybc/DIKit.git",
+            .branch("safe-property-wrappers")
+        ),
+        .package(
+            name: "RxCombine",
+            url: "https://github.com/paulo-bc/RxCombine.git",
+            from: "1.6.2"
+        ),
+        .package(
+            name: "RxSwift",
+            url: "https://github.com/ReactiveX/RxSwift.git",
+            from: "5.1.3"
+        ),
         .package(name: "Analytics", path: "../Analytics"),
         .package(name: "Test", path: "../Test"),
         .package(name: "Tool", path: "../Tool")
@@ -37,14 +49,19 @@ let package = Package(
         .target(
             name: "NetworkKitMock",
             dependencies: [
-                "NetworkKit",
-                .product(name: "TestKit", package: "Test")
+                .target(name: "NetworkKit"),
+                .product(name: "AnalyticsKit", package: "Analytics"),
+                .product(name: "DIKit", package: "DIKit"),
+                .product(name: "RxCombine", package: "RxCombine"),
+                .product(name: "RxSwift", package: "RxSwift"),
+                .product(name: "TestKit", package: "Test"),
+                .product(name: "ToolKit", package: "Tool")
             ]
         ),
         .testTarget(
             name: "NetworkKitTests",
             dependencies: [
-                "NetworkKit",
+                .target(name: "NetworkKit"),
                 .product(name: "RxSwift", package: "RxSwift")
             ]
         )

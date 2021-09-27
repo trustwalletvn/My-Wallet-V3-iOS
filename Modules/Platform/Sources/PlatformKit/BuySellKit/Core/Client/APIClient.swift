@@ -1,8 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 
 typealias SimpleBuyClientAPI = EligibilityClientAPI &
     SupportedPairsClientAPI &
@@ -86,29 +86,21 @@ final class APIClient: SimpleBuyClientAPI {
 
     // MARK: - BeneficiariesClientAPI
 
-    var beneficiaries: Single<[BeneficiaryResponse]> {
+    var beneficiaries: AnyPublisher<[BeneficiaryResponse], NabuNetworkError> {
         let request = requestBuilder.get(
             path: Path.beneficiaries,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    func deleteBank(by id: String) -> Completable {
+    func deleteBank(by id: String) -> AnyPublisher<Void, NabuNetworkError> {
         let path = Path.banks + [id]
         let request = requestBuilder.delete(
             path: path,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - EligibilityClientAPI
@@ -116,7 +108,7 @@ final class APIClient: SimpleBuyClientAPI {
     func isEligible(
         for currency: String,
         methods: [String]
-    ) -> Single<EligibilityResponse> {
+    ) -> AnyPublisher<EligibilityResponse, NabuNetworkError> {
         let parameters = [
             URLQueryItem(
                 name: Parameter.fiatCurrency,
@@ -132,30 +124,24 @@ final class APIClient: SimpleBuyClientAPI {
             parameters: parameters,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - OrderCancellationClientAPI
 
-    func cancel(order id: String) -> Completable {
+    func cancel(order id: String) -> AnyPublisher<Void, NabuNetworkError> {
         let request = requestBuilder.delete(
             path: Path.trades + [id],
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - SuggestedAmountsClientAPI
 
-    func suggestedAmounts(for currency: FiatCurrency) -> Single<SuggestedAmountsResponse> {
+    func suggestedAmounts(
+        for currency: FiatCurrency
+    ) -> AnyPublisher<SuggestedAmountsResponse, NabuNetworkError> {
         let parameters = [
             URLQueryItem(
                 name: Parameter.currency,
@@ -167,17 +153,15 @@ final class APIClient: SimpleBuyClientAPI {
             parameters: parameters,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - SupportedPairsClientAPI
 
     /// Streams the supported Simple-Buy pairs
-    func supportedPairs(with option: SupportedPairsFilterOption) -> Single<SupportedPairsResponse> {
+    func supportedPairs(
+        with option: SupportedPairsFilterOption
+    ) -> AnyPublisher<SupportedPairsResponse, NabuNetworkError> {
         let queryParameters: [URLQueryItem]
         switch option {
         case .all:
@@ -194,16 +178,14 @@ final class APIClient: SimpleBuyClientAPI {
             path: Path.supportedPairs,
             parameters: queryParameters
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - OrdersActivityClientAPI
 
-    func activityResponse(currency: Currency) -> Single<OrdersActivityResponse> {
+    func activityResponse(
+        currency: Currency
+    ) -> AnyPublisher<OrdersActivityResponse, NabuNetworkError> {
         let path = Path.transactions
         let parameters = [
             URLQueryItem(
@@ -220,16 +202,14 @@ final class APIClient: SimpleBuyClientAPI {
             parameters: parameters,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - OrderDetailsClientAPI
 
-    func orderDetails(pendingOnly: Bool) -> Single<[OrderPayload.Response]> {
+    func orderDetails(
+        pendingOnly: Bool
+    ) -> AnyPublisher<[OrderPayload.Response], NabuNetworkError> {
         let path = Path.trades
         let states: [OrderDetails.State] = OrderDetails.State.allCases.filter { $0 != .cancelled }
         let parameters = [
@@ -247,29 +227,25 @@ final class APIClient: SimpleBuyClientAPI {
             parameters: parameters,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    func orderDetails(with identifier: String) -> Single<OrderPayload.Response> {
+    func orderDetails(
+        with identifier: String
+    ) -> AnyPublisher<OrderPayload.Response, NabuNetworkError> {
         let path = Path.trades + [identifier]
         let request = requestBuilder.get(
             path: path,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - PaymentAccountClientAPI
 
-    func paymentAccount(for currency: FiatCurrency) -> Single<PlatformKit.PaymentAccount.Response> {
+    func paymentAccount(
+        for currency: FiatCurrency
+    ) -> AnyPublisher<PlatformKit.PaymentAccount.Response, NabuNetworkError> {
         struct Payload: Encodable {
             let currency: String
         }
@@ -280,11 +256,7 @@ final class APIClient: SimpleBuyClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - OrderCreationClientAPI
@@ -292,7 +264,7 @@ final class APIClient: SimpleBuyClientAPI {
     func create(
         order: OrderPayload.Request,
         createPendingOrder: Bool
-    ) -> Single<OrderPayload.Response> {
+    ) -> AnyPublisher<OrderPayload.Response, NabuNetworkError> {
         var parameters: [URLQueryItem] = []
         if createPendingOrder {
             parameters.append(
@@ -310,11 +282,7 @@ final class APIClient: SimpleBuyClientAPI {
             body: try? order.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - CardOrderConfirmationClientAPI
@@ -323,7 +291,7 @@ final class APIClient: SimpleBuyClientAPI {
         with identifier: String,
         partner: OrderPayload.ConfirmOrder.Partner,
         paymentMethodId: String?
-    ) -> Single<OrderPayload.Response> {
+    ) -> AnyPublisher<OrderPayload.Response, NabuNetworkError> {
         let payload = OrderPayload.ConfirmOrder(
             partner: partner,
             action: .confirm,
@@ -335,11 +303,7 @@ final class APIClient: SimpleBuyClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - QuoteClientAPI
@@ -348,7 +312,7 @@ final class APIClient: SimpleBuyClientAPI {
         for action: Order.Action,
         to cryptoCurrency: CryptoCurrency,
         amount: FiatValue
-    ) -> Single<QuoteResponse> {
+    ) -> AnyPublisher<QuoteResponse, NabuNetworkError> {
         let parameters = [
             URLQueryItem(
                 name: Parameter.currencyPair,
@@ -369,16 +333,16 @@ final class APIClient: SimpleBuyClientAPI {
             parameters: parameters,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - PaymentEligibleMethodsClientAPI
 
-    func eligiblePaymentMethods(for currency: String, currentTier: KYC.Tier, sddEligibleTier: Int?) -> Single<[PaymentMethodsResponse.Method]> {
+    func eligiblePaymentMethods(
+        for currency: String,
+        currentTier: KYC.Tier,
+        sddEligibleTier: Int?
+    ) -> AnyPublisher<[PaymentMethodsResponse.Method], NabuNetworkError> {
         var queryParameters = [
             URLQueryItem(
                 name: Parameter.currency,
@@ -408,15 +372,15 @@ final class APIClient: SimpleBuyClientAPI {
             parameters: queryParameters,
             authenticated: true
         )!
-        return networkAdapter.perform(
-            request: request,
-            errorResponseType: NabuNetworkError.self
-        )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - WithdrawalClientAPI
 
-    func withdrawFee(currency: FiatCurrency, paymentMethodType: PaymentMethodPayloadType) -> Single<WithdrawFeesResponse> {
+    func withdrawFee(
+        currency: FiatCurrency,
+        paymentMethodType: PaymentMethodPayloadType
+    ) -> AnyPublisher<WithdrawFeesResponse, NabuNetworkError> {
         let queryParameters = [
             URLQueryItem(
                 name: Parameter.currency,
@@ -436,14 +400,12 @@ final class APIClient: SimpleBuyClientAPI {
             parameters: queryParameters,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    func withdraw(data: WithdrawalCheckoutData) -> Single<WithdrawalCheckoutResponse> {
+    func withdraw(
+        data: WithdrawalCheckoutData
+    ) -> AnyPublisher<WithdrawalCheckoutResponse, NabuNetworkError> {
         let payload = WithdrawalPayload(data: data)
         let headers = [HttpHeaderField.blockchainOrigin: HttpHeaderValue.simpleBuy]
         let request = requestBuilder.post(
@@ -452,40 +414,32 @@ final class APIClient: SimpleBuyClientAPI {
             headers: headers,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
     // MARK: - LinkedBanks API
 
-    func linkedBanks() -> Single<[LinkedBankResponse]> {
+    func linkedBanks() -> AnyPublisher<[LinkedBankResponse], NabuNetworkError> {
         let request = requestBuilder.get(
             path: Path.linkedBanks,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    func deleteLinkedBank(for id: String) -> Completable {
+    func deleteLinkedBank(
+        for id: String
+    ) -> AnyPublisher<Void, NabuNetworkError> {
         let request = requestBuilder.delete(
             path: Path.bankTransfer + [id],
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    func createBankLinkage(for currency: FiatCurrency) -> Single<CreateBankLinkageResponse> {
+    func createBankLinkage(
+        for currency: FiatCurrency
+    ) -> AnyPublisher<CreateBankLinkageResponse, NabuNetworkError> {
         struct Payload: Encodable {
             let currency: String
         }
@@ -495,27 +449,25 @@ final class APIClient: SimpleBuyClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    func getLinkedBank(for id: String) -> Single<LinkedBankResponse> {
+    func getLinkedBank(
+        for id: String
+    ) -> AnyPublisher<LinkedBankResponse, NabuNetworkError> {
         let path = Path.linkedBanks + [id]
         let request = requestBuilder.get(
             path: path,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 
-    func updateBankLinkage(for id: String, providerAccountId: String, accountId: String) -> Single<LinkedBankResponse> {
+    func updateBankLinkage(
+        for id: String,
+        providerAccountId: String,
+        accountId: String
+    ) -> AnyPublisher<LinkedBankResponse, NabuNetworkError> {
         struct Payload: Encodable {
             struct Attributes: Encodable {
                 let providerAccountId: String
@@ -531,10 +483,6 @@ final class APIClient: SimpleBuyClientAPI {
             body: try? payload.encode(),
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 }

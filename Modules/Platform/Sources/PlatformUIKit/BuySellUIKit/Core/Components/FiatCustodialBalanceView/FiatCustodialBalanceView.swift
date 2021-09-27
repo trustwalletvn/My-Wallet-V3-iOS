@@ -96,7 +96,7 @@ final class FiatCustodialBalanceView: UIView {
         )
         fiatBalanceView.layout(edge: .leading, to: .trailing, of: stackView, offset: Spacing.interItem)
         fiatBalanceView.layoutToSuperview(axis: .vertical, offset: Spacing.inner)
-        fiatBalanceView.layoutToSuperview(.trailing, offset: -Spacing.outer, priority: .penultimateHigh)
+        fiatBalanceView.layoutToSuperview(.trailing, offset: -Spacing.inner, priority: .penultimateHigh)
     }
 
     @objc

@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
 import RxSwift
@@ -27,7 +28,9 @@ struct CreatePendingDepositRequestBody: Encodable {
 }
 
 protocol CustodialPendingDepositClientAPI: AnyObject {
-    func createPendingDeposit(body: CreatePendingDepositRequestBody) -> Completable
+    func createPendingDeposit(
+        body: CreatePendingDepositRequestBody
+    ) -> AnyPublisher<Void, NabuNetworkError>
 }
 
 public protocol CustodialPendingDepositServiceAPI: AnyObject {
@@ -63,5 +66,7 @@ final class CustodialPendingDepositService: CustodialPendingDepositServiceAPI {
             product: product
         )
         return client.createPendingDeposit(body: body)
+            .asObservable()
+            .ignoreElements()
     }
 }

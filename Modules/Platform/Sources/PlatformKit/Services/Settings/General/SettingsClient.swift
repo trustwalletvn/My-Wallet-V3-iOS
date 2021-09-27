@@ -61,7 +61,10 @@ final class SettingsClient: SettingsClientAPI {
     /// - Parameter guid: The wallet identifier that must be valid.
     /// - Parameter sharedKey: A shared key that must be valid.
     /// - Returns: a `Single` that wraps a `SettingsResponse`.
-    func settings(by guid: String, sharedKey: String) -> Single<SettingsResponse> {
+    func settings(
+        by guid: String,
+        sharedKey: String
+    ) -> AnyPublisher<SettingsResponse, NetworkError> {
         let url = URL(string: BlockchainAPI.shared.walletSettingsUrl)!
         let payload = SettingsRequest(
             method: Method.getInfo.rawValue,
@@ -83,7 +86,10 @@ final class SettingsClient: SettingsClientAPI {
     /// - Parameter guid: The wallet identifier that must be valid.
     /// - Parameter sharedKey: A shared key that must be valid.
     /// - Returns: a `Completable`.
-    func updateLastTransactionTime(guid: String, sharedKey: String) -> Completable {
+    func updateLastTransactionTime(
+        guid: String,
+        sharedKey: String
+    ) -> AnyPublisher<Void, NetworkError> {
         let currentTime = "\(Int(Date().timeIntervalSince1970))"
         return update(
             guid: guid,
@@ -91,6 +97,7 @@ final class SettingsClient: SettingsClientAPI {
             method: .updateLastTxTime,
             payload: currentTime
         )
+        .mapToVoid()
     }
 
     func update(
@@ -98,7 +105,7 @@ final class SettingsClient: SettingsClientAPI {
         context: FlowContext,
         guid: String,
         sharedKey: String
-    ) -> Completable {
+    ) -> AnyPublisher<Void, NetworkError> {
         update(
             guid: guid,
             sharedKey: sharedKey,
@@ -106,6 +113,7 @@ final class SettingsClient: SettingsClientAPI {
             payload: currency,
             context: context
         )
+        .mapToVoid()
     }
 
     func updatePublisher(
@@ -137,7 +145,7 @@ final class SettingsClient: SettingsClientAPI {
         context: FlowContext?,
         guid: String,
         sharedKey: String
-    ) -> Completable {
+    ) -> AnyPublisher<String, NetworkError> {
         update(
             guid: guid,
             sharedKey: sharedKey,
@@ -158,7 +166,7 @@ final class SettingsClient: SettingsClientAPI {
         context: FlowContext?,
         guid: String,
         sharedKey: String
-    ) -> Completable {
+    ) -> AnyPublisher<Void, NetworkError> {
         update(
             guid: guid,
             sharedKey: sharedKey,
@@ -166,40 +174,59 @@ final class SettingsClient: SettingsClientAPI {
             payload: smsNumber,
             context: context
         )
+        .mapToVoid()
     }
 
-    func emailNotifications(enabled: Bool, guid: String, sharedKey: String) -> Completable {
+    func emailNotifications(
+        enabled: Bool,
+        guid: String,
+        sharedKey: String
+    ) -> AnyPublisher<Void, NetworkError> {
         update(
             guid: guid,
             sharedKey: sharedKey,
             method: .updateNotificationType,
             payload: enabled ? "1" : "0"
-        ).andThen(
-            update(
+        )
+        .mapToVoid()
+        .flatMap { _ in
+            self.update(
                 guid: guid,
                 sharedKey: sharedKey,
                 method: .updateNotificationOn,
                 payload: enabled ? "1" : "0"
             )
-        )
+            .mapToVoid()
+        }
+        .eraseToAnyPublisher()
     }
 
-    func verifySMS(code: String, guid: String, sharedKey: String) -> Completable {
+    func verifySMS(
+        code: String,
+        guid: String,
+        sharedKey: String
+    ) -> AnyPublisher<Void, NetworkError> {
         update(
             guid: guid,
             sharedKey: sharedKey,
             method: .verifySms,
             payload: code
         )
+        .mapToVoid()
     }
 
-    func smsTwoFactorAuthentication(enabled: Bool, guid: String, sharedKey: String) -> Completable {
+    func smsTwoFactorAuthentication(
+        enabled: Bool,
+        guid: String,
+        sharedKey: String
+    ) -> AnyPublisher<Void, NetworkError> {
         update(
             guid: guid,
             sharedKey: sharedKey,
             method: .updateAuthType,
             payload: enabled ? "5" : "0"
         )
+        .mapToVoid()
     }
 
     /// A generic update method that is able to update email, mobile number, etc.
@@ -215,24 +242,6 @@ final class SettingsClient: SettingsClientAPI {
         method: Method,
         payload: String,
         context: FlowContext? = nil
-    ) -> Completable {
-        networkAdapter.perform(
-            request: request(
-                guid: guid,
-                sharedKey: sharedKey,
-                method: method,
-                payload: payload,
-                context: context
-            )
-        )
-    }
-
-    private func update(
-        guid: String,
-        sharedKey: String,
-        method: Method,
-        payload: String,
-        context: FlowContext? = nil
     ) -> AnyPublisher<String, NetworkError> {
         networkAdapter.perform(
             request: request(
@@ -241,17 +250,6 @@ final class SettingsClient: SettingsClientAPI {
                 method: method,
                 payload: payload,
                 context: context
-            )
-        )
-    }
-
-    func update(email: String, context: FlowContext?, guid: String, sharedKey: String) -> AnyPublisher<String, NetworkError> {
-        networkAdapter.perform(
-            request: request(
-                guid: guid,
-                sharedKey: sharedKey,
-                method: .updateEmail,
-                payload: email
             )
         )
     }

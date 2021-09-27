@@ -36,27 +36,31 @@ public final class AssetLineChartInteractor: AssetLineChartInteracting {
 
     private let stateRelay = BehaviorRelay<AssetLineChart.State.Interaction>(value: .loading)
     private let cryptoCurrency: CryptoCurrency
-    private let fiatCurrency: FiatCurrency
     private let priceService: PriceServiceAPI
+    private let fiatCurrencyService: FiatCurrencyServiceAPI
     private let disposeBag = DisposeBag()
 
     // MARK: - Setup
 
     public init(
         cryptoCurrency: CryptoCurrency,
-        fiatCurrency: FiatCurrency,
+        fiatCurrencyService: FiatCurrencyServiceAPI,
         priceService: PriceServiceAPI = resolve()
     ) {
-        self.fiatCurrency = fiatCurrency
+        self.fiatCurrencyService = fiatCurrencyService
         self.priceService = priceService
         self.cryptoCurrency = cryptoCurrency
     }
 
     private func loadHistoricalPrices(within window: PriceWindow) {
         let cryptoCurrency = self.cryptoCurrency
-        priceService
-            .priceSeries(within: window, of: cryptoCurrency, in: fiatCurrency)
-            .asObservable()
+        fiatCurrencyService
+            .fiatCurrencyObservable
+            .flatMap { [priceService] fiatCurrency in
+                priceService
+                    .priceSeries(of: cryptoCurrency, in: fiatCurrency, within: window)
+                    .asObservable()
+            }
             .map { .init(delta: $0.delta, currency: cryptoCurrency, prices: $0.prices) }
             .map { .loaded(next: $0) }
             .startWith(.loading)

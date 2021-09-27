@@ -2,13 +2,13 @@
 
 import Combine
 import ComposableArchitecture
-import DebugUIKit
 import DIKit
+import FeatureDebugUI
+import FeatureSettingsDomain
 import NetworkKit
 import PlatformKit
 import PlatformUIKit
 import RemoteNotificationsKit
-import SettingsKit
 import ToolKit
 import UIKit
 

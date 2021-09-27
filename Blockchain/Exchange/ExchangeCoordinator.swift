@@ -1,12 +1,12 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
 import DIKit
+import FeatureSettingsDomain
 import NetworkKit
 import PlatformKit
 import PlatformUIKit
 import RxSwift
 import SafariServices
-import SettingsKit
 import ToolKit
 
 final class ExchangeCoordinator {

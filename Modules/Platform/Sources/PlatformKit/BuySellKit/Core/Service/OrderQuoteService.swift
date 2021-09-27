@@ -36,6 +36,7 @@ final class OrderQuoteService: OrderQuoteServiceAPI {
             to: cryptoCurrency,
             amount: fiatValue
         )
+        .asSingle()
         .map {
             try Quote(
                 to: cryptoCurrency,

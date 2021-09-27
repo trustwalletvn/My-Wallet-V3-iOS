@@ -380,8 +380,8 @@ extension LocalizationConstants.SimpleBuy {
             "Failed",
             comment: "Simple Buy Order State: Failed"
         )
-        public static let finished = NSLocalizedString(
-            "Finished",
+        public static let completed = NSLocalizedString(
+            "Completed",
             comment: "Simple Buy Order State: Finished"
         )
     }

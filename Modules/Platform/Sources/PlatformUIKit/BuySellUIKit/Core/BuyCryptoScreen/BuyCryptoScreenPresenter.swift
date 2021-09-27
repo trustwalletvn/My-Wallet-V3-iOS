@@ -261,7 +261,7 @@ final class BuyCryptoScreenPresenter: EnterAmountScreenPresenter {
             .flatMap(weak: self) { (self, currencies) -> Observable<(FiatValue, CryptoCurrency)> in
                 let fiat = currencies.0
                 let crypto = currencies.1
-                return self.interactor.priceService.price(for: crypto, in: fiat)
+                return self.interactor.priceService.price(of: crypto, in: fiat)
                     .compactMap(\.moneyValue.fiatValue)
                     .map { (fiat: $0, crypto: crypto) }
                     .asObservable()

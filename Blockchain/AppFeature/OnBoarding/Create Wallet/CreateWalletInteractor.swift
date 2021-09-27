@@ -4,10 +4,10 @@ import AnalyticsKit
 import Combine
 import CombineExt
 import DIKit
+import FeatureSettingsDomain
 import PlatformKit
 import RxRelay
 import RxSwift
-import SettingsKit
 import ToolKit
 
 /// This is a counterpart of `CreateWalletScreenInteractor` and it is added so that we be able to

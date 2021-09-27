@@ -2,7 +2,7 @@
 
 import Combine
 
-public enum WalletPayloadServiceError: Error {
+public enum WalletPayloadServiceError: Error, Equatable {
 
     /// The payload returned from the backend is empty
     case missingPayload

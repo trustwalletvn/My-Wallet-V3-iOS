@@ -1,8 +1,8 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import Combine
 import DIKit
 import NetworkKit
-import RxSwift
 
 public protocol SwapActivityClientAPI {
     func fetchActivity(
@@ -10,7 +10,7 @@ public protocol SwapActivityClientAPI {
         fiatCurrency: String?,
         cryptoCurrency: String?,
         limit: Int
-    ) -> Single<[SwapActivityItemEvent]>
+    ) -> AnyPublisher<[SwapActivityItemEvent], NabuNetworkError>
 }
 
 public typealias SwapClientAPI = SwapActivityClientAPI
@@ -50,7 +50,7 @@ final class SwapClient: SwapClientAPI {
         fiatCurrency: String?,
         cryptoCurrency: String?,
         limit: Int
-    ) -> Single<[SwapActivityItemEvent]> {
+    ) -> AnyPublisher<[SwapActivityItemEvent], NabuNetworkError> {
         var parameters = [
             URLQueryItem(
                 name: Parameter.before,
@@ -84,10 +84,6 @@ final class SwapClient: SwapClientAPI {
             parameters: parameters,
             authenticated: true
         )!
-        return networkAdapter
-            .perform(
-                request: request,
-                errorResponseType: NabuNetworkError.self
-            )
+        return networkAdapter.perform(request: request)
     }
 }

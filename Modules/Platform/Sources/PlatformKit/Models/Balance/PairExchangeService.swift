@@ -33,7 +33,8 @@ public final class PairExchangeService: PairExchangeServiceAPI {
             .map(\.0)
             .flatMapLatest(weak: self) { (self, fiatCurrency) -> Observable<PriceQuoteAtTime> in
                 self.priceService
-                    .price(for: self.currency, in: fiatCurrency)
+                    .price(of: self.currency, in: fiatCurrency)
+                    .asSingle()
                     .catchErrorJustReturn(
                         PriceQuoteAtTime(
                             timestamp: Date(),

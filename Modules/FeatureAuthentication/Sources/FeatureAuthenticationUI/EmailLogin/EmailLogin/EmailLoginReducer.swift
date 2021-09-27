@@ -49,24 +49,24 @@ struct EmailLoginState: Equatable {
 }
 
 struct EmailLoginEnvironment {
+    let mainQueue: AnySchedulerOf<DispatchQueue>
     let sessionTokenService: SessionTokenServiceAPI
     let deviceVerificationService: DeviceVerificationServiceAPI
-    let mainQueue: AnySchedulerOf<DispatchQueue>
     let errorRecorder: ErrorRecording
-    let validateEmail: (String) -> Bool
     let analyticsRecorder: AnalyticsEventRecorderAPI
+    let validateEmail: (String) -> Bool
 
     init(
+        mainQueue: AnySchedulerOf<DispatchQueue>,
         sessionTokenService: SessionTokenServiceAPI,
         deviceVerificationService: DeviceVerificationServiceAPI,
-        mainQueue: AnySchedulerOf<DispatchQueue> = .main,
         errorRecorder: ErrorRecording,
         analyticsRecorder: AnalyticsEventRecorderAPI,
         validateEmail: @escaping (String) -> Bool = { $0.isEmail }
     ) {
+        self.mainQueue = mainQueue
         self.sessionTokenService = sessionTokenService
         self.deviceVerificationService = deviceVerificationService
-        self.mainQueue = mainQueue
         self.errorRecorder = errorRecorder
         self.analyticsRecorder = analyticsRecorder
         self.validateEmail = validateEmail
@@ -82,7 +82,9 @@ let emailLoginReducer = Reducer.combine(
             environment: {
                 VerifyDeviceEnvironment(
                     mainQueue: $0.mainQueue,
-                    deviceVerificationService: $0.deviceVerificationService
+                    deviceVerificationService: $0.deviceVerificationService,
+                    errorRecorder: $0.errorRecorder,
+                    analyticsRecorder: $0.analyticsRecorder
                 )
             }
         ),

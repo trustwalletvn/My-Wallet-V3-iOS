@@ -341,6 +341,10 @@ extension LocalizationConstants.FeatureAuthentication {
             "Enter your twelve word Secret Private Key Recovery Phrase to log in. Separate each word with a space.",
             comment: "Seed phrase screen: main instruction"
         )
+        public static let importWalletInstruction = NSLocalizedString(
+            "Enter your twelve word Secret Private Key Recovery Phrase (Seed Phrase) to import wallet. Separate each word with a space.",
+            comment: "Seed phrase screen: import wallet main instruction"
+        )
         public static let placeholder = NSLocalizedString(
             "Enter recovery phrase",
             comment: "Seed phrase screen: text field placeholder"
@@ -446,7 +450,7 @@ extension LocalizationConstants.FeatureAuthentication {
             comment: "Reset password screen: passwords do not match error"
         )
         public static let securityCallOut = NSLocalizedString(
-            "For your security, you may have to re-verify your identity before accessing your trading or interest account.",
+            "For your security, you may have to re-verify your identity before accessing your trading or rewards account.",
             comment: "Seed phrase screen: callout message for the security measure"
         )
         public enum Button {

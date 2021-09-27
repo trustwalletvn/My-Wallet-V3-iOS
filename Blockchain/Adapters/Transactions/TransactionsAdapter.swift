@@ -2,19 +2,25 @@
 
 import Combine
 import DIKit
+import FeatureTransactionUI
 import PlatformKit
-import TransactionUIKit
 
 /// Represents all types of transactions the user can perform.
 enum TransactionType: Equatable {
 
     /// Performs a buy. If `CrytoAccount` is `nil`, the users will be presented with a crypto currency selector.
     case buy(CryptoAccount?)
+    /// Performs a sell. If `CrytoCurrency` is `nil`, the users will be presented with a crypto currency selector.
+    case sell(CryptoAccount?)
 
     static func == (lhs: TransactionType, rhs: TransactionType) -> Bool {
         switch (lhs, rhs) {
         case (.buy(let lhsAccount), .buy(let rhsAccount)):
             return lhsAccount?.identifier == rhsAccount?.identifier
+        case (.sell(let lhsAccount), .sell(let rhsAccount)):
+            return lhsAccount?.identifier == rhsAccount?.identifier
+        default:
+            return false
         }
     }
 }
@@ -57,8 +63,10 @@ extension TransactionType {
 
     fileprivate var transactionFlowActionValue: TransactionFlowAction {
         switch self {
-        case .buy(let cryptoAccount):
-            return .buy(cryptoAccount)
+        case .buy(let cryptoCurrency):
+            return .buy(cryptoCurrency)
+        case .sell(let cryptoCurrency):
+            return .sell(cryptoCurrency)
         }
     }
 }
@@ -77,10 +85,10 @@ extension TransactionResult {
 
 final class TransactionsAdapter: TransactionsAdapterAPI {
 
-    private let router: TransactionUIKit.TransactionsRouterAPI
+    private let router: FeatureTransactionUI.TransactionsRouterAPI
     private var cancellables = Set<AnyCancellable>()
 
-    init(router: TransactionUIKit.TransactionsRouterAPI = resolve()) {
+    init(router: FeatureTransactionUI.TransactionsRouterAPI = resolve()) {
         self.router = router
     }
 

@@ -3,7 +3,7 @@
 import Combine
 import NetworkKit
 
-public enum SessionTokenServiceError: Error {
+public enum SessionTokenServiceError: Error, Equatable {
     case networkError(NetworkError)
     case missingSessionToken
 }

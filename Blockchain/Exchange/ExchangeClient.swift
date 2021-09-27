@@ -2,10 +2,10 @@
 
 import BitcoinCashKit
 import DIKit
+import FeatureSettingsDomain
 import NetworkKit
 import PlatformKit
 import RxSwift
-import SettingsKit
 
 protocol ExchangeClientAPI {
     typealias LinkID = String

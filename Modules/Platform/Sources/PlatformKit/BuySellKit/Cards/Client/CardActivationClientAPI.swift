@@ -1,10 +1,12 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
+import NetworkKit
 
 public protocol CardActivationClientAPI: AnyObject {
+
     func activateCard(
         by id: String,
         url: String
-    ) -> Single<ActivateCardResponse.Partner>
+    ) -> AnyPublisher<ActivateCardResponse.Partner, NabuNetworkError>
 }

@@ -32,7 +32,7 @@ public final class AnnouncementTableViewCell: UITableViewCell {
 
     override public func prepareForReuse() {
         super.prepareForReuse()
-        cardView.removeFromSuperview()
+        cardView?.removeFromSuperview()
         cardView = nil
         viewModel = nil
     }

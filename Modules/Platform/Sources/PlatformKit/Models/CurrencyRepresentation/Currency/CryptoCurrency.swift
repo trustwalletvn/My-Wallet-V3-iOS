@@ -19,6 +19,28 @@ public enum CryptoCurrency: Currency, Hashable, Codable, Comparable, CustomDebug
         self = cryptoCurrency
     }
 
+    /// Creates an ERC-20 crypto currency.
+    ///
+    /// If `erc20Address` is invalid, this initializer returns `nil`.
+    ///
+    /// - Parameters:
+    ///   - erc20Address:             An ERC-20 contract address.
+    ///   - enabledCurrenciesService: An enabled currencies service.
+    public init?(erc20Address: String, enabledCurrenciesService: EnabledCurrenciesServiceAPI = resolve()) {
+        guard let cryptoCurrency = enabledCurrenciesService.allEnabledCryptoCurrencies.first(where: { currency in
+            switch currency {
+            case .coin:
+                return false
+            case .erc20(let erc20AssetModel):
+                return erc20AssetModel.erc20Address.caseInsensitiveCompare(erc20Address) == .orderedSame
+            }
+        }) else {
+            return nil
+        }
+
+        self = cryptoCurrency
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let stringValue = try container.decode(String.self)

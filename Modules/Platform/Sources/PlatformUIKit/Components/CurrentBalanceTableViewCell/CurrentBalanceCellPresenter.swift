@@ -9,7 +9,7 @@ import RxSwift
 public final class CurrentBalanceCellPresenter: CurrentBalanceCellPresenting {
 
     public typealias DescriptionValue = () -> Observable<String>
-    private typealias LocalizedString = LocalizationConstants.DashboardDetails.BalanceCell
+    private typealias LocalizedString = LocalizationConstants.Dashboard.BalanceCell
 
     public var iconImageViewContent: Driver<BadgeImageViewModel> {
         iconImageViewContentRelay.asDriver()

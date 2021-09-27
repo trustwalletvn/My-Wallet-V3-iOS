@@ -54,7 +54,7 @@ final class SeedPhraseReducerTests: XCTestCase {
                 state.seedPhrase = completePhrase
             },
             // WHEN: Validate Seed Phrase
-            .send(.validateSeedPhrase),
+            .receive(.validateSeedPhrase),
             .do { self.mockMainQueue.advance() },
             // THEN: Seed Phrase Score should be `complete`
             .receive(.didChangeSeedPhraseScore(.valid)) { state in
@@ -66,7 +66,7 @@ final class SeedPhraseReducerTests: XCTestCase {
                 state.seedPhrase = incompletePhrase
             },
             // WHEN: Validate Seed Phrase
-            .send(.validateSeedPhrase),
+            .receive(.validateSeedPhrase),
             .do { self.mockMainQueue.advance() },
             // THEN: Seed Phrase Score should be `incomplete`
             .receive(.didChangeSeedPhraseScore(.incomplete)) { state in
@@ -78,7 +78,7 @@ final class SeedPhraseReducerTests: XCTestCase {
                 state.seedPhrase = excessPhrase
             },
             // WHEN: Validate Seed Phrase
-            .send(.validateSeedPhrase),
+            .receive(.validateSeedPhrase),
             .do { self.mockMainQueue.advance() },
             // THEN: Seed Phrase Score should be `excess`
             .receive(.didChangeSeedPhraseScore(.excess)) { state in
@@ -90,7 +90,7 @@ final class SeedPhraseReducerTests: XCTestCase {
                 state.seedPhrase = invalidPhrase
             },
             // WHEN: Validate Seed Phrase
-            .send(.validateSeedPhrase),
+            .receive(.validateSeedPhrase),
             .do { self.mockMainQueue.advance() },
             // THEN: Seed Phrase Score should be `invalid`
             .receive(.didChangeSeedPhraseScore(.invalid([invalidRange]))) { state in

@@ -2,13 +2,13 @@
 
 import Combine
 import ComposableArchitecture
-import DashboardUIKit
 import DIKit
-import InterestUIKit
-import OnboardingUIKit
+import FeatureDashboardUI
+import FeatureInterestUI
+import FeatureOnboardingUI
+import FeatureSettingsUI
 import PlatformKit
 import PlatformUIKit
-import SettingsUIKit
 import ToolKit
 
 /// Acts as a container for the Home screen
@@ -32,19 +32,18 @@ final class LoggedInHostingController: UIViewController, LoggedInBridge {
 
     @Inject var airdropRouter: AirdropRouterAPI
 
-    private let onboardingRouter: OnboardingUIKit.OnboardingRouterAPI
+    private let onboardingRouter: FeatureOnboardingUI.OnboardingRouterAPI
 
     var settingsRouterAPI: SettingsRouterAPI?
     var buyRouter: PlatformUIKit.RouterAPI?
-    var sellRouter: PlatformUIKit.SellRouter?
-    var backupRouter: DashboardUIKit.BackupRouterAPI?
+    var backupRouter: FeatureDashboardUI.BackupRouterAPI?
     var pinRouter: PinRouter?
 
     @LazyInject var transactionsAdapter: TransactionsAdapterAPI
 
     init(
         store: Store<LoggedIn.State, LoggedIn.Action>,
-        onboardingRouter: OnboardingUIKit.OnboardingRouterAPI = resolve()
+        onboardingRouter: FeatureOnboardingUI.OnboardingRouterAPI = resolve()
     ) {
         self.store = store
         viewStore = ViewStore(store)

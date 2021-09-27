@@ -1,6 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import RxSwift
+import Combine
 
 protocol CardOrderConfirmationClientAPI: AnyObject {
 
@@ -9,5 +9,5 @@ protocol CardOrderConfirmationClientAPI: AnyObject {
         with identifier: String,
         partner: OrderPayload.ConfirmOrder.Partner,
         paymentMethodId: String?
-    ) -> Single<OrderPayload.Response>
+    ) -> AnyPublisher<OrderPayload.Response, NabuNetworkError>
 }

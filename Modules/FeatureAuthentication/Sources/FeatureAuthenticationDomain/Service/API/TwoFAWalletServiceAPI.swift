@@ -5,7 +5,7 @@ import NetworkKit
 import RxSwift
 
 /// Potential errors that may arise during 2FA initialization
-public enum TwoFAWalletServiceError: Error {
+public enum TwoFAWalletServiceError: Error, Equatable {
 
     /// The payload returned from the backend is empty
     case missingPayload

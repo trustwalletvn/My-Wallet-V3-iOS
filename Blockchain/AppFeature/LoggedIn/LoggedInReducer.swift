@@ -4,11 +4,11 @@ import AnalyticsKit
 import Combine
 import ComposableArchitecture
 import FeatureAuthenticationDomain
+import FeatureSettingsDomain
 import PlatformKit
 import PlatformUIKit
 import RemoteNotificationsKit
 import RxSwift
-import SettingsKit
 import ToolKit
 import WalletPayloadKit
 
@@ -126,7 +126,7 @@ let loggedInReducer = Reducer<
                 .requestAuthorizationIfNeededPublisher()
                 .catchToEffect()
                 .fireAndForget(),
-            environment.coincore.initializePublisher()
+            environment.coincore.initialize()
                 .catchToEffect()
                 .fireAndForget(),
             .fireAndForget {

@@ -4,54 +4,49 @@ import AnalyticsKit
 import BitcoinCashKit
 import BitcoinChainKit
 import BitcoinKit
-import DashboardUIKit
-import DebugUIKit
 import DIKit
 import ERC20Kit
 import EthereumKit
 import FeatureAuthenticationData
 import FeatureAuthenticationDomain
-import KYCKit
-import KYCUIKit
+import FeatureDashboardUI
+import FeatureDebugUI
+import FeatureKYCDomain
+import FeatureKYCUI
+import FeatureOnboardingUI
+import FeatureSettingsDomain
+import FeatureSettingsUI
+import FeatureTransactionDomain
+import FeatureTransactionUI
 import NetworkKit
-import OnboardingKit
-import OnboardingUIKit
 import PlatformKit
 import PlatformUIKit
 import RemoteNotificationsKit
-import SettingsKit
-import SettingsUIKit
 import StellarKit
 import ToolKit
-import TransactionKit
-import TransactionUIKit
 import WalletPayloadKit
 
 // MARK: - Settings Dependencies
 
-extension AuthenticationCoordinator: SettingsUIKit.AuthenticationCoordinating {}
+extension AuthenticationCoordinator: FeatureSettingsUI.AuthenticationCoordinating {}
 
-extension AppCoordinator: SettingsUIKit.AppCoordinating {}
+extension AppCoordinator: FeatureSettingsUI.AppCoordinating {}
 
-extension ExchangeCoordinator: SettingsUIKit.ExchangeCoordinating {}
+extension ExchangeCoordinator: FeatureSettingsUI.ExchangeCoordinating {}
 
-extension UIApplication: SettingsUIKit.AppStoreOpening {}
+extension UIApplication: FeatureSettingsUI.AppStoreOpening {}
 
 extension Wallet: WalletRecoveryVerifing {}
 
 // MARK: - Dashboard Dependencies
 
-extension AppCoordinator: DashboardUIKit.WalletOperationsRouting {}
+extension AppCoordinator: FeatureDashboardUI.WalletOperationsRouting {}
 
-extension AnalyticsUserPropertyInteractor: DashboardUIKit.AnalyticsUserPropertyInteracting {}
+extension AnalyticsUserPropertyInteractor: FeatureDashboardUI.AnalyticsUserPropertyInteracting {}
 
-extension AnnouncementPresenter: DashboardUIKit.AnnouncementPresenting {}
+extension AnnouncementPresenter: FeatureDashboardUI.AnnouncementPresenting {}
 
-extension SettingsUIKit.BackupFundsRouter: DashboardUIKit.BackupRouterAPI {}
-
-// MARK: - FeatureAuthentication Dependencies
-
-extension Wallet: WalletFeatureAuthenticationDomainWrapper {}
+extension FeatureSettingsUI.BackupFundsRouter: FeatureDashboardUI.BackupRouterAPI {}
 
 // MARK: - AnalyticsKit Dependencies
 
@@ -151,8 +146,6 @@ extension DependencyContainer {
 
         single { AuthenticationCoordinator() }
 
-        factory { AuthenticationCoordinator.shared as WalletPairingFetcherAPI }
-
         factory { () -> AuthenticationCoordinating in
             let bridge: LoggedInDependencyBridgeAPI = DIKit.resolve()
             return bridge.resolveAuthenticationCoordinating() as AuthenticationCoordinating
@@ -170,12 +163,12 @@ extension DependencyContainer {
         factory { UIApplication.shared as AppStoreOpening }
 
         factory {
-            BackupFundsRouter(entry: .custody, navigationRouter: NavigationRouter()) as DashboardUIKit.BackupRouterAPI
+            BackupFundsRouter(entry: .custody, navigationRouter: NavigationRouter()) as FeatureDashboardUI.BackupRouterAPI
         }
 
-        factory { AnalyticsUserPropertyInteractor() as DashboardUIKit.AnalyticsUserPropertyInteracting }
+        factory { AnalyticsUserPropertyInteractor() as FeatureDashboardUI.AnalyticsUserPropertyInteracting }
 
-        factory { AnnouncementPresenter() as DashboardUIKit.AnnouncementPresenting }
+        factory { AnnouncementPresenter() as FeatureDashboardUI.AnnouncementPresenting }
 
         factory { FiatBalanceCellProvider() as FiatBalanceCellProviding }
 
@@ -215,9 +208,9 @@ extension DependencyContainer {
             return bridge.resolveAppCoordinating() as AppCoordinating
         }
 
-        factory { () -> DashboardUIKit.WalletOperationsRouting in
+        factory { () -> FeatureDashboardUI.WalletOperationsRouting in
             let bridge: LoggedInDependencyBridgeAPI = DIKit.resolve()
-            return bridge.resolveWalletOperationsRouting() as DashboardUIKit.WalletOperationsRouting
+            return bridge.resolveWalletOperationsRouting() as FeatureDashboardUI.WalletOperationsRouting
         }
 
         factory { () -> BackupFlowStarterAPI in
@@ -381,20 +374,6 @@ extension DependencyContainer {
             return completeSettingsService
         }
 
-        // MARK: - DataProvider
-
-        single { DataProvider() as DataProviding }
-
-        factory { () -> ExchangeProviding in
-            let provider: DataProviding = DIKit.resolve()
-            return provider.exchange
-        }
-
-        factory { () -> HistoricalFiatPriceProviding in
-            let provider: DataProviding = DIKit.resolve()
-            return provider.historicalPrices
-        }
-
         // MARK: - BlockchainDataRepository
 
         factory { BlockchainDataRepository.shared as DataRepositoryAPI }
@@ -473,10 +452,10 @@ extension DependencyContainer {
 
         // MARK: KYC Module
 
-        factory { () -> KYCUIKit.Routing in
-            let emailVerificationService: KYCKit.EmailVerificationServiceAPI = DIKit.resolve()
+        factory { () -> FeatureKYCUI.Routing in
+            let emailVerificationService: FeatureKYCDomain.EmailVerificationServiceAPI = DIKit.resolve()
             let externalAppOpener: ExternalAppOpener = DIKit.resolve()
-            return KYCUIKit.Router(
+            return FeatureKYCUI.Router(
                 analyticsRecorder: DIKit.resolve(),
                 legacyRouter: DIKit.resolve(),
                 kycService: DIKit.resolve(),
@@ -485,7 +464,7 @@ extension DependencyContainer {
             )
         }
 
-        factory { () -> KYCKit.EmailVerificationAPI in
+        factory { () -> FeatureKYCDomain.EmailVerificationAPI in
             EmailVerificationAdapter(settingsService: DIKit.resolve())
         }
 
@@ -496,15 +475,15 @@ extension DependencyContainer {
         // MARK: Onboarding Module
 
         // this must be kept in memory because of how PlatformUIKit.Router works, otherwise the flow crashes.
-        single { () -> OnboardingUIKit.OnboardingRouterAPI in
-            OnboardingUIKit.OnboardingRouter()
+        single { () -> FeatureOnboardingUI.OnboardingRouterAPI in
+            FeatureOnboardingUI.OnboardingRouter()
         }
 
-        factory { () -> OnboardingUIKit.BuyCryptoRouterAPI in
+        factory { () -> FeatureOnboardingUI.BuyCryptoRouterAPI in
             TransactionsAdapter()
         }
 
-        factory { () -> OnboardingUIKit.EmailVerificationRouterAPI in
+        factory { () -> FeatureOnboardingUI.EmailVerificationRouterAPI in
             KYCAdapter()
         }
 
@@ -518,7 +497,7 @@ extension DependencyContainer {
             KYCAdapter()
         }
 
-        factory { () -> TransactionUIKit.KYCSDDServiceAPI in
+        factory { () -> FeatureTransactionUI.KYCSDDServiceAPI in
             TransactionsKYCAdapter()
         }
 
@@ -577,11 +556,6 @@ extension DependencyContainer {
         factory { RecaptchaClient(siteKey: AuthenticationKeys.googleRecaptchaSiteKey) }
 
         factory { GoogleRecaptchaService() as GoogleRecaptchaServiceAPI }
-
-        factory { () -> WalletFeatureAuthenticationDomainWrapper in
-            let manager: WalletManager = DIKit.resolve()
-            return manager.wallet as WalletFeatureAuthenticationDomainWrapper
-        }
 
         // MARK: Analytics
 

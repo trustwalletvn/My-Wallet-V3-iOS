@@ -2,10 +2,10 @@
 
 import DIKit
 import FeatureAuthenticationDomain
+import FeatureSettingsDomain
 import PlatformKit
 import RxRelay
 import RxSwift
-import SettingsKit
 
 final class PasswordRequiredScreenInteractor {
 

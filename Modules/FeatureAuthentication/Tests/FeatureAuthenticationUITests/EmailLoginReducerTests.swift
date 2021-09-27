@@ -29,9 +29,9 @@ final class EmailLoginReducerTests: XCTestCase {
             initialState: .init(),
             reducer: emailLoginReducer,
             environment: .init(
+                mainQueue: mockMainQueue.eraseToAnyScheduler(),
                 sessionTokenService: MockSessionTokenService(),
                 deviceVerificationService: MockDeviceVerificationService(),
-                mainQueue: mockMainQueue.eraseToAnyScheduler(),
                 errorRecorder: MockErrorRecorder(),
                 analyticsRecorder: MockAnalyticsRecorder()
             )

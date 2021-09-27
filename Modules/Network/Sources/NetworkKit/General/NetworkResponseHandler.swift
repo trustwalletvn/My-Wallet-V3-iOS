@@ -17,7 +17,7 @@ public protocol NetworkResponseHandlerAPI {
 }
 
 extension Data {
-    fileprivate func unescapedJSONString() throws -> String {
+    private func unescapedJSONString() throws -> String {
         let object = try JSONSerialization.jsonObject(with: self, options: .allowFragments)
         let unescapedData = try JSONSerialization.data(withJSONObject: object, options: .withoutEscapingSlashes)
         guard let string = String(data: unescapedData, encoding: .utf8) else {
@@ -50,22 +50,13 @@ final class NetworkResponseHandler: NetworkResponseHandlerAPI {
                 let payload = elements.data
                 switch response.statusCode {
                 case 204:
+                    request.peek("🌎 📲", \.endpoint, if: \.isDebugging.response)
                     return .success(ServerResponse(payload: nil, response: response))
                 case 200...299:
-                    #if INTERNAL_BUILD
-                    if request.shouldDebug, let json = try? payload.unescapedJSONString() {
-                        Logger.shared.debug("[NetworkKit] Received response for \(request) => \(json)")
-                    }
-                    #endif
+                    request.peek("🌎 📲 Data(count: \(payload.count))", \.endpoint, if: \.isDebugging.response)
                     return .success(ServerResponse(payload: payload, response: response))
                 default:
-                    let requestPath = request.urlRequest.url?.path ?? ""
-                    #if INTERNAL_BUILD
-                    if let json = try? JSONSerialization.jsonObject(with: payload, options: .allowFragments) {
-                        Logger.shared.error("\(json)")
-                    }
-                    #endif
-                    Logger.shared.error("\(requestPath) failed with status code: \(response.statusCode)")
+                    request.peek("🌎 ‼️ \(response.statusCode)", \.endpoint)
                     return .failure(
                         .rawServerError(
                             ServerErrorResponse(response: response, payload: payload)

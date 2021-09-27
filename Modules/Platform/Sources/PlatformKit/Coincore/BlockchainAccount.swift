@@ -82,3 +82,14 @@ extension BlockchainAccount {
         balancePair(fiatCurrency: fiatCurrency, at: date).map(\.quote)
     }
 }
+
+extension Publisher where Output == [SingleAccount] {
+
+    /// Maps each `[SingleAccount]` object filtering out accounts that match the given `BlockchainAccount` identifier.
+    public func mapFilter(excluding identifier: AnyHashable) -> AnyPublisher<Output, Failure> {
+        map { accounts in
+            accounts.filter { $0.identifier != identifier }
+        }
+        .eraseToAnyPublisher()
+    }
+}

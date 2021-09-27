@@ -69,7 +69,7 @@ public struct ImageResourceView: View {
 struct ImageResourceView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            ImageResourceView(.local(name: "cancel_icon", bundle: .current))
+            ImageResourceView(.local(name: "cancel_icon", bundle: .module))
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 20)
 

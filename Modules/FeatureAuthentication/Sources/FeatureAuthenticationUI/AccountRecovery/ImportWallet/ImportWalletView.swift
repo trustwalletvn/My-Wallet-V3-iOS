@@ -1,5 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
+import ComposableArchitecture
 import Localization
 import SwiftUI
 import UIComponentsKit
@@ -19,6 +20,14 @@ struct ImportWalletView: View {
         static let trailingPadding: CGFloat = 24
         static let titleTopPadding: CGFloat = 16
         static let buttonBottomPadding: CGFloat = 10
+    }
+
+    private let store: Store<ImportWalletState, ImportWalletAction>
+    @ObservedObject private var viewStore: ViewStore<ImportWalletState, ImportWalletAction>
+
+    init(store: Store<ImportWalletState, ImportWalletAction>) {
+        self.store = store
+        viewStore = ViewStore(store)
     }
 
     var body: some View {
@@ -43,13 +52,29 @@ struct ImportWalletView: View {
             }
             VStack {
                 PrimaryButton(title: LocalizedString.Button.importWallet) {
-                    // TODO: import wallet
+                    viewStore.send(.importWalletButtonTapped)
                 }
                 .padding(.bottom, Layout.buttonBottomPadding)
                 SecondaryButton(title: LocalizedString.Button.goBack) {
-                    // TODO: go back
+                    viewStore.send(.goBackButtonTapped)
                 }
             }
+            NavigationLink(
+                destination: IfLetStore(
+                    store.scope(
+                        state: \.createAccountState,
+                        action: ImportWalletAction.createAccount
+                    ),
+                    then: { store in
+                        CreateAccountView(store: store)
+                    }
+                ),
+                isActive: viewStore.binding(
+                    get: \.isCreateAccountScreenVisible,
+                    send: ImportWalletAction.setCreateAccountScreenVisible(_:)
+                ),
+                label: EmptyView.init
+            )
         }
         .multilineTextAlignment(.center)
         .navigationBarTitleDisplayMode(.inline)
@@ -68,7 +93,13 @@ struct ImportWalletView: View {
 #if DEBUG
 struct ImportWalletView_Previews: PreviewProvider {
     static var previews: some View {
-        ImportWalletView()
+        ImportWalletView(
+            store: .init(
+                initialState: .init(),
+                reducer: importWalletReducer,
+                environment: .init()
+            )
+        )
     }
 }
 #endif

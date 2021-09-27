@@ -1,6 +1,6 @@
 // Copyright © Blockchain Luxembourg S.A. All rights reserved.
 
-import KYCUIKit
+import FeatureKYCUI
 import PlatformKit
 
 /// The main `DeepLinkRouting`
